@@ -1,0 +1,27 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
+
+@import "tailwindcss";
+
+/* Custom Theme for Tailwind CSS */
+@theme {
+  --color-primary: #1e3a5f; /* Deep Royal Blue */
+  --color-secondary: #f8f6f2; /* Soft Ivory */
+  --color-accent: #c9a227; /* Luxury Gold */
+}
+
+/* Global Styles */
+html {
+  overflow-x: hidden;
+  scroll-behavior: smooth;
+  font-family: "Inter", sans-serif;
+}
+
+html,
+body,
+#root {
+  width: 100%;
+  overflow-x: hidden;
+  margin: 0;
+  padding: 0;
+  background-color: var(--color-secondary);
+}
