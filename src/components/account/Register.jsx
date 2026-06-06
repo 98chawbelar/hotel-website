@@ -35,16 +35,16 @@ const Register = () => {
 
   const onSubmit = async (data) => {
     try {
-      await registerUser(data.email, data.password);
+      await registerUser(data.email, data.password, data.phone);
 
       alert("Register successful!");
 
       navigate("/");
     } catch (error) {
-      if(error.code === 'auth/email-already-in-use'){
+      if (error.code === "auth/email-already-in-use") {
         setMessage("Email is already registered");
-      }else{
-        setMessage("Registration Failed")
+      } else {
+        setMessage("Registration Failed");
       }
 
       console.error(error);
@@ -53,7 +53,6 @@ const Register = () => {
 
   return (
     <div className="min-h-screen w-full flex items-center justify-center px-4 sm:px-6 md:px-8 py-10 bg-linear-to-br from-primary via-[#10233B] to-black overflow-hidden">
-      
       {/* BACKGROUND GLOW */}
       <div className="absolute w-75 h-75 bg-accent/20 blur-3xl  rounded-full top-20 left-20" />
 
@@ -61,7 +60,6 @@ const Register = () => {
 
       {/* REGISTER CARD */}
       <div className="relative z-10 w-full max-w-md sm:max-w-lg backdrop-blur-2xl bg-white/10 border border-white/10 shadow-2xl rounded-3xl p-6 sm:p-8 lg:p-10">
-        
         {/* BRAND */}
         <div className="text-center mb-8">
           <h1 className="text-3xl sm:text-4xl font-bold text-secondary">
@@ -75,7 +73,6 @@ const Register = () => {
 
         {/* FORM */}
         <form onSubmit={handleSubmit(onSubmit)}>
-          
           {/* EMAIL */}
           <div className="mb-5">
             <label
@@ -94,9 +91,7 @@ const Register = () => {
             />
 
             {errors.email && (
-              <p className="text-red-400 text-xs mt-2">
-                Email is required
-              </p>
+              <p className="text-red-400 text-xs mt-2">Email is required</p>
             )}
           </div>
           {/* Phone */}
@@ -142,32 +137,20 @@ const Register = () => {
               />
 
               <span
-                onClick={() =>
-                  setShowPassword(!showPassword)
-                }
+                onClick={() => setShowPassword(!showPassword)}
                 className="absolute right-4 top-1/2 -translate-y-1/2 cursor-pointer text-secondary/60 hover:text-accent transition"
               >
-                {showPassword ? (
-                  <FaEyeSlash />
-                ) : (
-                  <FaEye />
-                )}
+                {showPassword ? <FaEyeSlash /> : <FaEye />}
               </span>
             </div>
 
             {errors.password && (
-              <p className="text-red-400 text-xs mt-2">
-                Password is required
-              </p>
+              <p className="text-red-400 text-xs mt-2">Password is required</p>
             )}
           </div>
 
           {/* ERROR MESSAGE */}
-          {message && (
-            <p className="text-red-400 text-sm mb-4">
-              {message}
-            </p>
-          )}
+          {message && <p className="text-red-400 text-sm mb-4">{message}</p>}
 
           {/* REGISTER BUTTON */}
           <button
@@ -182,9 +165,7 @@ const Register = () => {
         <div className="flex items-center gap-3 my-6">
           <div className="flex-1 h-px bg-white/10" />
 
-          <span className="text-secondary/50 text-xs">
-            OR
-          </span>
+          <span className="text-secondary/50 text-xs">OR</span>
 
           <div className="flex-1 h-px bg-white/10" />
         </div>
@@ -195,18 +176,13 @@ const Register = () => {
           className="w-full flex items-center justify-center gap-3 bg-white text-black py-3 rounded-xl font-medium hover:bg-secondary transition duration-300"
         >
           <FaGoogle />
-
           Continue with Google
         </button>
 
         {/* LOGIN LINK */}
         <p className="text-center text-secondary/70 text-sm mt-6">
           Already have an account?{" "}
-          
-          <Link
-            to="/login"
-            className="text-accent hover:underline font-medium"
-          >
+          <Link to="/login" className="text-accent hover:underline font-medium">
             Login
           </Link>
         </p>

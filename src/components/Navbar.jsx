@@ -11,7 +11,8 @@ const Navbar = () => {
 
   const [showAdminDropdown, setShowAdminDropdown] = useState(false);
 
-  const { currentUser, logout, loading } = useAuth();
+  const { currentUser, logout, loading, uploadProfileImage } = useAuth();
+  console.log(currentUser);
 
   const navigate = useNavigate();
 
@@ -36,10 +37,34 @@ const Navbar = () => {
   const handleLogout = async () => {
     try {
       await logout();
+
       navigate("/login");
     } catch (error) {
       console.error(error);
     }
+  };
+
+  //Profile Image Upload
+  const handleProfileUpload = async (e) => {
+    const file = e.target.files[0];
+
+    if (!file) return;
+
+    // ALLOW ONLY JPG PNG
+    if (file.type !== "image/png" && file.type !== "image/jpeg") {
+      alert("Only JPG and PNG allowed");
+
+      return;
+    }
+
+    // LIMIT 2MB
+    if (file.size > 2 * 1024 * 1024) {
+      alert("Image must be under 2MB");
+
+      return;
+    }
+
+    await uploadProfileImage(file);
   };
 
   // NAVIGATION
@@ -176,11 +201,26 @@ const Navbar = () => {
           <div className="hidden lg:flex items-center gap-3 xl:gap-4">
             {/* PROFILE */}
             {currentUser && (
-              <img
-                src={currentUser?.photo}
-                alt="avatar"
-                className="w-10 h-10 rounded-full object-cover ring-2 ring-accent"
-              />
+              <div>
+                <label htmlFor="profileUpload" className="cursor-pointer">
+                  <img
+                    src={
+                      currentUser?.photo ||
+                      "https://ui-avatars.com/api/?name=User"
+                    }
+                    alt="avatar"
+                    className="w-10 h-10 rounded-full object-cover ring-2 ring-accent"
+                  />
+                </label>
+
+                <input
+                  type="file"
+                  id="profileUpload"
+                  accept="image/png,image/jpeg"
+                  className="hidden"
+                  onChange={handleProfileUpload}
+                />
+              </div>
             )}
 
             {/* ADMIN BUTTON */}
@@ -224,20 +264,20 @@ const Navbar = () => {
         {open && (
           <div
             className="
-      absolute
-      top-24
-      right-4
-      sm:right-6
-      w-[260px]
-      lg:hidden
-      bg-black/85
-      backdrop-blur-xl
-      rounded-2xl
-      p-5
-      shadow-2xl
-      border
-      border-white/10
-      z-50
+            absolute
+            top-24
+            right-4
+            sm:right-6
+            w-[260px]
+            lg:hidden
+          bg-black/85
+            backdrop-blur-xl
+            rounded-2xl
+            p-5
+            shadow-2xl
+            border
+          border-white/10
+            z-50
     "
           >
             <ul className="flex flex-col items-center gap-6">
@@ -247,16 +287,26 @@ const Navbar = () => {
 
               {/* PROFILE */}
               {currentUser && (
-                <li>
-                  <img
-                    src={
-                      currentUser?.photoURL ||
-                      "https://ui-avatars.com/api/?name=User"
-                    }
-                    alt="avatar"
-                    className="w-14 h-14 rounded-full object-cover ring-2 ring-accent"
+                <div>
+                  <label htmlFor="profileUpload" className="cursor-pointer">
+                    <img
+                      src={
+                        currentUser?.photo ||
+                        "https://ui-avatars.com/api/?name=User"
+                      }
+                      alt="avatar"
+                      className="w-10 h-10 rounded-full object-cover ring-2 ring-accent"
+                    />
+                  </label>
+
+                  <input
+                    type="file"
+                    id="profileUpload"
+                    accept="image/png,image/jpeg"
+                    className="hidden"
+                    onChange={handleProfileUpload}
                   />
-                </li>
+                </div>
               )}
 
               {/* ADMIN */}
