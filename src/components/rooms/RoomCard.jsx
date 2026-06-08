@@ -2,6 +2,10 @@ import { Link } from "react-router-dom";
 import { FaBed, FaUserFriends } from "react-icons/fa";
 
 const RoomCard = ({ room }) => {
+  const capacity =
+    typeof room.capacity === "string"
+      ? JSON.parse(room.capacity)
+      : room?.capacity;
   return (
     <div className="flex flex-col lg:flex-row gap-8 bg-primary/10 p-5 rounded-2xl">
       {/* Image */}
@@ -19,7 +23,7 @@ const RoomCard = ({ room }) => {
           {/* Left */}
           <div className="flex-1">
             <h3 className="text-3xl font-bold text-primary mb-4">
-              {room?.title}
+              {room?.name}
             </h3>
 
             <p className="text-gray-600 mb-5 leading-7">{room?.description}</p>
@@ -28,12 +32,12 @@ const RoomCard = ({ room }) => {
             <div className="flex flex-wrap gap-5 mb-6">
               <div className="flex items-center gap-2 text-primary">
                 <FaUserFriends className="text-accent" />
-                <span>{room?.guests} Guests</span>
+                <span>{capacity?.adults.join(", ")}</span>
               </div>
 
               <div className="flex items-center gap-2 text-primary">
                 <FaBed className="text-accent" />
-                <span>{room?.bed}</span>
+                <span>{room?.size}</span>
               </div>
             </div>
 

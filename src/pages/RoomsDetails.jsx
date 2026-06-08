@@ -12,13 +12,10 @@ import {
 
 const RoomDetails = () => {
   const { id } = useParams();
+
   const navigate = useNavigate();
 
-  const {
-    data: room,
-    isLoading,
-    error,
-  } = useFetchRoomByIdQuery(id, { skip: !id });
+  const { data: room, isLoading, error } = useFetchRoomByIdQuery(id);
 
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");

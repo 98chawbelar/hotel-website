@@ -3,16 +3,17 @@ import { useRef, useState } from "react";
 import { assets } from "../assets/assets";
 import { IoIosClose, IoIosMenu, IoIosArrowDown } from "react-icons/io";
 import { useAuth } from "../context/AuthContext";
+import { getAdmin } from "../utils/auth";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
+  const admin = getAdmin();
 
   const [showFacilitiesDropdown, setShowFacilitiesDropdown] = useState(false);
 
   const [showAdminDropdown, setShowAdminDropdown] = useState(false);
 
   const { currentUser, logout, loading, uploadProfileImage } = useAuth();
-  console.log(currentUser);
 
   const navigate = useNavigate();
 
@@ -224,12 +225,12 @@ const Navbar = () => {
             )}
 
             {/* ADMIN BUTTON */}
-            {currentUser && (
+            {admin && (
               <Link
-                to="/admin-login"
-                className="bg-white text-primary px-4 py-2 rounded-lg font-medium hover:bg-secondary transition"
+                to="/dashboard"
+                className="bg-white text-primary px-4 py-2 rounded-lg font-medium"
               >
-                Admin
+                Admin Dashboard
               </Link>
             )}
 
@@ -310,26 +311,13 @@ const Navbar = () => {
               )}
 
               {/* ADMIN */}
-              {currentUser && (
-                <li className="w-full">
-                  <Link
-                    to="/admin-login"
-                    onClick={() => setOpen(false)}
-                    className="
-                    block
-                    w-full
-                    text-center
-                  bg-white
-                  text-primary
-                    py-3
-                    rounded-xl
-                    font-medium
-                  hover:bg-secondary
-                    transition"
-                  >
-                    Admin
-                  </Link>
-                </li>
+              {admin && (
+                <Link
+                  to="/dashboard"
+                  className="bg-white text-primary px-4 py-2 rounded-lg font-medium"
+                >
+                  Admin Dashboard
+                </Link>
               )}
 
               {/* LOGIN / LOGOUT */}

@@ -1,6 +1,6 @@
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { assets } from "../../assets/assets";
-
+import getBaseUrl from "../../utils/baseURL";
 import {
   HiOutlineHome,
   HiOutlineMenuAlt2,
@@ -8,20 +8,38 @@ import {
   HiOutlineBell,
   HiOutlineLogout,
 } from "react-icons/hi";
-
+import { useState, useEffect } from "react";
 import { HiViewGridAdd } from "react-icons/hi";
 import { MdOutlineManageHistory } from "react-icons/md";
-import { FiSettings, FiChevronDown } from "react-icons/fi";
+import { FiSettings } from "react-icons/fi";
 import { AiOutlineAppstoreAdd, AiOutlineProduct } from "react-icons/ai";
 import { RiReservedLine } from "react-icons/ri";
+import { clearAdmin, getAdmin, setAdmin } from "../../utils/auth";
+import { getProfile } from "../../api/admin.api";
 
 const DashboardLayout = () => {
+  const [admin, setAdminState] = useState(getAdmin());
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    navigate("/");
+    clearAdmin();
+    setAdminState(null);
+    navigate("/admin-login", { replace: true });
   };
+  useEffect(() => {
+    const load = async () => {
+      try {
+        const res = await getProfile();
+
+        setAdmin(res.data);
+        setAdminState(res.data);
+      } catch (err) {
+        handleLogout();
+      }
+    };
+
+    load();
+  }, []);
 
   return (
     <section className="flex min-h-screen bg-secondary text-primary overflow-hidden">
@@ -141,21 +159,22 @@ const DashboardLayout = () => {
             </button>
 
             {/* USER */}
-            <button className="flex items-center gap-3 hover:bg-secondary px-3 py-2 rounded-2xl transition">
+            <Link
+              to="/dashboard/profile"
+              className="flex items-center gap-3 hover:bg-secondary px-3 py-2 rounded-2xl transition"
+            >
               <img
-                src="https://randomuser.me/api/portraits/women/68.jpg"
-                alt="user"
+                src={
+                  admin?.avatar
+                    ? `${getBaseUrl()}${admin.avatar}`
+                    : "https://ui-avatars.com/api/?name=Admin"
+                }
+                alt="admin"
                 className="w-12 h-12 rounded-full object-cover border-2 border-accent"
               />
 
-              <div className="hidden md:block text-left">
-                <h3 className="font-semibold text-primary">Grace Simmons</h3>
-
-                <p className="text-sm text-primary/60">Lecturer</p>
-              </div>
-
-              <FiChevronDown className="hidden md:block text-primary/50" />
-            </button>
+              <p className="text-sm text-primary/60">{admin?.role}</p>
+            </Link>
 
             {/* LOGOUT */}
             <button

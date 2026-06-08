@@ -14,20 +14,32 @@ import Loading from "../../components/Loading";
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState({});
+  const [avatar, setAvatar] = useState(null);
+
+  const handleImageChange = (e) => {
+    setAvatar(e.target.files[0]);
+  };
 
   useEffect(() => {
     const fetchDashboardData = async () => {
       try {
+        const token = localStorage.getItem("token");
+
         const response = await axios.get(`${getBaseUrl()}/api/admin`, {
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
           },
         });
 
         setData(response.data);
       } catch (error) {
         console.error("Dashboard Error:", error);
+        if (error.response?.status === 401 || error.response?.status === 403) {
+          localStorage.removeItem("token");
+          localStorage.removeItem("admin");
+
+          window.location.href = "/admin-login";
+        }
       } finally {
         setLoading(false);
       }

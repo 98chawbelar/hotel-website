@@ -5,7 +5,12 @@ import { useFetchAllRoomsQuery } from "../../redux/features/rooms/roomsApi";
 const RoomGallery = () => {
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const { data: rooms = [], isLoading, error } = useFetchAllRoomsQuery();
+  const { data, isLoading, error } = useFetchAllRoomsQuery();
+  const rooms = Array.isArray(data)
+    ? data
+    : Array.isArray(data?.rooms)
+      ? data.rooms
+      : [];
 
   const images = rooms.map((room) => ({
     src: room.image,

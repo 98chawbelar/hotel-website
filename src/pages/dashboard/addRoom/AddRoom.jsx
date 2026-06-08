@@ -15,31 +15,52 @@ const AddRoom = () => {
   const [imageFile, setimageFile] = useState(null);
   const [addRoom, { isLoading }] = useAddRoomMutation();
   const [imageFileName, setimageFileName] = useState("");
+
   const onSubmit = async (data) => {
-    const newBookData = {
-      ...data,
-      coverImage: imageFileName,
-    };
     try {
-      await addRoom(newBookData).unwrap();
+      const formData = new FormData();
+
+      formData.append("name", data.title);
+      formData.append("description", data.description);
+      formData.append("image", imageFile);
+      formData.append("price", Number(data.newPrice));
+
+      formData.append(
+        "capacity",
+        JSON.stringify({
+          adults: data.adults.split(",").map((num) => Number(num.trim())),
+
+          child: data.child.split(",").map((num) => Number(num.trim())),
+        }),
+      );
+
+      formData.append("category", data.category);
+
+      formData.append("status", "available");
+
+      formData.append("beds", 1);
+
+      formData.append("size", "25 sqm");
+
+      console.log([...formData]);
+
+      await addRoom(formData).unwrap();
+
       Swal.fire({
-        title: "Room added",
-        text: "Your room is uploaded successfully!",
         icon: "success",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, It's Okay!",
+        title: "Room Added Successfully",
       });
+
       reset();
-      setimageFileName("");
-      setimageFile(null);
     } catch (error) {
       console.error(error);
-      alert("Failed to add book. Please try again.");
+
+      Swal.fire({
+        icon: "error",
+        title: "Failed to add room",
+      });
     }
   };
-
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (file) {
@@ -83,6 +104,19 @@ const AddRoom = () => {
 
             // Add more options as needed
           ]}
+          register={register}
+        />
+        <InputField
+          label="Adults Capacity"
+          name="adults"
+          placeholder="1,2,3"
+          register={register}
+        />
+
+        <InputField
+          label="Children Capacity"
+          name="child"
+          placeholder="1,2,3"
           register={register}
         />
 

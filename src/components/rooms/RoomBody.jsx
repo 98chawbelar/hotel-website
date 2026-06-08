@@ -14,7 +14,12 @@ const RoomBody = () => {
   const [checkOut, setCheckOut] = useState("");
 
   // ================= ROOMS DATA =================
-  const { data: rooms = [], isLoading, error } = useFetchAllRoomsQuery();
+  const { data, isLoading, error } = useFetchAllRoomsQuery();
+  const rooms = Array.isArray(data)
+    ? data
+    : Array.isArray(data?.rooms)
+      ? data.rooms
+      : [];
 
   // ================= SEARCH =================
   const handleSearch = () => {
@@ -110,7 +115,10 @@ const RoomBody = () => {
                 onChange={(e) => setAdults(Number(e.target.value))}
                 className="w-full rounded-md px-2 py-3 bg-white text-gray-700 outline-none cursor-pointer"
               >
-                {[0, ...new Set(rooms.flatMap((room) => room.capacity.adults))]
+                {[
+                  0,
+                  ...new Set(rooms.flatMap((room) => room?.capacity?.adults)),
+                ]
                   .sort((a, b) => a - b)
                   .map((adult) => (
                     <option key={adult} value={adult}>
@@ -131,11 +139,16 @@ const RoomBody = () => {
                 onChange={(e) => setChild(Number(e.target.value))}
                 className="w-full rounded-md px-2 py-3 bg-white text-gray-700 outline-none cursor-pointer"
               >
-                {[0, ...new Set(rooms.flatMap((room) => room.capacity.child))]
+                {[
+                  0,
+                  ...new Set(
+                    rooms.flatMap((room) => room?.capacity?.child || []),
+                  ),
+                ]
                   .sort((a, b) => a - b)
                   .map((childCount) => (
                     <option key={childCount} value={childCount}>
-                      {childCount} {childCount === 1 ? "Child" : "Child"}
+                      {childCount} {childCount === 1 ? "Child" : "Children"}
                     </option>
                   ))}
               </select>
@@ -155,9 +168,13 @@ const RoomBody = () => {
 
         {/* ================= ROOMS ================= */}
         <div className="p-6 md:p-8 space-y-8">
-          {rooms.map((room) => (
-            <RoomCard key={room._id} room={room} />
-          ))}
+          {rooms.length > 0 ? (
+            rooms.map((room) => <RoomCard key={room._id} room={room} />)
+          ) : (
+            <div className="text-center text-white py-10">
+              No rooms available
+            </div>
+          )}
         </div>
 
         {/* ================= PAYMENT ================= */}

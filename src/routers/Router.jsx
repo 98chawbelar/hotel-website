@@ -15,7 +15,7 @@ import Booking from "../pages/Booking";
 import RoomDetails from "../pages/RoomsDetails";
 import LogIn from "../components/account/Login";
 import Register from "../components/account/Register";
-import AdminLogin from "../components/account/AdminLogin";
+import AdminLogin from "../components/account/admin/AdminLogin";
 import { PrivateRoute } from "./PrivateRoute";
 import About from "../pages/About";
 
@@ -28,6 +28,9 @@ import ManageBooking from "../pages/dashboard/manageBooking/ManageBooking";
 import AdminRoute from "./AdminRoute";
 import AddFacilities from "../pages/dashboard/addFacilities/AddFacilities";
 import AddExtraFacilities from "../pages/dashboard/addExtraFacilities/AddExtraFacilities";
+import AdminRegister from "../components/account/admin/AdminRegister";
+import AdminProfile from "../components/account/admin/AdminProfile";
+import { elements } from "chart.js";
 
 const Router = createBrowserRouter([
   {
@@ -99,6 +102,14 @@ const Router = createBrowserRouter([
     ],
   },
   {
+    path: "/admin-register",
+    element: (
+      <div>
+        <AdminRegister />
+      </div>
+    ),
+  },
+  {
     path: "/admin-login",
     element: (
       <div>
@@ -108,39 +119,20 @@ const Router = createBrowserRouter([
   },
   {
     path: "/dashboard",
-    element: (
-      <AdminRoute>
-        <DashboardLayout />
-      </AdminRoute>
-    ),
+    element: <AdminRoute />, // ONLY route guard here
     children: [
       {
-        index: true,
-        element: <Dashboard />,
-      },
-      {
-        path: "add-new-room",
-        element: <AddRoom />,
-      },
-      {
-        path: "edit-room/:id",
-        element: <UpdateRoom />,
-      },
-      {
-        path: "manage-rooms",
-        element: <ManageRooms />,
-      },
-      {
-        path: "manage-booking",
-        element: <ManageBooking />,
-      },
-      {
-        path: "add-facilities",
-        element: <AddFacilities />,
-      },
-      {
-        path: "add-extra-facilities",
-        element: <AddExtraFacilities />,
+        element: <DashboardLayout />, // layout wrapper
+        children: [
+          { index: true, element: <Dashboard /> },
+          { path: "profile", element: <AdminProfile /> },
+          { path: "add-new-room", element: <AddRoom /> },
+          { path: "edit-room/:id", element: <UpdateRoom /> },
+          { path: "manage-rooms", element: <ManageRooms /> },
+          { path: "manage-booking", element: <ManageBooking /> },
+          { path: "add-facilities", element: <AddFacilities /> },
+          { path: "add-extra-facilities", element: <AddExtraFacilities /> },
+        ],
       },
     ],
   },

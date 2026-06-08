@@ -1,80 +1,77 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
+import { createApi } from "@reduxjs/toolkit/query/react";
+import api from "../../../api/clientapi";
 
-import getBaseUrl from "../../../utils/baseURL";
+const axiosBaseQuery =
+  () =>
+  async ({ url, method, data, params }) => {
+    try {
+      const result = await api({
+        url,
+        method,
+        data,
+        params,
+      });
 
-const baseQuery = fetchBaseQuery({
-  baseUrl: `${getBaseUrl()}/api/rooms`,
-
-  credentials: "include",
-
-  prepareHeaders: (headers) => {
-    const token = localStorage.getItem("token");
-
-    if (token) {
-      headers.set("Authorization", `Bearer ${token}`);
+      return { data: result.data };
+    } catch (axiosError) {
+      return {
+        error: {
+          status: axiosError.response?.status,
+          data: axiosError.response?.data || axiosError.message,
+        },
+      };
     }
-
-    return headers;
-  },
-});
+  };
 
 const roomsApi = createApi({
   reducerPath: "roomsApi",
 
-  baseQuery,
+  baseQuery: axiosBaseQuery(),
 
   tagTypes: ["Rooms"],
 
   endpoints: (builder) => ({
-    // ================= GET ALL ROOMS =================
     fetchAllRooms: builder.query({
-      query: () => "/",
+      query: () => ({
+        url: "/api/rooms",
+        method: "GET",
+      }),
 
       providesTags: ["Rooms"],
     }),
 
-    // ================= GET SINGLE ROOM =================
     fetchRoomById: builder.query({
-      query: (id) => `/${id}`,
+      query: (id) => ({
+        url: `/api/rooms/${id}`,
+        method: "GET",
+      }),
 
       providesTags: (result, error, id) => [{ type: "Rooms", id }],
     }),
 
-    // ================= ADD ROOM =================
     addRoom: builder.mutation({
       query: (newRoom) => ({
-        url: "/create-room",
-
+        url: "/api/rooms/create-room",
         method: "POST",
-
-        body: newRoom,
+        data: newRoom,
       }),
 
       invalidatesTags: ["Rooms"],
     }),
 
-    // ================= UPDATE ROOM =================
     updateRoom: builder.mutation({
       query: ({ id, ...rest }) => ({
-        url: `/edit/${id}`,
-
+        url: `/api/rooms/edit/${id}`,
         method: "PUT",
-
-        body: rest,
-
-        headers: {
-          "Content-Type": "application/json",
-        },
+        data: rest,
       }),
 
       invalidatesTags: ["Rooms"],
     }),
 
-    // ================= DELETE ROOM =================
     deleteRoom: builder.mutation({
       query: (id) => ({
-        url: `/${id}`,
-
+        url: `/api/rooms/${id}`,
         method: "DELETE",
       }),
 
