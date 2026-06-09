@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
 import {
   FaBed,
@@ -7,9 +6,9 @@ import {
   FaMoneyBillWave,
 } from "react-icons/fa";
 
-import getBaseUrl from "../../utils/baseURL";
 import RevenueChart from "./RevenueChart";
 import Loading from "../../components/Loading";
+import api from "../../api/client.api";
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -25,11 +24,7 @@ const Dashboard = () => {
       try {
         const token = localStorage.getItem("token");
 
-        const response = await axios.get(`${getBaseUrl()}/api/admin`, {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await api.get("/api/admin");
 
         setData(response.data);
       } catch (error) {
@@ -70,7 +65,7 @@ const Dashboard = () => {
             <div>
               <p className="text-gray-500">Total Rooms</p>
               <h2 className="text-3xl font-bold text-primary mt-2">
-                {data?.totalRooms}
+                {data.totalRooms}
               </h2>
             </div>
 
@@ -86,7 +81,7 @@ const Dashboard = () => {
             <div>
               <p className="text-gray-500">Total Revenue</p>
               <h2 className="text-3xl font-bold text-primary mt-2">
-                {data?.totalRevenue} MMK
+                {data.totalRevenue} MMK
               </h2>
             </div>
 

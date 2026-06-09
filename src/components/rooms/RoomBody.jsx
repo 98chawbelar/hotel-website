@@ -21,6 +21,38 @@ const RoomBody = () => {
       ? data.rooms
       : [];
 
+  // ================= ADULT OPTIONS =================
+  const adultOptions = [
+    0,
+
+    ...new Set(
+      rooms.flatMap((room) => {
+        const capacity =
+          typeof room.capacity === "string"
+            ? JSON.parse(room.capacity)
+            : room.capacity;
+
+        return capacity?.adults || [];
+      }),
+    ),
+  ].sort((a, b) => a - b);
+
+  // ================= CHILD OPTIONS =================
+  const childOptions = [
+    0,
+
+    ...new Set(
+      rooms.flatMap((room) => {
+        const capacity =
+          typeof room.capacity === "string"
+            ? JSON.parse(room.capacity)
+            : room.capacity;
+
+        return capacity?.child || [];
+      }),
+    ),
+  ].sort((a, b) => a - b);
+
   // ================= SEARCH =================
   const handleSearch = () => {
     // validate dates
@@ -115,16 +147,12 @@ const RoomBody = () => {
                 onChange={(e) => setAdults(Number(e.target.value))}
                 className="w-full rounded-md px-2 py-3 bg-white text-gray-700 outline-none cursor-pointer"
               >
-                {[
-                  0,
-                  ...new Set(rooms.flatMap((room) => room?.capacity?.adults)),
-                ]
-                  .sort((a, b) => a - b)
-                  .map((adult) => (
-                    <option key={adult} value={adult}>
-                      {adult}
-                    </option>
-                  ))}
+                {adultOptions.map((adult) => (
+                  <option key={adult} value={adult}>
+                    {adult}
+                    {adult === 1 ? "Adult" : "Adults"}
+                  </option>
+                ))}
               </select>
             </div>
 
@@ -139,18 +167,11 @@ const RoomBody = () => {
                 onChange={(e) => setChild(Number(e.target.value))}
                 className="w-full rounded-md px-2 py-3 bg-white text-gray-700 outline-none cursor-pointer"
               >
-                {[
-                  0,
-                  ...new Set(
-                    rooms.flatMap((room) => room?.capacity?.child || []),
-                  ),
-                ]
-                  .sort((a, b) => a - b)
-                  .map((childCount) => (
-                    <option key={childCount} value={childCount}>
-                      {childCount} {childCount === 1 ? "Child" : "Children"}
-                    </option>
-                  ))}
+                {childOptions.map((childCount) => (
+                  <option key={childCount} value={childCount}>
+                    {childCount} {childCount === 1 ? "Child" : "Children"}
+                  </option>
+                ))}
               </select>
             </div>
 

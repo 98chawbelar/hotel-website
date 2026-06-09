@@ -1,5 +1,5 @@
 import { createApi } from "@reduxjs/toolkit/query/react";
-import api from "../../../api/clientapi";
+import api from "../../../api/client.api";
 
 const axiosBaseQuery =
   () =>

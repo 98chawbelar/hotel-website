@@ -1,4 +1,4 @@
-import api from "./clientapi";
+import api from "./client.api";
 
 export const loginAdmin = (data) => api.post("/api/auth/login", data);
 

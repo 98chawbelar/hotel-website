@@ -1,23 +1,33 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
 import getBaseUrl from "../../../utils/baseURL";
+import api from "../../../api/client.api";
+
+const axiosBaseQuery =
+  () =>
+  async ({ url, method, data, params }) => {
+    try {
+      const result = await api({
+        url,
+        method,
+        data,
+        params,
+      });
+
+      return { data: result.data };
+    } catch (axiosError) {
+      return {
+        error: {
+          status: axiosError.response?.status,
+          data: axiosError.response?.data || axiosError.message,
+        },
+      };
+    }
+  };
 
 const bookingApi = createApi({
   reducerPath: "bookingApi",
 
-  baseQuery: fetchBaseQuery({
-    baseUrl: `${getBaseUrl()}/api/bookings`,
-    credentials: "include",
-
-    prepareHeaders: (headers) => {
-      const token = localStorage.getItem("token");
-
-      if (token) {
-        headers.set("Authorization", `Bearer ${token}`);
-      }
-
-      return headers;
-    },
-  }),
+  baseQuery: axiosBaseQuery(),
 
   tagTypes: ["Bookings"],
 
@@ -25,9 +35,9 @@ const bookingApi = createApi({
     // ================= CREATE BOOKING =================
     createBooking: builder.mutation({
       query: (bookingData) => ({
-        url: "/",
+        url: "/api/bookings",
         method: "POST",
-        body: bookingData,
+        data: bookingData,
       }),
 
       invalidatesTags: ["Bookings"],
@@ -35,14 +45,22 @@ const bookingApi = createApi({
 
     // ================= GET BOOKINGS BY EMAIL =================
     fetchBookingsByEmail: builder.query({
-      query: (email) => `/email/${email}`,
+      query: (email) => `/api/bookings/email/${email}`,
 
       providesTags: ["Bookings"],
     }),
 
+    // ================= GET All BOOKINGS =================
+    fetchBookingsAll: builder.query({
+      query: () => ({
+        url: "/api/bookings",
+        method: "GET",
+      }),
+    }),
+
     // ================= GET SINGLE BOOKING =================
     fetchBookingById: builder.query({
-      query: (id) => `/${id}`,
+      query: (id) => `/api/bookings/${id}`,
 
       providesTags: (result, error, id) => [{ type: "Bookings", id }],
     }),
@@ -50,12 +68,10 @@ const bookingApi = createApi({
     // ================= UPDATE BOOKING STATUS =================
     updateBookingStatus: builder.mutation({
       query: ({ id, bookingStatus }) => ({
-        url: `/${id}/status`,
+        url: `/api/bookings/${id}/status`,
         method: "PATCH",
 
-        body: {
-          bookingStatus,
-        },
+        data: { bookingStatus },
       }),
 
       invalidatesTags: ["Bookings"],
@@ -64,7 +80,7 @@ const bookingApi = createApi({
     // ================= CANCEL BOOKING =================
     cancelBooking: builder.mutation({
       query: (id) => ({
-        url: `/${id}/cancel`,
+        url: `/api/bookings/${id}/cancel`,
         method: "PATCH",
       }),
 
@@ -74,7 +90,7 @@ const bookingApi = createApi({
     // ================= DELETE BOOKING =================
     deleteBooking: builder.mutation({
       query: (id) => ({
-        url: `/${id}`,
+        url: `/api/bookings/${id}`,
         method: "DELETE",
       }),
 
@@ -86,6 +102,7 @@ const bookingApi = createApi({
 export const {
   useCreateBookingMutation,
   useFetchBookingsByEmailQuery,
+  useFetchBookingsAllQuery,
   useFetchBookingByIdQuery,
   useUpdateBookingStatusMutation,
   useCancelBookingMutation,

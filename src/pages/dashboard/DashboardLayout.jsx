@@ -7,19 +7,55 @@ import {
   HiOutlineSearch,
   HiOutlineBell,
   HiOutlineLogout,
+  HiOutlineX,
 } from "react-icons/hi";
 import { useState, useEffect } from "react";
-import { HiViewGridAdd } from "react-icons/hi";
-import { MdOutlineManageHistory } from "react-icons/md";
+
+import { MdOutlineManageHistory, MdHotel } from "react-icons/md";
 import { FiSettings } from "react-icons/fi";
 import { AiOutlineAppstoreAdd, AiOutlineProduct } from "react-icons/ai";
-import { RiReservedLine } from "react-icons/ri";
+import { TbCalendarPlus } from "react-icons/tb";
 import { clearAdmin, getAdmin, setAdmin } from "../../utils/auth";
 import { getProfile } from "../../api/admin.api";
 
 const DashboardLayout = () => {
   const [admin, setAdminState] = useState(getAdmin());
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+
+  const sidebarLinks = [
+    {
+      to: "/dashboard",
+      label: "Dashboard",
+      icon: HiOutlineHome,
+    },
+    {
+      to: "/dashboard/add-new-room",
+      label: "Add New Room",
+      icon: MdHotel,
+    },
+    {
+      to: "/dashboard/manage-booking",
+      label: "Manage Booking",
+      icon: TbCalendarPlus,
+    },
+    {
+      to: "/dashboard/add-facilities",
+      label: "Add Facilities",
+      icon: AiOutlineProduct,
+    },
+    {
+      to: "/dashboard/add-extra-facilities",
+      label: "Add Extra Facilities",
+
+      icon: AiOutlineAppstoreAdd,
+    },
+    {
+      to: "/dashboard/manage-rooms",
+      label: "Manage Rooms",
+      icon: MdOutlineManageHistory,
+    },
+  ];
 
   const handleLogout = () => {
     clearAdmin();
@@ -44,7 +80,7 @@ const DashboardLayout = () => {
   return (
     <section className="flex min-h-screen bg-secondary text-primary overflow-hidden">
       {/* SIDEBAR */}
-      <aside className="hidden sm:flex sm:flex-col w-24 bg-primary shadow-2xl">
+      <aside className="hidden sm:flex w-35 sm:flex-col bg-primary shadow-2xl">
         {/* LOGO */}
         <a
           href="/"
@@ -53,87 +89,100 @@ const DashboardLayout = () => {
           <img
             src={assets.logo}
             alt="logo"
-            className="w-14 h-14 rounded-full object-cover border-2 border-accent"
+            className="w-14 h-14 rounded-full object-cover hover:border-accent/80 border-2 border-accent"
           />
         </a>
 
         {/* NAVIGATION */}
         <div className="flex flex-col justify-between flex-1 py-6">
           <nav className="flex flex-col items-center gap-5">
-            <Link
-              to="/dashboard"
-              className="group relative p-4 rounded-2xl bg-white/5 hover:bg-accent hover:text-primary transition-all duration-300"
-            >
-              <HiOutlineHome className="text-2xl text-secondary group-hover:text-primary" />
-              <span className="absolute left-24 top-1/2 -translate-y-1/2 bg-primary text-secondary text-xs px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 transition whitespace-nowrap shadow-lg">
-                Dashboard
-              </span>
-            </Link>
+            {sidebarLinks.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.to}
+                  to={item.to}
+                  className="group relative mt-5 p-4 rounded-2xl bg-white/5 hover:bg-accent hover:text-primary transition-all duration-300"
+                >
+                  <Icon className="text-3xl text-secondary group-hover:text-primary" />
 
-            <Link
-              to="/dashboard/add-new-room"
-              className="group relative p-4 rounded-2xl bg-white/5 hover:bg-accent hover:text-primary transition-all duration-300"
-            >
-              <HiViewGridAdd className="text-2xl text-secondary group-hover:text-primary" />
-              <span className="absolute left-24 top-1/2 -translate-y-1/2 bg-primary text-secondary text-xs px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 transition whitespace-nowrap shadow-lg">
-                Add New Room
-              </span>
-            </Link>
-
-            <Link
-              to="/dashboard/manage-booking"
-              className="group relative p-4 rounded-2xl bg-white/5 hover:bg-accent hover:text-primary transition-all duration-300"
-            >
-              <RiReservedLine className="text-2xl text-secondary group-hover:text-primary" />
-              <span className="absolute left-24 top-1/2 -translate-y-1/2 bg-primary text-secondary text-xs px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 transition whitespace-nowrap shadow-lg">
-                Manage Booking
-              </span>
-            </Link>
-            <Link
-              to="/dashboard/add-facilities"
-              className="group relative p-4 rounded-2xl bg-white/5 hover:bg-accent hover:text-primary transition-all duration-300"
-            >
-              <AiOutlineAppstoreAdd className="text-2xl text-secondary group-hover:text-primary" />
-              <span className="absolute left-24 top-1/2 -translate-y-1/2 bg-primary text-secondary text-xs px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 transition whitespace-nowrap shadow-lg">
-                Add Facilities
-              </span>
-            </Link>
-            <Link
-              to="/dashboard/add-extra-facilities"
-              className="group relative  p-4 rounded-2xl bg-white/5 hover:bg-accent hover:text-primary transition-all duration-300"
-            >
-              <AiOutlineProduct className="text-2xl text-secondary group-hover:text-primary" />
-              <span className="absolute left-24 top-1/2 -translate-y-1/2 bg-primary text-secondary text-xs px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 transition whitespace-nowrap shadow-lg">
-                Add Extra Facilities
-              </span>
-            </Link>
-            <Link
-              to="/dashboard/manage-rooms"
-              className="group relative p-4 rounded-2xl bg-white/5 hover:bg-accent hover:text-primary transition-all duration-300"
-            >
-              <MdOutlineManageHistory className="text-2xl text-secondary group-hover:text-primary" />
-              <span className="absolute left-24 top-1/2 -translate-y-1/2 bg-primary text-secondary text-xs px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 transition whitespace-nowrap shadow-lg">
-                Manage Rooms
-              </span>
-            </Link>
+                  <span className="absolute left-24 top-1/2 -translate-y-1/2 bg-primary text-secondary text-xs px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 transition whitespace-nowrap shadow-lg">
+                    {item.label}
+                  </span>
+                </Link>
+              );
+            })}
           </nav>
 
           {/* SETTINGS */}
           <div className="flex justify-center">
-            <button className="p-4 rounded-2xl bg-white/5 hover:bg-accent transition-all duration-300 group">
-              <FiSettings className="text-2xl text-secondary group-hover:text-primary" />
+            <button className=" rounded-2xl p-4 bg-white/5 hover:bg-accent/80 transition-all duration-300 group">
+              <FiSettings className="text-3xl  text-secondary " />
             </button>
           </div>
         </div>
       </aside>
+      {mobileMenuOpen && (
+        <div className="fixed inset-0 z-50 sm:hidden">
+          {/* Overlay */}
+          <div
+            className="absolute inset-0 bg-black/50 backdrop-blur-xs"
+            onClick={() => setMobileMenuOpen(false)}
+          />
+
+          {/* Sidebar */}
+          <aside className="absolute border-0 left-0 top-0 h-full w-50 bg-primary  shadow-2xl">
+            {/* Header */}
+            <div className="flex items-center justify-between p-5 border-b gap-4 border-white/10">
+              <Link to="/" onClick={() => setMobileMenuOpen(false)}>
+                <img
+                  src={assets.logo}
+                  alt="logo"
+                  className="w-10 h-10 rounded-full border-2 border-accent hover:border-accent/80"
+                />
+              </Link>
+
+              <button
+                onClick={() => setMobileMenuOpen(false)}
+                className="p-2 rounded-xl cursor-pointer bg-secondary/10 hover:bg-accent/80 text-secondary  shadow-2xl transition"
+              >
+                <HiOutlineX className="text-4xl" />
+              </button>
+            </div>
+
+            {/* Navigation */}
+            <nav className="flex flex-col p-4 items-center gap-10">
+              {sidebarLinks.map((item) => {
+                const Icon = item.icon;
+                return (
+                  <Link
+                    key={item.to}
+                    to={item.to}
+                    className="group relative p-2 rounded-2xl hover:bg-accent/80   hover:text-secondary transition-all duration-300"
+                  >
+                    <Icon className="text-4xl text-secondary " />
+
+                    <span className="absolute left-24 top-1/2 -translate-y-1/2 bg-primary text-secondary text-xs px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 transition whitespace-nowrap shadow-lg">
+                      {item.label}
+                    </span>
+                  </Link>
+                );
+              })}
+            </nav>
+          </aside>
+        </div>
+      )}
 
       {/* MAIN CONTENT */}
       <div className="flex-1 flex flex-col">
         {/* HEADER */}
         <header className="h-24 bg-white border-b border-gray-200 px-6 sm:px-10 flex items-center justify-between shadow-sm">
           {/* MOBILE MENU */}
-          <button className="sm:hidden p-3 rounded-xl bg-secondary text-primary">
-            <HiOutlineMenuAlt2 className="text-2xl" />
+          <button
+            onClick={() => setMobileMenuOpen(true)}
+            className="sm:hidden p-3 rounded-xl cursor-pointer bg-black/10 hover:bg-accent/80 text-primary"
+          >
+            <HiOutlineMenuAlt2 className="text-2xl " />
           </button>
 
           {/* SEARCH */}
