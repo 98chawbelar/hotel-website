@@ -13,7 +13,7 @@ const Navbar = () => {
 
   const [showAdminDropdown, setShowAdminDropdown] = useState(false);
 
-  const { currentUser, logout, loading, uploadProfileImage } = useAuth();
+  const { currentUser, logout, uploadProfileImage } = useAuth();
 
   const navigate = useNavigate();
 
@@ -51,21 +51,13 @@ const Navbar = () => {
 
     if (!file) return;
 
-    // ALLOW ONLY JPG PNG
-    if (file.type !== "image/png" && file.type !== "image/jpeg") {
-      alert("Only JPG and PNG allowed");
-
-      return;
+    try {
+      const imageUrl = await uploadProfileImage(file);
+      alert("Profile updated!");
+      console.log("upladed", imageUrl);
+    } catch (error) {
+      console.log(error);
     }
-
-    // LIMIT 2MB
-    if (file.size > 2 * 1024 * 1024) {
-      alert("Image must be under 2MB");
-
-      return;
-    }
-
-    await uploadProfileImage(file);
   };
 
   // NAVIGATION
