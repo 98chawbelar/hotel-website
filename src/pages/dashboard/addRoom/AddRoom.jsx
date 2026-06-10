@@ -28,9 +28,9 @@ const AddRoom = () => {
       formData.append(
         "capacity",
         JSON.stringify({
-          adults: data.adults.split(",").map((num) => Number(num.trim())),
+          adults: Number(data.adults),
 
-          child: data.child.split(",").map((num) => Number(num.trim())),
+          child: Number(data.child),
         }),
       );
 
@@ -43,6 +43,9 @@ const AddRoom = () => {
       formData.append("size", "25 sqm");
 
       console.log([...formData]);
+      for (const pair of formData.entries()) {
+        console.log(pair[0], pair[1]);
+      }
 
       await addRoom(formData).unwrap();
 

@@ -12,10 +12,12 @@ const RoomGallery = () => {
       ? data.rooms
       : [];
 
-  const images = rooms.map((room) => ({
-    src: room.image,
-    name: room.name,
-  }));
+  const images = rooms
+    .filter((room) => room.image)
+    .map((room) => ({
+      src: room.image,
+      name: room.name,
+    }));
 
   const closeModal = () => setSelectedImage(null);
   if (isLoading) {

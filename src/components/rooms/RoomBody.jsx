@@ -22,37 +22,9 @@ const RoomBody = () => {
       : [];
 
   // ================= ADULT OPTIONS =================
-  const adultOptions = [
-    0,
-
-    ...new Set(
-      rooms.flatMap((room) => {
-        const capacity =
-          typeof room.capacity === "string"
-            ? JSON.parse(room.capacity)
-            : room.capacity;
-
-        return capacity?.adults || [];
-      }),
-    ),
-  ].sort((a, b) => a - b);
-
+  const adultOptions = [1, 2, 3];
   // ================= CHILD OPTIONS =================
-  const childOptions = [
-    0,
-
-    ...new Set(
-      rooms.flatMap((room) => {
-        const capacity =
-          typeof room.capacity === "string"
-            ? JSON.parse(room.capacity)
-            : room.capacity;
-
-        return capacity?.child || [];
-      }),
-    ),
-  ].sort((a, b) => a - b);
-
+  const childOptions = [1, 2, 3];
   // ================= SEARCH =================
   const handleSearch = () => {
     // validate dates
@@ -149,8 +121,7 @@ const RoomBody = () => {
               >
                 {adultOptions.map((adult) => (
                   <option key={adult} value={adult}>
-                    {adult}
-                    {adult === 1 ? "Adult" : "Adults"}
+                    {adult} {adult === 1 ? "Adult" : "Adults"}
                   </option>
                 ))}
               </select>
@@ -169,7 +140,7 @@ const RoomBody = () => {
               >
                 {childOptions.map((childCount) => (
                   <option key={childCount} value={childCount}>
-                    {childCount} {childCount === 1 ? "Child" : "Children"}
+                    {childCount} {childCount === 1 ? "Child" : "Childs"}
                   </option>
                 ))}
               </select>

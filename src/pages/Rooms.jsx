@@ -1,10 +1,8 @@
-import { useParams } from "react-router-dom";
 import RoomBody from "../components/rooms/RoomBody";
 import RoomHeader from "../components/rooms/RoomHeader";
 import { useFetchAllRoomsQuery } from "../redux/features/rooms/roomsApi";
 
 const Rooms = () => {
-  const { id } = useParams();
   const { data: room, isLoading, error } = useFetchAllRoomsQuery();
 
   if (isLoading) {
