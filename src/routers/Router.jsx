@@ -16,21 +16,19 @@ import RoomDetails from "../pages/RoomsDetails";
 import LogIn from "../components/account/Login";
 import Register from "../components/account/Register";
 import AdminLogin from "../components/account/admin/AdminLogin";
+import AdminRegister from "../components/account/admin/AdminRegister";
 import { PrivateRoute } from "./PrivateRoute";
 import About from "../pages/About";
-
-import DashboardLayout from "../pages/dashboard/DashboardLayout";
-import Dashboard from "../pages/dashboard/Dashboard";
-import AddRoom from "../pages/dashboard/addRoom/AddRoom";
-import UpdateRoom from "../pages/dashboard/editRoom/EditRoom";
-import ManageRooms from "../pages/dashboard/manageRoom/ManageRoom";
-import ManageBooking from "../pages/dashboard/manageBooking/ManageBooking";
 import AdminRoute from "./AdminRoute";
-import AddFacilities from "../pages/dashboard/addFacilities/AddFacilities";
-import AddExtraFacilities from "../pages/dashboard/addExtraFacilities/AddExtraFacilities";
-import AdminRegister from "../components/account/admin/AdminRegister";
+
+import DashboardLayout from "../pages/adminPage/dashboard/DashboardLayout";
 import AdminProfile from "../components/account/admin/AdminProfile";
-import { elements } from "chart.js";
+import Dashboard from "../pages/adminPage/dashboard/Dashboard";
+import AddRoom from "../pages/adminPage/dashboard/addRoom/AddRoom";
+import ManageRoom from "../pages/adminPage/dashboard/manageRoom/ManageRoom";
+import ManageBooking from "../pages/adminPage/dashboard/manageBooking/ManageBooking";
+import AddFacilities from "../pages/adminPage/dashboard/addFacilities/AddFacilities";
+import AddExtraFacilities from "../pages/adminPage/dashboard/addExtraFacilities/AddExtraFacilities";
 
 const Router = createBrowserRouter([
   {
@@ -127,8 +125,8 @@ const Router = createBrowserRouter([
           { index: true, element: <Dashboard /> },
           { path: "profile", element: <AdminProfile /> },
           { path: "add-new-room", element: <AddRoom /> },
-          { path: "edit-room/:id", element: <UpdateRoom /> },
-          { path: "manage-rooms", element: <ManageRooms /> },
+          { path: "manage-room/*", element: <ManageRoom /> },
+
           { path: "manage-booking", element: <ManageBooking /> },
           { path: "add-facilities", element: <AddFacilities /> },
           { path: "add-extra-facilities", element: <AddExtraFacilities /> },

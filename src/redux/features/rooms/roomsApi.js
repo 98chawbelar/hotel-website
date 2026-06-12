@@ -60,10 +60,10 @@ const roomsApi = createApi({
     }),
 
     updateRoom: builder.mutation({
-      query: ({ id, ...rest }) => ({
+      query: ({ id, data }) => ({
         url: `/api/rooms/edit/${id}`,
         method: "PUT",
-        data: rest,
+        data,
       }),
 
       invalidatesTags: ["Rooms"],

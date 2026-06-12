@@ -7,8 +7,8 @@ import {
 } from "react-icons/fa";
 
 import RevenueChart from "./RevenueChart";
-import Loading from "../../components/Loading";
-import api from "../../api/client.api";
+import Loading from "../../../components/Loading";
+import api from "../../../api/client.api";
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -58,7 +58,7 @@ const Dashboard = () => {
       </div>
 
       {/* Top Stats */}
-      <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+      <section className="grid grid-cols-1 md:grid-cols-1  xl:grid-cols-4 gap-6">
         {/* Total Rooms */}
         <div className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-accent">
           <div className="flex items-center justify-between">

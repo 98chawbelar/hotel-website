@@ -1,5 +1,5 @@
-import { useAuth } from "../../../context/AuthContext";
-import { useGetOrderByEmailQuery } from "../../../redux/features/booking/bookingApi";
+import { useAuth } from "./context/AuthContext";
+import { useGetOrderByEmailQuery } from "./redux/features/booking/bookingApi";
 
 const UserDashboard = () => {
   const { currentUser } = useAuth();

@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { FaBed, FaUserFriends } from "react-icons/fa";
+import { FaLocationPin } from "react-icons/fa6";
 
 const RoomCard = ({ room }) => {
   const capacity = room?.capacity;
@@ -45,6 +46,10 @@ const RoomCard = ({ room }) => {
               <div className="flex items-center gap-2 text-gray-300">
                 <FaBed className="text-accent" />
                 <span>{room.size}</span>
+              </div>
+              <div className="flex items-center gap-2 text-gray-300">
+                <FaLocationPin className="text-accent" />
+                <span>{room.location}</span>
               </div>
             </div>
           </div>

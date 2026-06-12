@@ -1,9 +1,11 @@
 import { useState } from "react";
-import InputField from "./InputField";
+import FormInput from "../../components/FormInput";
 import SelectField from "./SelectField";
 import { useForm } from "react-hook-form";
-import { useAddRoomMutation } from "../../../redux/features/rooms/roomsApi";
+import { useAddRoomMutation } from "../../../../redux/features/rooms/roomsApi";
 import Swal from "sweetalert2";
+import SubmitButton from "../../components/SubmitButton";
+import ImageUpload from "../../components/ImageUpload";
 
 const AddRoom = () => {
   const {
@@ -14,7 +16,6 @@ const AddRoom = () => {
   } = useForm();
   const [imageFile, setimageFile] = useState(null);
   const [addRoom, { isLoading }] = useAddRoomMutation();
-  const [imageFileName, setimageFileName] = useState("");
 
   const onSubmit = async (data) => {
     try {
@@ -22,30 +23,20 @@ const AddRoom = () => {
 
       formData.append("name", data.title);
       formData.append("description", data.description);
+      formData.append("location", data.location);
       formData.append("image", imageFile);
-      formData.append("price", Number(data.newPrice));
+      formData.append("price", Number(data.price));
 
-      formData.append(
-        "capacity",
-        JSON.stringify({
-          adults: Number(data.adults),
-
-          child: Number(data.child),
-        }),
-      );
+      formData.append("capacity[adults]", Number(data.adults));
+      formData.append("capacity[child]", Number(data.child));
 
       formData.append("category", data.category);
 
-      formData.append("status", "available");
+      formData.append("status", data.status);
 
-      formData.append("beds", 1);
+      formData.append("beds", data.beds);
 
-      formData.append("size", "25 sqm");
-
-      console.log([...formData]);
-      for (const pair of formData.entries()) {
-        console.log(pair[0], pair[1]);
-      }
+      formData.append("size", data.size);
 
       await addRoom(formData).unwrap();
 
@@ -68,17 +59,14 @@ const AddRoom = () => {
     const file = e.target.files[0];
     if (file) {
       setimageFile(file);
-      setimageFileName(file.name);
     }
   };
   return (
-    <div className="max-w-lg   mx-auto md:p-6 p-3 bg-white rounded-lg shadow-md">
-      <h2 className="text-2xl font-bold text-gray-800 mb-4">Add New Room</h2>
-
+    <div className="max-w-lg mx-auto md:p-6 p-3 bg-white  rounded-md shadow-2xl">
       {/* Form starts here */}
       <form onSubmit={handleSubmit(onSubmit)} className="">
         {/* Reusable Input Field for Title */}
-        <InputField
+        <FormInput
           label="Title"
           name="title"
           placeholder="Enter room title"
@@ -86,10 +74,18 @@ const AddRoom = () => {
         />
 
         {/* Reusable Textarea for Description */}
-        <InputField
+        <FormInput
           label="Description"
           name="description"
           placeholder="Enter room description"
+          type="textarea"
+          register={register}
+        />
+        {/* Reusable Textarea for Location */}
+        <FormInput
+          label="Location"
+          name="location"
+          placeholder="Enter room location"
           type="textarea"
           register={register}
         />
@@ -109,17 +105,52 @@ const AddRoom = () => {
           ]}
           register={register}
         />
-        <InputField
-          label="Adults Capacity"
+        <FormInput
+          label="Adults"
           name="adults"
           placeholder="1,2,3"
           register={register}
         />
 
-        <InputField
-          label="Children Capacity"
+        <FormInput
+          label="Child"
           name="child"
           placeholder="1,2,3"
+          register={register}
+        />
+        {/* Price */}
+        <FormInput
+          label="Price"
+          name="price"
+          type="number"
+          placeholder="Room Price"
+          register={register}
+        />
+        {/* Beds */}
+        <FormInput
+          label="Beds"
+          name="beds"
+          type="number"
+          placeholder="How many beds?"
+          register={register}
+        />
+
+        {/* Room Size */}
+        <FormInput
+          label="Room Size"
+          name="size"
+          placeholder="25 sqm"
+          register={register}
+        />
+
+        {/* Status */}
+        <SelectField
+          label="Room Status"
+          name="status"
+          options={[
+            { value: "available", label: "Available" },
+            { value: "reserved", label: "Reserved" },
+          ]}
           register={register}
         />
 
@@ -137,51 +168,21 @@ const AddRoom = () => {
           </label>
         </div>
 
-        {/* Old Price */}
-        <InputField
-          label="Old Price"
-          name="oldPrice"
-          type="number"
-          placeholder="Old Price"
-          register={register}
-        />
-
-        {/* New Price */}
-        <InputField
-          label="New Price"
-          name="newPrice"
-          type="number"
-          placeholder="New Price"
-          register={register}
-        />
-
         {/* Cover Image Upload */}
-        <div className="mb-4">
-          <label className="block text-sm font-semibold text-gray-700 mb-2">
-            Cover Image
-          </label>
-          <input
-            type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="mb-2 w-full"
-          />
-          {imageFileName && (
-            <p className="text-sm text-gray-500">Selected: {imageFileName}</p>
-          )}
-        </div>
+        <ImageUpload
+          title="Cover Image"
+          image={imageFile}
+          onChange={handleFileChange}
+        />
 
         {/* Submit Button */}
-        <button
+        <SubmitButton
           type="submit"
-          className="w-full py-2 bg-green-500 text-white font-bold rounded-md"
+          loading={isLoading}
+          loadingText="Adding Room..."
         >
-          {isLoading ? (
-            <span className="">Adding.. </span>
-          ) : (
-            <span>Add Room</span>
-          )}
-        </button>
+          Add Room
+        </SubmitButton>
       </form>
     </div>
   );

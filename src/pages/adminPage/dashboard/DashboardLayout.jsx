@@ -1,6 +1,6 @@
-import { Link, Outlet, useNavigate } from "react-router-dom";
-import { assets } from "../../assets/assets";
-import getBaseUrl from "../../utils/baseURL";
+import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
+import { assets } from "../../../assets/assets";
+import getBaseUrl from "../../../utils/baseURL";
 import {
   HiOutlineHome,
   HiOutlineMenuAlt2,
@@ -15,47 +15,64 @@ import { MdOutlineManageHistory, MdHotel } from "react-icons/md";
 import { FiSettings } from "react-icons/fi";
 import { AiOutlineAppstoreAdd, AiOutlineProduct } from "react-icons/ai";
 import { TbCalendarPlus } from "react-icons/tb";
-import { clearAdmin, getAdmin, setAdmin } from "../../utils/auth";
-import { getProfile } from "../../api/admin.api";
+import { clearAdmin, getAdmin, setAdmin } from "../../../utils/auth";
+import { getProfile } from "../../../api/admin.api";
+import PageHeader from "../components/PageHeader";
 
 const DashboardLayout = () => {
   const [admin, setAdminState] = useState(getAdmin());
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const sidebarLinks = [
     {
       to: "/dashboard",
       label: "Dashboard",
+      subtitle: "Luxury Room Management",
       icon: HiOutlineHome,
     },
     {
       to: "/dashboard/add-new-room",
       label: "Add New Room",
+      subtitle: "Create and publish a new room listing",
       icon: MdHotel,
     },
     {
       to: "/dashboard/manage-booking",
-      label: "Manage Booking",
+      label: "Manage Bookings",
+      subtitle: "View and manage guest reservations",
       icon: TbCalendarPlus,
     },
     {
       to: "/dashboard/add-facilities",
-      label: "Add Facilities",
+      label: "Facilities",
+      subtitle: "Manage hotel facilities and amenities",
       icon: AiOutlineProduct,
     },
     {
       to: "/dashboard/add-extra-facilities",
-      label: "Add Extra Facilities",
-
+      label: "Extra Facilities",
+      subtitle: "Manage additional services and extras",
       icon: AiOutlineAppstoreAdd,
     },
     {
-      to: "/dashboard/manage-rooms",
-      label: "Manage Rooms",
+      to: "/dashboard/manage-room/:id",
+      label: "Manage Room",
+      subtitle: "Update room details and availability",
       icon: MdOutlineManageHistory,
     },
   ];
+
+  const currentPage =
+    sidebarLinks.find((link) => {
+      if (link.to.includes(":id")) {
+        return location.pathname.startsWith("/dashboard/manage-room/");
+      }
+      return link.to === location.pathname;
+    }) || sidebarLinks[0];
+
+  const isDashboardHome = location.pathname === "/dashboard";
 
   const handleLogout = () => {
     clearAdmin();
@@ -98,17 +115,35 @@ const DashboardLayout = () => {
           <nav className="flex flex-col items-center gap-5">
             {sidebarLinks.map((item) => {
               const Icon = item.icon;
+
+              const isActive = item.to.includes(":id")
+                ? location.pathname.startsWith("/dashboard/manage-room/")
+                : location.pathname === item.to;
+
               return (
                 <Link
                   key={item.to}
                   to={item.to}
-                  className="group relative mt-5 p-4 rounded-2xl bg-white/5 hover:bg-accent hover:text-primary transition-all duration-300"
+                  className={`group relative p-4 rounded-2xl transition-all duration-300 ${
+                    isActive
+                      ? "bg-accent text-primary"
+                      : "bg-white/5 hover:bg-accent"
+                  }`}
                 >
-                  <Icon className="text-3xl text-secondary group-hover:text-primary" />
+                  <Icon
+                    className={`text-3xl ${
+                      isActive
+                        ? "text-primary"
+                        : "text-secondary group-hover:text-primary"
+                    }`}
+                  />
 
-                  <span className="absolute left-24 top-1/2 -translate-y-1/2 bg-primary text-secondary text-xs px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 transition whitespace-nowrap shadow-lg">
-                    {item.label}
-                  </span>
+                  {/* Tooltip */}
+                  <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+                    <div className="bg-white text-primary px-3 py-2 rounded-lg shadow-lg whitespace-nowrap text-sm font-medium">
+                      {item.label}
+                    </div>
+                  </div>
                 </Link>
               );
             })}
@@ -151,20 +186,22 @@ const DashboardLayout = () => {
             </div>
 
             {/* Navigation */}
-            <nav className="flex flex-col p-4 items-center gap-10">
+            <nav className="flex flex-col p-4 gap-3">
               {sidebarLinks.map((item) => {
                 const Icon = item.icon;
+
                 return (
                   <Link
                     key={item.to}
                     to={item.to}
-                    className="group relative p-2 rounded-2xl hover:bg-accent/80   hover:text-secondary transition-all duration-300"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="flex items-center gap-4 p-4 rounded-xl text-secondary hover:bg-accent hover:text-primary transition"
                   >
-                    <Icon className="text-4xl text-secondary " />
+                    <Icon className="text-2xl shrink-0" />
 
-                    <span className="absolute left-24 top-1/2 -translate-y-1/2 bg-primary text-secondary text-xs px-3 py-1 rounded-md opacity-0 group-hover:opacity-100 transition whitespace-nowrap shadow-lg">
-                      {item.label}
-                    </span>
+                    <div>
+                      <p className="font-medium">{item.label}</p>
+                    </div>
                   </Link>
                 );
               })}
@@ -240,32 +277,33 @@ const DashboardLayout = () => {
           {/* TOP SECTION */}
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-10">
             {/* TITLE */}
-            <div>
-              <h1 className="text-4xl font-bold text-primary">Dashboard</h1>
-
-              <p className="text-primary/60 mt-2">Luxury Room Management</p>
-            </div>
+            <PageHeader
+              title={currentPage.label}
+              subtitle={currentPage.subtitle}
+            />
 
             {/* ACTION BUTTONS */}
-            <div className="flex flex-col sm:flex-row gap-4">
-              <Link
-                to="/dashboard/manage-rooms"
-                className="px-6 py-3 rounded-2xl border border-primary text-primary hover:bg-primary hover:text-white transition-all duration-300 font-medium"
-              >
-                Manage Rooms
-              </Link>
+            {isDashboardHome && (
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link
+                  to="/dashboard/manage-room"
+                  className="px-6 py-3 rounded-2xl border border-primary text-primary hover:bg-primary hover:text-white transition-all duration-300 font-medium"
+                >
+                  Manage Rooms
+                </Link>
 
-              <Link
-                to="/dashboard/add-new-room"
-                className="px-6 py-3 rounded-2xl bg-accent text-primary font-semibold hover:scale-105 transition-all duration-300 shadow-lg"
-              >
-                Add New Room
-              </Link>
-            </div>
+                <Link
+                  to="/dashboard/add-new-room"
+                  className="px-6 py-3 rounded-2xl bg-accent text-primary font-semibold hover:scale-105 transition-all duration-300 shadow-lg"
+                >
+                  Add New Room
+                </Link>
+              </div>
+            )}
           </div>
 
           {/* OUTLET */}
-          <div className="bg-white rounded-3xl p-6 shadow-sm border border-gray-100">
+          <div className="bg-secondary/20 rounded-2xl p-6 shadow-base border-0 ">
             <Outlet />
           </div>
         </main>
