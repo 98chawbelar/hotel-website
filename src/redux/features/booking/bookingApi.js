@@ -1,5 +1,4 @@
-import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react";
-import getBaseUrl from "../../../utils/baseURL";
+import { createApi } from "@reduxjs/toolkit/query/react";
 import api from "../../../api/client.api";
 
 const axiosBaseQuery =
@@ -13,7 +12,9 @@ const axiosBaseQuery =
         params,
       });
 
-      return { data: result.data };
+      return {
+        data: result.data,
+      };
     } catch (axiosError) {
       return {
         error: {
@@ -32,6 +33,20 @@ const bookingApi = createApi({
   tagTypes: ["Bookings"],
 
   endpoints: (builder) => ({
+    // ================= PRICE PREVIEW =================
+    calculatePricePreview: builder.mutation({
+      query: ({ roomId, checkIn, checkOut, extrasTotal = 0 }) => ({
+        url: "/api/bookings/price-preview",
+        method: "POST",
+        data: {
+          roomId,
+          checkIn,
+          checkOut,
+          extrasTotal,
+        },
+      }),
+    }),
+
     // ================= CREATE BOOKING =================
     createBooking: builder.mutation({
       query: (bookingData) => ({
@@ -45,22 +60,30 @@ const bookingApi = createApi({
 
     // ================= GET BOOKINGS BY EMAIL =================
     fetchBookingsByEmail: builder.query({
-      query: (email) => `/api/bookings/email/${email}`,
+      query: (email) => ({
+        url: `/api/bookings/email/${email}`,
+        method: "GET",
+      }),
 
       providesTags: ["Bookings"],
     }),
 
-    // ================= GET All BOOKINGS =================
+    // ================= GET ALL BOOKINGS =================
     fetchBookingsAll: builder.query({
       query: () => ({
         url: "/api/bookings",
         method: "GET",
       }),
+
+      providesTags: ["Bookings"],
     }),
 
     // ================= GET SINGLE BOOKING =================
     fetchBookingById: builder.query({
-      query: (id) => `/api/bookings/${id}`,
+      query: (id) => ({
+        url: `/api/bookings/${id}`,
+        method: "GET",
+      }),
 
       providesTags: (result, error, id) => [{ type: "Bookings", id }],
     }),
@@ -70,8 +93,9 @@ const bookingApi = createApi({
       query: ({ id, bookingStatus }) => ({
         url: `/api/bookings/${id}/status`,
         method: "PATCH",
-
-        data: { bookingStatus },
+        data: {
+          bookingStatus,
+        },
       }),
 
       invalidatesTags: ["Bookings"],
@@ -100,6 +124,7 @@ const bookingApi = createApi({
 });
 
 export const {
+  useCalculatePricePreviewMutation,
   useCreateBookingMutation,
   useFetchBookingsByEmailQuery,
   useFetchBookingsAllQuery,

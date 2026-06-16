@@ -1,16 +1,8 @@
-import {
-  FaClock,
-  FaUtensils,
-  FaSuitcase,
-  FaParking,
-  FaBus,
-  FaConciergeBell,
-} from "react-icons/fa";
+import { FaConciergeBell } from "react-icons/fa";
 
 import { Card, CardTitle } from "./Shared";
 
-
-const CheckRow = ({ icon: Icon, label, price,desc, checked, onChange }) => (
+const CheckRow = ({ icon: Icon, label, price, desc, checked, onChange }) => (
   <label
     className={`flex items-center justify-between p-3 rounded-xl cursor-pointer border transition duration-200 ${
       checked
@@ -27,10 +19,10 @@ const CheckRow = ({ icon: Icon, label, price,desc, checked, onChange }) => (
 
       <div className="min-w-0">
         <p className="text-xs sm:text-sm font-medium truncate">{label}</p>
-       
+
         <p className="text-xs text-gray-400 truncate">{desc}</p>
       </div>
-      < p className="text-xs text-gray-200 mt-1">{price.toLocaleString()} MMK</p>
+      <p className="text-xs text-gray-200 mt-1">{price.toLocaleString()} MMK</p>
     </div>
 
     <input

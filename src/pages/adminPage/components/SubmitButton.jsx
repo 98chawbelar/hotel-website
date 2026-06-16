@@ -15,8 +15,8 @@ const SubmitButton = ({
       disabled={loading || disabled}
       className={`
         ${fullWidth ? "w-full" : ""}
-        px-4 py-3 rounded-xl
-        bg-blue-600 text-white hover:bg-blue-800
+        px-5 py-5 rounded-xl
+        bg-accent/80 text-white hover:bg-accent
         font-semibold
         transition-all duration-300
         hover:opacity-90

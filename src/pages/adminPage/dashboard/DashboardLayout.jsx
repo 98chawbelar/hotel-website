@@ -39,6 +39,12 @@ const DashboardLayout = () => {
       icon: MdHotel,
     },
     {
+      to: "/dashboard/manage-room/:id",
+      label: "Manage Room",
+      subtitle: "Update room details and availability",
+      icon: MdOutlineManageHistory,
+    },
+    {
       to: "/dashboard/manage-booking",
       label: "Manage Bookings",
       subtitle: "View and manage guest reservations",
@@ -55,12 +61,6 @@ const DashboardLayout = () => {
       label: "Extra Facilities",
       subtitle: "Manage additional services and extras",
       icon: AiOutlineAppstoreAdd,
-    },
-    {
-      to: "/dashboard/manage-room/:id",
-      label: "Manage Room",
-      subtitle: "Update room details and availability",
-      icon: MdOutlineManageHistory,
     },
   ];
 
@@ -93,30 +93,55 @@ const DashboardLayout = () => {
 
     load();
   }, []);
-
   return (
-    <section className="flex min-h-screen bg-secondary text-primary overflow-hidden">
-      {/* SIDEBAR */}
-      <aside className="hidden sm:flex w-35 sm:flex-col bg-primary shadow-2xl">
+    <section className="min-h-screen bg-secondary flex">
+      {/* ==========================
+        DESKTOP SIDEBAR
+    ========================== */}
+      <aside
+        className="
+      hidden
+      md:flex
+      flex-col
+      w-72
+      xl:w-60
+      bg-primary
+      border-r
+      border-white/10
+      shadow-xl
+      "
+      >
         {/* LOGO */}
-        <a
-          href="/"
-          className="flex items-center justify-center h-24 border-b border-white/10"
-        >
-          <img
-            src={assets.logo}
-            alt="logo"
-            className="w-14 h-14 rounded-full object-cover hover:border-accent/80 border-2 border-accent"
-          />
-        </a>
+        <div className="h-24 px-6 border-b border-white/10 flex items-center">
+          <Link to="/" className="flex items-center gap-4">
+            <img
+              src={assets.logo}
+              alt="logo"
+              className="
+            w-12
+            h-12
+            rounded-full
+            object-cover
+            border-2
+            border-accent
+          "
+            />
 
-        {/* NAVIGATION */}
-        <div className="flex flex-col justify-between flex-1 py-6">
-          <nav className="flex flex-col items-center gap-5">
+            <div>
+              <h2 className="text-white font-semibold text-xl">Kandaw101</h2>
+
+              <p className="text-gray-400 text-xs">Hotel Admin Dashboard</p>
+            </div>
+          </Link>
+        </div>
+
+        {/* MENU */}
+        <nav className="flex-1 overflow-y-auto p-4">
+          <div className="flex flex-col gap-6">
             {sidebarLinks.map((item) => {
               const Icon = item.icon;
 
-              const isActive = item.to.includes(":id")
+              const active = item.to.includes(":id")
                 ? location.pathname.startsWith("/dashboard/manage-room/")
                 : location.pathname === item.to;
 
@@ -124,186 +149,253 @@ const DashboardLayout = () => {
                 <Link
                   key={item.to}
                   to={item.to}
-                  className={`group relative p-4 rounded-2xl transition-all duration-300 ${
-                    isActive
-                      ? "bg-accent text-primary"
-                      : "bg-white/5 hover:bg-accent"
-                  }`}
+                  className={`
+                flex
+                items-center
+                gap-2
+                px-5
+                py-5
+                rounded-2xl
+                transition-all
+                duration-300
+                ${
+                  active
+                    ? "bg-accent text-primary shadow-lg"
+                    : "text-white hover:bg-white/10"
+                }
+              `}
                 >
-                  <Icon
-                    className={`text-3xl ${
-                      isActive
-                        ? "text-primary"
-                        : "text-secondary group-hover:text-primary"
-                    }`}
-                  />
+                  <Icon className="text-2xl shrink-0" />
 
-                  {/* Tooltip */}
-                  <div className="absolute left-full ml-4 top-1/2 -translate-y-1/2 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
-                    <div className="bg-white text-primary px-3 py-2 rounded-lg shadow-lg whitespace-nowrap text-sm font-medium">
-                      {item.label}
-                    </div>
-                  </div>
+                  <span className="font-medium text-base truncate">
+                    {item.label}
+                  </span>
                 </Link>
               );
             })}
-          </nav>
-
-          {/* SETTINGS */}
-          <div className="flex justify-center">
-            <button className=" rounded-2xl p-4 bg-white/5 hover:bg-accent/80 transition-all duration-300 group">
-              <FiSettings className="text-3xl  text-secondary " />
-            </button>
           </div>
+        </nav>
+
+        {/* SETTINGS */}
+        <div className="p-4 border-t mb-5 border-white/10">
+          <button
+            className="
+          w-full
+          flex
+          items-center
+          gap-2
+          px-5
+          py-4
+          rounded-2xl
+          text-white
+          hover:bg-accent/80
+          transition-all
+          duration-300
+        "
+          >
+            <FiSettings className="text-2xl shrink-0" />
+
+            <span className="font-medium">Settings</span>
+          </button>
         </div>
       </aside>
+
+      {/* ==========================
+        MOBILE DRAWER
+    ========================== */}
       {mobileMenuOpen && (
-        <div className="fixed inset-0 z-50 sm:hidden">
-          {/* Overlay */}
+        <div className="fixed inset-0 z-50 md:hidden">
+          {/* OVERLAY */}
           <div
-            className="absolute inset-0 bg-black/50 backdrop-blur-xs"
+            className="absolute inset-0 bg-black/60 backdrop-blur-sm"
             onClick={() => setMobileMenuOpen(false)}
           />
 
-          {/* Sidebar */}
-          <aside className="absolute border-0 left-0 top-0 h-full w-50 bg-primary  shadow-2xl">
-            {/* Header */}
-            <div className="flex items-center justify-between p-5 border-b gap-4 border-white/10">
-              <Link to="/" onClick={() => setMobileMenuOpen(false)}>
+          {/* SIDEBAR */}
+          <aside
+            className="
+          absolute
+          left-0
+          top-0
+          h-full
+          w-[85vw]
+          max-w-95
+          bg-primary
+          shadow-2xl
+          flex
+          flex-col
+        "
+          >
+            {/* HEADER */}
+            <div className="h-24 px-5 border-b border-white/10 flex items-center justify-between">
+              <Link
+                to="/"
+                onClick={() => setMobileMenuOpen(false)}
+                className="flex items-center gap-4"
+              >
                 <img
                   src={assets.logo}
                   alt="logo"
-                  className="w-10 h-10 rounded-full border-2 border-accent hover:border-accent/80"
+                  className="
+                w-12
+                h-12
+                rounded-full
+                border-2
+                border-accent
+              "
                 />
+
+                <div>
+                  <h2 className="text-white font-bold">Kandaw101</h2>
+
+                  <p className="text-white/60 text-xs">Hotel Admin Dashboard</p>
+                </div>
               </Link>
 
               <button
                 onClick={() => setMobileMenuOpen(false)}
-                className="p-2 rounded-xl cursor-pointer bg-secondary/10 hover:bg-accent/80 text-secondary  shadow-2xl transition"
+                className="
+              p-2
+              rounded-xl
+              bg-white/10
+              text-white
+            "
               >
-                <HiOutlineX className="text-4xl" />
+                <HiOutlineX className="text-2xl" />
               </button>
             </div>
 
-            {/* Navigation */}
-            <nav className="flex flex-col p-4 gap-3">
-              {sidebarLinks.map((item) => {
-                const Icon = item.icon;
+            {/* MENU */}
+            <nav className="flex-1 overflow-y-auto p-4">
+              <div className="flex flex-col gap-2">
+                {sidebarLinks.map((item) => {
+                  const Icon = item.icon;
 
-                return (
-                  <Link
-                    key={item.to}
-                    to={item.to}
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="flex items-center gap-4 p-4 rounded-xl text-secondary hover:bg-accent hover:text-primary transition"
-                  >
-                    <Icon className="text-2xl shrink-0" />
+                  const active = item.to.includes(":id")
+                    ? location.pathname.startsWith("/dashboard/manage-room/")
+                    : location.pathname === item.to;
 
-                    <div>
-                      <p className="font-medium">{item.label}</p>
-                    </div>
-                  </Link>
-                );
-              })}
+                  return (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      onClick={() => setMobileMenuOpen(false)}
+                      className={`
+                    flex
+                    items-center
+                    gap-4
+                    px-5
+                    py-4
+                    rounded-2xl
+                    transition-all
+                    duration-300
+                    ${
+                      active
+                        ? "bg-accent text-primary"
+                        : "text-white hover:bg-white/10"
+                    }
+                  `}
+                    >
+                      <Icon className="text-2xl shrink-0" />
+
+                      <span className="font-medium">{item.label}</span>
+                    </Link>
+                  );
+                })}
+              </div>
             </nav>
+
+            {/* SETTINGS */}
+            <div className="p-4 border-t border-white/10">
+              <button
+                className="
+              w-full
+              flex
+              items-center
+              gap-4
+              px-5
+              py-4
+              rounded-2xl
+              text-white
+              hover:bg-white/10
+              transition-all
+            "
+              >
+                <FiSettings className="text-2xl shrink-0" />
+
+                <span>Settings</span>
+              </button>
+            </div>
           </aside>
         </div>
       )}
 
-      {/* MAIN CONTENT */}
-      <div className="flex-1 flex flex-col">
-        {/* HEADER */}
-        <header className="h-24 bg-white border-b border-gray-200 px-6 sm:px-10 flex items-center justify-between shadow-sm">
-          {/* MOBILE MENU */}
+      {/* ==========================
+        CONTENT AREA
+    ========================== */}
+      <div className="flex-1 min-w-0 flex flex-col">
+        {/* ==========================
+          HEADER
+          IMPORT YOUR HEADER HERE
+      ========================== */}
+        <header
+          className="
+        h-16
+        sm:h-20
+        lg:h-24
+        bg-white
+        border-b
+        border-gray-200
+        px-4
+        sm:px-6
+        lg:px-8
+        flex
+        items-center
+        justify-between
+      "
+        >
+          {/* MOBILE MENU BUTTON */}
           <button
             onClick={() => setMobileMenuOpen(true)}
-            className="sm:hidden p-3 rounded-xl cursor-pointer bg-black/10 hover:bg-accent/80 text-primary"
+            className="
+          md:hidden
+          p-3
+          rounded-xl
+          bg-secondary
+        "
           >
-            <HiOutlineMenuAlt2 className="text-2xl " />
+            <HiOutlineMenuAlt2 className="text-2xl" />
           </button>
 
-          {/* SEARCH */}
-          <div className="flex  xs:hidden items-center bg-secondary rounded-2xl px-4 py-3 w-full max-w-md">
-            <HiOutlineSearch className="text-xl text-primary/50 mr-3" />
-
-            <input
-              type="text"
-              placeholder="Search..."
-              className="bg-transparent outline-none w-full placeholder:text-primary/40"
-            />
-          </div>
-
-          {/* USER SECTION */}
-          <div className="flex items-center gap-5">
-            {/* NOTIFICATION */}
-            <button className="relative p-3 rounded-xl bg-secondary hover:bg-accent/20 transition">
-              <HiOutlineBell className="text-2xl text-primary" />
-
-              <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-accent animate-ping"></span>
-
-              <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-accent"></span>
-            </button>
-
-            {/* USER */}
-            <Link
-              to="/dashboard/profile"
-              className="flex items-center gap-3 hover:bg-secondary px-3 py-2 rounded-2xl transition"
-            >
-              <img
-                src={
-                  admin?.avatar
-                    ? `${getBaseUrl()}${admin.avatar}`
-                    : "https://ui-avatars.com/api/?name=Admin"
-                }
-                alt="admin"
-                className="w-12 h-12 rounded-full object-cover border-2 border-accent"
-              />
-
-              <p className="text-sm text-primary/60">{admin?.role}</p>
-            </Link>
-
-            {/* LOGOUT */}
-            <button
-              onClick={handleLogout}
-              className="p-3 rounded-xl bg-red-50 hover:bg-red-100 transition"
-            >
-              <HiOutlineLogout className="text-2xl text-red-500" />
-            </button>
-          </div>
+          {/* IMPORT YOUR HEADER CONTENT HERE */}
         </header>
 
-        {/* PAGE CONTENT */}
-        <main className="flex-1 p-6 sm:p-10 bg-secondary">
-          {/* TOP SECTION */}
-          <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-6 mb-10">
-            {/* TITLE */}
-            <PageHeader
-              title={currentPage.label}
-              subtitle={currentPage.subtitle}
-            />
+        {/* ==========================
+          PAGE CONTENT
+      ========================== */}
+        <main
+          className="
+        flex-1
+        p-4
+        sm:p-6
+        lg:p-8
+        xl:p-10
+        overflow-x-hidden
+      "
+        >
+          <PageHeader />
 
-            {/* ACTION BUTTONS */}
-            {isDashboardHome && (
-              <div className="flex flex-col sm:flex-row gap-4">
-                <Link
-                  to="/dashboard/manage-room"
-                  className="px-6 py-3 rounded-2xl border border-primary text-primary hover:bg-primary hover:text-white transition-all duration-300 font-medium"
-                >
-                  Manage Rooms
-                </Link>
-
-                <Link
-                  to="/dashboard/add-new-room"
-                  className="px-6 py-3 rounded-2xl bg-accent text-primary font-semibold hover:scale-105 transition-all duration-300 shadow-lg"
-                >
-                  Add New Room
-                </Link>
-              </div>
-            )}
-          </div>
-
-          {/* OUTLET */}
-          <div className="bg-secondary/20 rounded-2xl p-6 shadow-base border-0 ">
+          <div
+            className="
+          mt-6
+          rounded-2xl
+          bg-white
+          shadow-sm
+          p-4
+          sm:p-6
+          lg:p-8
+        "
+          >
             <Outlet />
           </div>
         </main>

@@ -1,5 +1,3 @@
-import React from "react";
-
 export const Card = ({ children, className = "" }) => (
   <div className={`bg-white/5 rounded-2xl p-4 sm:p-6 space-y-4 ${className}`}>
     {children}

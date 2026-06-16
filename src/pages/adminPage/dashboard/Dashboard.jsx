@@ -9,6 +9,8 @@ import {
 import RevenueChart from "./RevenueChart";
 import Loading from "../../../components/Loading";
 import api from "../../../api/client.api";
+import PageHeader from "../components/PageHeader";
+import StatCard from "../components/StatCard";
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -48,80 +50,50 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-secondary p-6">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-4xl font-bold text-primary">
-          Hotel Admin Dashboard
-        </h1>
-        <p className="text-gray-500 mt-2">
-          Welcome back! Here’s your hotel overview.
-        </p>
+      <div className=" mb-2">
+        <PageHeader
+          title={"Hotel Admin Dashboard"}
+          subtitle={"Welcome back! Here’s your hotel overview."}
+        />
       </div>
 
       {/* Top Stats */}
-      <section className="grid grid-cols-1 md:grid-cols-1  xl:grid-cols-4 gap-6">
-        {/* Total Rooms */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-accent">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-500">Total Rooms</p>
-              <h2 className="text-3xl font-bold text-primary mt-2">
-                {data.totalRooms}
-              </h2>
-            </div>
+      <section className="grid grid-cols-1 md:grid-cols-1 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+        <StatCard
+          title="Total Rooms"
+          value={data.totalRooms}
+          icon={<FaBed />}
+          borderColor="border-accent"
+          iconBg="bg-primary/10"
+          iconColor="text-primary"
+        />
 
-            <div className="bg-primary/10 p-4 rounded-full">
-              <FaBed className="text-2xl text-primary" />
-            </div>
-          </div>
-        </div>
+        <StatCard
+          title="Total Revenue"
+          value={`${data.totalRevenue} MMK`}
+          icon={<FaMoneyBillWave />}
+          borderColor="border-green-500"
+          iconBg="bg-green-100"
+          iconColor="text-green-600"
+        />
 
-        {/* Total Revenue */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-green-500">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-500">Total Revenue</p>
-              <h2 className="text-3xl font-bold text-primary mt-2">
-                {data.totalRevenue} MMK
-              </h2>
-            </div>
+        <StatCard
+          title="Available Rooms"
+          value={data.availableRooms}
+          icon={<FaDoorOpen />}
+          borderColor="border-blue-500"
+          iconBg="bg-blue-100"
+          iconColor="text-blue-600"
+        />
 
-            <div className="bg-green-100 p-4 rounded-full">
-              <FaMoneyBillWave className="text-2xl text-green-600" />
-            </div>
-          </div>
-        </div>
-
-        {/* Available Rooms */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-blue-500">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-500">Available Rooms</p>
-              <h2 className="text-3xl font-bold text-primary mt-2">
-                {data.availableRooms}
-              </h2>
-            </div>
-
-            <div className="bg-blue-100 p-4 rounded-full">
-              <FaDoorOpen className="text-2xl text-blue-600" />
-            </div>
-          </div>
-        </div>
-
-        {/* Reserved Rooms */}
-        <div className="bg-white rounded-2xl shadow-lg p-6 border-l-4 border-red-500">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-gray-500">Reserved Rooms</p>
-              <h2 className="text-3xl font-bold text-primary mt-2">
-                {data?.reservedRooms}
-              </h2>
-            </div>
-
-            <div className="bg-red-100 p-4 rounded-full">
-              <FaDoorClosed className="text-2xl text-red-600" />
-            </div>
-          </div>
-        </div>
+        <StatCard
+          title="Reserved Rooms"
+          value={data.reservedRooms}
+          icon={<FaDoorClosed />}
+          borderColor="border-red-500"
+          iconBg="bg-red-100"
+          iconColor="text-red-600"
+        />
       </section>
 
       {/* Charts + Analytics */}

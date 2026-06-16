@@ -9,7 +9,7 @@ const ImageUpload = ({ title = "Cover Image", image, onChange }) => {
         <img
           src={typeof image === "string" ? image : URL.createObjectURL(image)}
           alt="preview"
-          className="h-48 w-full rounded-xl object-cover"
+          className="h-48 w-48 rounded-xl object-cover"
         />
       )}
 
@@ -17,7 +17,7 @@ const ImageUpload = ({ title = "Cover Image", image, onChange }) => {
         type="file"
         accept="image/*"
         onChange={onChange}
-        className="w-full"
+        className="max-w-fit w-full"
       />
     </div>
   );

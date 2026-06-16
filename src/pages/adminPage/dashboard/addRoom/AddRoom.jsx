@@ -6,6 +6,7 @@ import { useAddRoomMutation } from "../../../../redux/features/rooms/roomsApi";
 import Swal from "sweetalert2";
 import SubmitButton from "../../components/SubmitButton";
 import ImageUpload from "../../components/ImageUpload";
+import PageHeader from "../../components/PageHeader";
 
 const AddRoom = () => {
   const {
@@ -62,9 +63,10 @@ const AddRoom = () => {
     }
   };
   return (
-    <div className="max-w-lg mx-auto md:p-6 p-3 bg-white  rounded-md shadow-2xl">
+    <div className="max-w-lg mx-auto  p-6 bg-secondary sm:p-8 mb-10 rounded-md shadow-2xl">
+      <PageHeader title={"Add New Room"} subtitle={"Add new room for hotel."} />
       {/* Form starts here */}
-      <form onSubmit={handleSubmit(onSubmit)} className="">
+      <form onSubmit={handleSubmit(onSubmit)}>
         {/* Reusable Input Field for Title */}
         <FormInput
           label="Title"
@@ -160,9 +162,9 @@ const AddRoom = () => {
             <input
               type="checkbox"
               {...register("trending")}
-              className="rounded text-blue-600 focus:ring focus:ring-offset-2 focus:ring-blue-500"
+              className="rounded  focus-visible:not-enable "
             />
-            <span className="ml-2 text-sm font-semibold text-gray-700">
+            <span className="ml-2 text-sm font-semibold text-gray-400">
               Most Tranding Room
             </span>
           </label>

@@ -1,12 +1,17 @@
 import { useState } from "react";
 import Swal from "sweetalert2";
 import { useNavigate, useParams } from "react-router-dom";
+
 import {
   useFetchAllRoomsQuery,
   useDeleteRoomMutation,
   useUpdateRoomMutation,
 } from "../../../../redux/features/rooms/roomsApi";
+
 import ImageUpload from "../../components/ImageUpload";
+import PageHeader from "../../components/PageHeader";
+import FormInput from "../../components/FormInput";
+import SubmitButton from "../../components/SubmitButton";
 
 const categoryOptions = [
   "Superior King",
@@ -27,11 +32,10 @@ const ManageRooms = () => {
   const [formData, setFormData] = useState(null);
 
   const { data: rooms, isLoading, refetch } = useFetchAllRoomsQuery();
-  const [deleteRoom] = useDeleteRoomMutation();
-  const [updateRoom, { isLoading: updating }] = useUpdateRoomMutation();
 
-  const inputClass =
-    "w-full border border-gray-300 rounded-lg p-3 outline-none focus:border-accent";
+  const [deleteRoom] = useDeleteRoomMutation();
+
+  const [updateRoom, { isLoading: updating }] = useUpdateRoomMutation();
 
   // ================= DELETE =================
   const handleDelete = async (id) => {
@@ -67,6 +71,7 @@ const ManageRooms = () => {
   // ================= EDIT =================
   const handleEditClick = (room) => {
     navigate(`/dashboard/manage-room/${room._id}`);
+
     setEditingRoom(room._id);
 
     setFormData({
@@ -78,7 +83,7 @@ const ManageRooms = () => {
       beds: room.beds,
       size: room.size,
       status: room.status,
-      image: imageFile,
+      image: room.image,
 
       capacity: {
         adults: room.capacity?.adults,
@@ -90,17 +95,22 @@ const ManageRooms = () => {
   // ================= CHANGE =================
   const handleChange = (e) => {
     const { name, value, files } = e.target;
-    const file = files?.[0];
 
-    if (file) {
+    // image upload
+    if (files && files[0]) {
+      const file = files[0];
+
       setimageFile(file);
-    }
-    setFormData((prev) => ({
-      ...prev,
-      image: file,
-    }));
 
-    // capacity
+      setFormData((prev) => ({
+        ...prev,
+        image: file,
+      }));
+
+      return;
+    }
+
+    // capacity fields
     if (name === "adults" || name === "child") {
       setFormData((prev) => ({
         ...prev,
@@ -114,7 +124,7 @@ const ManageRooms = () => {
       return;
     }
 
-    // numbers
+    // number fields
     if (name === "price" || name === "beds") {
       setFormData((prev) => ({
         ...prev,
@@ -169,218 +179,261 @@ const ManageRooms = () => {
     }
   };
 
-  // ================= INPUT =================
-  const renderInput = ({ name, value, placeholder, type = "text" }) => (
-    <input
-      type={type}
-      name={name}
-      value={value}
-      onChange={handleChange}
-      placeholder={placeholder}
-      className={inputClass}
-    />
-  );
-
+  // ================= LOADING =================
   if (isLoading) {
     return <div className="p-6 text-center text-lg">Loading...</div>;
   }
 
   return (
-    <div className="p-6  min-h-screen">
-      <div className="grid grid-cols-1   sm:grid-cols-2 xl:grid-cols-3 gap-6">
-        {rooms?.map((room) => (
-          <div
-            key={room._id}
-            className=" rounded-lg shadow-md hover:shadow-2xl overflow-hidden border-0 backdrop:blur-md "
+    <div className=" min-h-screen rounded-4xl bg-secondary p-6 sm:p-8 mb-10 shadow-2xl">
+      <PageHeader
+        title={"Manage Rooms"}
+        subtitle={"View and manage all hotel rooms."}
+      />
+
+      {/* EMPTY STATE */}
+      {rooms?.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-20 text-center">
+          <h2 className="text-2xl font-bold text-white  mb-3">
+            No Rooms Available
+          </h2>
+
+          <p className="text-gray-500 mb-6">
+            Please add rooms from Add Room page.
+          </p>
+
+          <SubmitButton
+            fullWidth={false}
+            onClick={() => navigate("/dashboard/add-new-room")}
           >
-            {/* IMAGE */}
-            <img
-              src={room.image}
-              alt={room.name}
-              className="w-full rounded-tl-none rounded-tr-none rounded-xl   h-52 sm:h-56 object-cover"
-            />
+            Add Room
+          </SubmitButton>
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 sm:grid-cols-1 xl:grid-cols-3 2xl:grid-cols-4 gap-6">
+          {rooms?.map((room) => (
+            <div
+              key={room._id}
+              className="rounded-xl shadow-md hover:shadow-2xl overflow-hidden"
+            >
+              {/* IMAGE */}
+              <img
+                src={room.image}
+                alt={room.name}
+                className="w-full h-52 sm:h-56 object-cover"
+              />
 
-            <div className="p-5">
-              {editingRoom === room._id ? (
-                <div className="space-y-3">
-                  {renderInput({
-                    name: "name",
-                    value: formData.name,
-                    placeholder: "Room Name",
-                  })}
+              <div className="p-5">
+                {editingRoom === room._id ? (
+                  <div className="space-y-3">
+                    <FormInput
+                      label="Room Name"
+                      name="name"
+                      value={formData.name}
+                      onChange={handleChange}
+                      placeholder="Room Name"
+                    />
 
-                  {/* CATEGORY */}
-                  <select
-                    name="category"
-                    value={formData.category}
-                    onChange={handleChange}
-                    className={inputClass}
-                  >
-                    {categoryOptions.map((category) => (
-                      <option key={category} value={category}>
-                        {category}
-                      </option>
-                    ))}
-                  </select>
+                    {/* CATEGORY */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Category
+                      </label>
 
-                  {/* DESCRIPTION */}
-                  <textarea
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    rows={4}
-                    placeholder="Room Description"
-                    className={inputClass}
-                  />
+                      <select
+                        name="category"
+                        value={formData.category}
+                        onChange={handleChange}
+                        className="w-full border border-gray-300 rounded-xl p-3 outline-none"
+                      >
+                        {categoryOptions.map((category) => (
+                          <option key={category} value={category}>
+                            {category}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
 
-                  {renderInput({
-                    name: "location",
-                    value: formData.location,
-                    placeholder: "Location",
-                  })}
+                    {/* DESCRIPTION */}
+                    <FormInput
+                      label="Description"
+                      name="description"
+                      type="textarea"
+                      rows={4}
+                      value={formData.description}
+                      onChange={handleChange}
+                      placeholder="Room Description"
+                    />
 
-                  {renderInput({
-                    name: "price",
-                    value: formData.price,
-                    placeholder: "Price",
-                    type: "number",
-                  })}
+                    <FormInput
+                      label="Location"
+                      name="location"
+                      value={formData.location}
+                      onChange={handleChange}
+                      placeholder="Location"
+                    />
 
-                  {renderInput({
-                    name: "adults",
-                    value: formData.capacity?.adults,
-                    placeholder: "Adults Capacity",
-                    type: "number",
-                  })}
+                    <FormInput
+                      label="Price"
+                      name="price"
+                      type="text"
+                      value={formData.price}
+                      onChange={handleChange}
+                      placeholder="Price"
+                    />
 
-                  {renderInput({
-                    name: "child",
-                    value: formData.capacity?.child,
-                    placeholder: "Child Capacity",
-                    type: "number",
-                  })}
+                    <FormInput
+                      label="Adults Capacity"
+                      name="adults"
+                      type="number"
+                      value={formData.capacity?.adults}
+                      onChange={handleChange}
+                      placeholder="Adults Capacity"
+                    />
 
-                  {renderInput({
-                    name: "beds",
-                    value: formData.beds,
-                    placeholder: "Beds",
-                    type: "number",
-                  })}
+                    <FormInput
+                      label="Child Capacity"
+                      name="child"
+                      type="number"
+                      value={formData.capacity?.child}
+                      onChange={handleChange}
+                      placeholder="Child Capacity"
+                    />
 
-                  {renderInput({
-                    name: "size",
-                    value: formData.size,
-                    placeholder: "Room Size",
-                  })}
+                    <FormInput
+                      label="Beds"
+                      name="beds"
+                      type="number"
+                      value={formData.beds}
+                      onChange={handleChange}
+                      placeholder="Beds"
+                    />
 
-                  {/* STATUS */}
-                  <select
-                    name="status"
-                    value={formData.status}
-                    onChange={handleChange}
-                    className={inputClass}
-                  >
-                    {statusOptions.map((status) => (
-                      <option key={status} value={status}>
-                        {status}
-                      </option>
-                    ))}
-                  </select>
-                  <ImageUpload
-                    title="Room Image"
-                    image={room.imageFile}
-                    onChange={handleChange}
-                  />
+                    <FormInput
+                      label="Room Size"
+                      name="size"
+                      value={formData.size}
+                      onChange={handleChange}
+                      placeholder="Room Size"
+                    />
 
-                  {/* BUTTONS */}
-                  <div className="flex gap-3 pt-2">
-                    <button
-                      onClick={() => handleUpdate(room._id)}
-                      className="flex-1 bg-accent text-white py-2 rounded-lg font-semibold"
-                    >
-                      {updating ? "Saving..." : "Save"}
-                    </button>
+                    {/* STATUS */}
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Status
+                      </label>
 
-                    <button
-                      onClick={() => setEditingRoom(null)}
-                      className="flex-1 bg-gray-500 text-white py-2 rounded-lg font-semibold"
-                    >
-                      Cancel
-                    </button>
+                      <select
+                        name="status"
+                        value={formData.status}
+                        onChange={handleChange}
+                        className="w-full border border-gray-300 rounded-xl p-3 outline-none"
+                      >
+                        {statusOptions.map((status) => (
+                          <option key={status} value={status}>
+                            {status}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    {/* IMAGE */}
+                    <ImageUpload
+                      title="Room Image"
+                      image={formData.image}
+                      onChange={handleChange}
+                    />
+
+                    {/* BUTTONS */}
+                    <div className="flex gap-3 pt-2">
+                      <SubmitButton
+                        onClick={() => handleUpdate(room._id)}
+                        loading={updating}
+                        loadingText="Saving..."
+                      >
+                        Save
+                      </SubmitButton>
+
+                      <SubmitButton
+                        onClick={() => setEditingRoom(null)}
+                        className="bg-gray-500 hover:bg-gray-600"
+                      >
+                        Cancel
+                      </SubmitButton>
+                    </div>
                   </div>
-                </div>
-              ) : (
-                <>
-                  {/* HEADER */}
-                  <div className="flex justify-between items-start mb-2">
-                    <h3 className="text-xl font-bold text-primary">
-                      {room.name}
-                    </h3>
+                ) : (
+                  <>
+                    {/* HEADER */}
+                    <div className="flex justify-between items-start mb-2">
+                      <h3 className="text-xl font-bold text-primary">
+                        {room.name}
+                      </h3>
 
-                    <span
-                      className={`text-xs px-3 py-1 rounded-full ${
-                        room.status === "available"
-                          ? "bg-green-100 text-green-700"
-                          : "bg-red-100 text-red-700"
-                      }`}
-                    >
-                      {room.status}
-                    </span>
-                  </div>
+                      <span
+                        className={`text-xs px-3 py-1 rounded-full ${
+                          room.status === "available"
+                            ? "bg-green-500 text-green-700"
+                            : "bg-red-500 text-red-600"
+                        }`}
+                      >
+                        {room.status}
+                      </span>
+                    </div>
 
-                  {/* CONTENT */}
-                  <p className="text-sm text-gray-500 mb-2">{room.category}</p>
+                    {/* CONTENT */}
+                    <p className="text-sm text-gray-500 mb-2">
+                      {room.category}
+                    </p>
 
-                  <p className="text-gray-600 text-sm mb-3 line-clamp-2">
-                    {room.description}
-                  </p>
+                    <p className="text-gray-600 text-sm mb-3 line-clamp-2">
+                      {room.description}
+                    </p>
 
-                  <p className="text-sm text-gray-500 mb-2">
-                    📍 {room.location}
-                  </p>
+                    <p className="text-sm text-gray-500 mb-2">
+                      📍 {room.location}
+                    </p>
 
-                  <p className="text-sm text-gray-500 mb-2">
-                    👨 Adults: {room.capacity?.adults}
-                  </p>
+                    <p className="text-sm text-gray-500 mb-2">
+                      👨 Adults: {room.capacity?.adults}
+                    </p>
 
-                  <p className="text-sm text-gray-500 mb-2">
-                    👶 Child: {room.capacity?.child}
-                  </p>
+                    <p className="text-sm text-gray-500 mb-2">
+                      👶 Child: {room.capacity?.child}
+                    </p>
 
-                  <p className="text-sm text-gray-500 mb-2">
-                    🛏 Beds: {room.beds}
-                  </p>
+                    <p className="text-sm text-gray-500 mb-2">
+                      🛏 Beds: {room.beds}
+                    </p>
 
-                  <p className="text-sm text-gray-500 mb-2">
-                    📐 Size: {room.size}
-                  </p>
+                    <p className="text-sm text-gray-500 mb-2">
+                      📐 Size: {room.size}
+                    </p>
 
-                  <p className="text-2xl font-bold text-accent mb-4">
-                    {room.price} MMK
-                  </p>
+                    <p className="text-2xl font-bold text-accent mb-4">
+                      {room.price} MMK
+                    </p>
 
-                  {/* ACTIONS */}
-                  <div className="flex gap-3">
-                    <button
-                      onClick={() => handleEditClick(room)}
-                      className="flex-1 bg-primary text-white py-2 rounded-lg font-semibold"
-                    >
-                      Edit
-                    </button>
+                    {/* ACTIONS */}
+                    <div className="flex gap-3">
+                      <SubmitButton onClick={() => handleEditClick(room)}>
+                        Edit
+                      </SubmitButton>
 
-                    <button
-                      onClick={() => handleDelete(room._id)}
-                      className="flex-1 bg-red-500 text-white py-2 rounded-lg font-semibold"
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </>
-              )}
+                      <SubmitButton
+                        onClick={() => handleDelete(room._id)}
+                        className="bg-red-600 hover:bg-red-700"
+                      >
+                        Delete
+                      </SubmitButton>
+                    </div>
+                  </>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

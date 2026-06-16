@@ -118,10 +118,10 @@ const RoomDetails = () => {
               <div className="bg-white/5 p-4 rounded-lg flex flex-col items-center gap-2">
                 <FaUserFriends className="text-accent text-2xl md:text-3xl" />
                 <span className=" px-2 py-2 text-xs md:text-sm text-nowrap">
-                  Max Adults: {Math.max(...room.capacity.adults)}
+                  Max Adults: {room.capacity.adults}
                 </span>
                 <span className="px-2 py-2 text-nowrap text-xs md:text-sm">
-                  Max Childs: {Math.max(...room.capacity.child)}
+                  Max Childs: {room.capacity.child}
                 </span>
               </div>
               <div className="bg-white/5 p-4 rounded-lg flex flex-col items-center gap-2">
@@ -209,9 +209,9 @@ const RoomDetails = () => {
                   onChange={(e) => setAdults(Number(e.target.value))}
                   className="w-full p-2 rounded text-black"
                 >
-                  {[...Array(room.capacity.adults)].map((_, i) => (
-                    <option key={i} value={i}>
-                      {i} {i === 0 ? "Adult" : "Adults"}
+                  {Array.from({ length: room.capacity.adults }, (_, i) => (
+                    <option key={i + 1} value={i + 1}>
+                      {i + 1} {i === 0 ? "Adult" : "Adults"}
                     </option>
                   ))}
                 </select>
@@ -222,9 +222,9 @@ const RoomDetails = () => {
                   onChange={(e) => setChild(Number(e.target.value))}
                   className="w-full p-2 rounded text-black"
                 >
-                  {[...Array(room.capacity.child + 1)].map((_, i) => (
-                    <option key={i} value={i}>
-                      {i} {i === 1 ? "Child" : "Children"}
+                  {Array.from({ length: room.capacity.child }, (_, i) => (
+                    <option key={i + 1} value={i + 1}>
+                      {i + 1} {i === 0 ? "Child" : "Childs"}
                     </option>
                   ))}
                 </select>

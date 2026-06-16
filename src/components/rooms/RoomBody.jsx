@@ -41,7 +41,7 @@ const RoomBody = () => {
 
     // backend-ready query
     navigate(
-      `/booking?checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}&chil=${child}`,
+      `/booking?checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}&child=${child}`,
     );
   };
 

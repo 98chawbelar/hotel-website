@@ -217,14 +217,13 @@ const Navbar = () => {
             )}
 
             {/* ADMIN BUTTON */}
-            {admin && (
-              <Link
-                to="/dashboard"
-                className="bg-white text-primary px-4 py-2 rounded-lg font-medium"
-              >
-                Admin Dashboard
-              </Link>
-            )}
+
+            <Link
+              to={admin ? "/dashboard" : "/admin-login"}
+              className="bg-white text-primary px-4 py-2 rounded-lg font-medium"
+            >
+              Admin Dashboard
+            </Link>
 
             {/* LOGIN / LOGOUT BUTTON */}
             {currentUser ? (
@@ -247,7 +246,7 @@ const Navbar = () => {
           {/* MOBILE MENU BUTTON */}
           <button
             onClick={() => setOpen(!open)}
-            className="lg:hidden text-white text-3xl sm:text-4xl"
+            className="lg:hidden hover:shadow-lg rounded-md shadow-md hover:bg-accent text-white text-3xl cursor-pointer sm:text-4xl"
           >
             {open ? <IoIosClose /> : <IoIosMenu />}
           </button>
@@ -258,10 +257,11 @@ const Navbar = () => {
           <div
             className="
             absolute
-            top-24
+            top-13
             right-4
             sm:right-6
-            w-[260px]
+            w-[90vw]
+            max-w-[320px]
             lg:hidden
           bg-black/85
             backdrop-blur-xl
@@ -303,14 +303,13 @@ const Navbar = () => {
               )}
 
               {/* ADMIN */}
-              {admin && (
-                <Link
-                  to="/dashboard"
-                  className="bg-white text-primary px-4 py-2 rounded-lg font-medium"
-                >
-                  Admin Dashboard
-                </Link>
-              )}
+
+              <Link
+                to={admin ? "/dashboard" : "/admin-login"}
+                className="bg-white text-primary px-4 py-2 rounded-lg font-medium"
+              >
+                Admin Dashboard
+              </Link>
 
               {/* LOGIN / LOGOUT */}
               <li className="w-full">

@@ -1,134 +1,78 @@
-import {
-  FaBed,
-  FaUserFriends,
-  FaRulerCombined,
-  FaMoneyBillWave,
-} from "react-icons/fa";
-
-import { Card, CardTitle } from "./Shared";
-
-const InfoChip = ({ icon: Icon, children }) => (
-  <div className="bg-white/5 p-2 sm:p-3 rounded-lg flex items-center gap-2 text-xs sm:text-sm text-gray-300">
-    <Icon className="text-accent shrink-0" />
-
-    <span className="truncate">{children}</span>
-  </div>
-);
-
 const BookingSummary = ({
   selectedRoomData,
   checkIn,
   checkOut,
   adults,
   child,
-  days,
-  totalPrice,
-  extras,
-  extrasTotal,
-  extraServices,
+  pricing,
 }) => {
   return (
-    <Card>
-      <CardTitle>Booking Summary</CardTitle>
+    <div className="bg-white/5 rounded-xl p-6">
+      <h3 className="text-xl font-bold mb-4">Booking Summary</h3>
 
-      {/* ROOM IMAGE */}
-      <div className="rounded-xl overflow-hidden">
-        <img
-          src={selectedRoomData?.image}
-          alt={selectedRoomData?.name}
-          className="w-full h-32 sm:h-40 object-cover"
-        />
-      </div>
+      <div className="space-y-3">
+        <div className="flex justify-between">
+          <span>Room</span>
+          <span>{selectedRoomData?.title}</span>
+        </div>
 
-      {/* ROOM INFO */}
-      <div className="grid grid-cols-2 gap-2 sm:gap-3">
-        <InfoChip icon={FaBed}>Beds: {selectedRoomData?.beds}</InfoChip>
-
-        <InfoChip icon={FaUserFriends}>
-          Max {Math.max(...(selectedRoomData?.capacity?.adults || [0]))} Adults
-          · {Math.max(...(selectedRoomData?.capacity?.child || [0]))} Child
-        </InfoChip>
-
-        <InfoChip icon={FaRulerCombined}>{selectedRoomData?.size}</InfoChip>
-
-        <InfoChip icon={FaMoneyBillWave}>
-          {selectedRoomData?.price?.toLocaleString()} MMK
-        </InfoChip>
-      </div>
-
-      {/* BOOKING DETAILS */}
-      <div className="border-t border-white/10 pt-3 space-y-2 text-xs sm:text-sm text-gray-300">
         <div className="flex justify-between">
           <span>Check In</span>
-
-          <span>
-            {checkIn ? `${checkIn} • ${selectedRoomData?.checkIn}` : "—"}
-          </span>
+          <span>{checkIn ? new Date(checkIn).toLocaleDateString() : "-"}</span>
         </div>
 
         <div className="flex justify-between">
           <span>Check Out</span>
-
           <span>
-            {checkOut ? `${checkOut} • ${selectedRoomData?.checkOut}` : "—"}
+            {checkOut ? new Date(checkOut).toLocaleDateString() : "-"}
           </span>
         </div>
 
         <div className="flex justify-between">
           <span>Guests</span>
-
-          <span className="text-right">
-            {Number(adults || 0)} Adults . {""}
-            
-            {Number(child || 0)} Child
-            
+          <span>
+            {adults} Adult • {child} Child
           </span>
+        </div>
+
+        <hr className="border-white/10" />
+
+        <div className="flex justify-between">
+          <span>Nights</span>
+          <span>{pricing?.nights || 0}</span>
         </div>
 
         <div className="flex justify-between">
-          <span>Duration</span>
-
-          <span>
-            {days} Night{days !== 1 ? "s" : ""}
-          </span>
+          <span>Room Price</span>
+          <span>{pricing?.roomPrice?.toLocaleString() || 0}</span>
         </div>
-      </div>
 
-      {/* EXTRA SERVICES */}
-      {extrasTotal > 0 && (
-  <div className="border-t border-white/10 pt-3 space-y-2 text-xs sm:text-sm text-gray-300">
-    <p className="font-semibold text-white">
-      Extra Services
-    </p>
-
-    {extraServices?.map((service) => {
-      if (!extras.includes(service.key)) return null;
-
-      return (
-        <div
-          key={service.key}
-          className="flex justify-between"
-        >
-          <span>{service.label}</span>
-
-          <span>
-            +{service.price.toLocaleString()} MMK
-          </span>
+        <div className="flex justify-between">
+          <span>Subtotal</span>
+          <span>{pricing?.subtotal?.toLocaleString() || 0}</span>
         </div>
-      );
-    })}
-  </div>
-)}
 
-      {/* TOTAL */}
-      <div className="border-t border-white/10 pt-3">
-        <div className="flex justify-between text-base sm:text-lg font-bold text-accent">
+        <div className="flex justify-between">
+          <span>Discount</span>
+          <span>- {pricing?.discount?.toLocaleString() || 0}</span>
+        </div>
+
+        <div className="flex justify-between">
+          <span>Extras</span>
+          <span>{pricing?.extrasTotal?.toLocaleString() || 0}</span>
+        </div>
+
+        <hr className="border-white/10" />
+
+        <div className="flex justify-between text-xl font-bold">
           <span>Total</span>
-
-          <span>{totalPrice?.toLocaleString()} MMK</span>
+          <span>
+            {pricing?.totalPrice?.toLocaleString() || 0}{" "}
+            {pricing?.currency || "MMK"}
+          </span>
         </div>
       </div>
-    </Card>
+    </div>
   );
 };
 

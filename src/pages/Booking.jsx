@@ -1,42 +1,25 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { rooms, extraServices } from "../assets/assets";
+import { extraServices } from "../assets/assets";
 import ExtraRequests from "../components/bookings/ExtraRequest";
 import PaymentMethod from "../components/bookings/PaymentMethod";
 import GuestDetails from "../components/bookings/GuestDetails";
 import RoomSelector from "../components/bookings/RoomSelector";
 import BookingSummary from "../components/bookings/BookingSummary";
+import {
+  useCreateBookingMutation,
+  useCalculatePricePreviewMutation,
+} from "../redux/features/booking/bookingApi";
+import { useFetchAllRoomsQuery } from "../redux/features/rooms/roomsApi";
 
 const Booking = () => {
   const navigate = useNavigate();
+
   const [searchParams] = useSearchParams();
-
-  const checkIn = searchParams.get("checkIn") || "";
-  const checkOut = searchParams.get("checkOut") || "";
-
-  const roomId = searchParams.get("roomId");
-
-  const adults = searchParams.get("adults") || 1;
-  const child = searchParams.get("child") || 0;
-
-  const availableRooms = rooms.filter((room) => {
-    return (
-      room.capacity.adults.includes(Number(adults)) &&
-      Number(child) <= Math.max(...room.capacity.child)
-    );
-  });
-
-  const room =
-    availableRooms.find((r) => r.id === Number(roomId)) || availableRooms[0];
-
-  const days =
-    checkIn && checkOut
-      ? Math.max(0, (new Date(checkOut) - new Date(checkIn)) / 864e5)
-      : 1;
 
   const [step, setStep] = useState(1);
 
-  const [selectedRoom, setSelectedRoom] = useState(room?.id);
+  const [selectedRoom, setSelectedRoom] = useState("");
 
   const [paymentMethod, setPaymentMethod] = useState("credit_card");
 
@@ -44,49 +27,169 @@ const Booking = () => {
 
   const [extras, setExtras] = useState([]);
 
+  const [pricing, setPricing] = useState(null);
+
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
     email: "",
     phone: "",
     country: "",
-    specialRequest: "",
     agreePolicy: false,
   });
+  const {
+    data: rooms = [],
+    isLoading: roomsLoading,
+    isError,
+  } = useFetchAllRoomsQuery();
 
-  const toggleExtra = (key)=>{
-    setExtras((prev)=>
-    prev.includes(key)?
-  prev.filter((item)=>item!==key):[...prev,key]
-  )
-  }
+  const [createBooking, { isLoading }] = useCreateBookingMutation();
+
+  const [calculatePricePreview] = useCalculatePricePreviewMutation();
+
+  const checkIn = searchParams.get("checkIn") || "";
+  const checkOut = searchParams.get("checkOut") || "";
+
+  const roomId = searchParams.get("roomId");
+
+  const adults = Number(searchParams.get("adults") || 1);
+  const child = Number(searchParams.get("child") || 0);
+
+  const availableRooms = rooms.filter((room) => {
+    const roomAdults = room?.capacity?.adults || 0;
+    const roomChild = room?.capacity?.child || 0;
+
+    return adults <= roomAdults && child <= roomChild;
+  });
+
+  const room =
+    availableRooms.find((r) => String(r._id) === String(roomId)) ||
+    availableRooms[0];
+
+  const extrasTotal = extraServices.reduce((total, service) =>
+    extras.includes(service.key) ? total + service.price : total,
+  );
+
+  const toggleExtra = (key) => {
+    setExtras((prev) =>
+      prev.includes(key) ? prev.filter((item) => item !== key) : [...prev, key],
+    );
+  };
 
   const selectedRoomData =
-    availableRooms.find((r) => r.id === selectedRoom) || availableRooms[0];
-
- const extrasTotal = extraServices.reduce((total, service) => {
-  return extras.includes(service.key)
-    ? total + service.price
-    : total;
-}, 0);
-
-  const roomPrice =
-    days > 0 ? days * selectedRoomData.price : selectedRoomData.price;
-  const discount = days >= 7 ? 1000 : 0;
-  const totalPrice = roomPrice + extrasTotal - discount;
-
+    availableRooms.find((room) => String(room._id) === String(selectedRoom)) ||
+    availableRooms[0];
 
   const setField = (key, value) => {
     setForm((prev) => ({
       ...prev,
       [key]: value,
     }));
-    
   };
 
-  
-  if (!selectedRoomData) {
-    return <div className="text-white p-10">No available rooms found.</div>;
+  const handleBooking = async () => {
+    try {
+      if (!form.agreePolicy) {
+        alert("Please agree to the policy");
+        return;
+      }
+
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        navigate("/login");
+        return;
+      }
+
+      const bookingData = {
+        room: selectedRoomData._id,
+
+        checkIn,
+        checkOut,
+
+        adults,
+        child,
+
+        email: form.email,
+        firstName: form.firstName,
+        lastName: form.lastName,
+        phone: form.phone,
+        country: form.country,
+
+        specialRequests,
+
+        paymentMethod,
+
+        extras,
+
+        bookingStatus: "pending",
+      };
+
+      const response = await createBooking(bookingData).unwrap();
+
+      (navigate("/confirmation"),
+        {
+          state: {
+            booking: response.booking,
+            pricing: response.pricing,
+          },
+        });
+    } catch (error) {
+      console.error(error);
+
+      alert(error?.data?.message || "Booking Failed");
+    }
+  };
+
+  useEffect(() => {
+    const fetchPricing = async () => {
+      try {
+        if (!selectedRoom || !checkIn || !checkOut) return;
+
+        const result = await calculatePricePreview({
+          roomId: selectedRoom,
+          checkIn,
+          checkOut,
+          extrasTotal,
+        }).unwrap();
+
+        setPricing(result);
+      } catch (error) {
+        console.error("Pricing Preview Error", error);
+      }
+    };
+
+    fetchPricing();
+  }, [selectedRoom, checkIn, checkOut, extrasTotal, calculatePricePreview]);
+
+  useEffect(() => {
+    if (room?._id && !selectedRoom) {
+      setSelectedRoom(room._id);
+    }
+  }, [room, selectedRoom]);
+
+  if (roomsLoading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white">
+        Loading rooms...
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white">
+        Failed to load rooms
+      </div>
+    );
+  }
+
+  if (!availableRooms.length) {
+    return (
+      <div className="min-h-screen flex items-center justify-center text-white">
+        No rooms available for selected guests
+      </div>
+    );
   }
 
   return (
@@ -172,11 +275,9 @@ const Booking = () => {
               checkOut={checkOut}
               adults={adults}
               child={child}
-              days={days}
-              totalPrice={totalPrice}
               extras={extras}
               extraServices={extraServices}
-              extrasTotal={extrasTotal}
+              pricing={pricing}
             />
           </div>
         </div>
@@ -199,24 +300,16 @@ const Booking = () => {
               if (step === 1) {
                 setStep(2);
               } else {
-                if (!form.agreePolicy) {
-                  return alert("Please agree to the policy.");
-                }
-
-                // check login from token/localStorage/backend
-                const token = localStorage.getItem("token");
-
-                if (!token) {
-                  navigate("/login");
-                  return;
-                }
-
-                navigate("/confirmation");
+                handleBooking();
               }
             }}
             className="bg-accent hover:bg-accent/70 text-white px-5 sm:px-10 py-3 sm:py-4 rounded-xl text-sm sm:text-lg font-semibold transition"
           >
-            {step === 1 ? "Continue →" : "Continue to Checkout →"}
+            {step === 1
+              ? "Continue →"
+              : isLoading
+                ? "Booking..."
+                : "Confirm Booking →"}
           </button>
         </div>
       </div>
