@@ -1,9 +1,19 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
-import { FaEye, FaEyeSlash } from "react-icons/fa";
+import {
+  FaEye,
+  FaEyeSlash,
+  FaLock,
+  FaUserShield,
+  FaHotel,
+} from "react-icons/fa";
+
 import { setAdmin } from "../../../utils/auth";
 import { loginAdmin } from "../../../api/admin.api";
+
+import PageHeader from "../../../pages/adminPage/components/PageHeader";
+import StatCard from "../../../pages/adminPage/components/StatCard";
 
 const AdminLogin = () => {
   const [showPassword, setShowPassword] = useState(false);
@@ -37,95 +47,162 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="h-screen flex justify-center items-center">
-      <div className="w-full max-w-sm mx-auto bg-white shadow-md rounded px-8 pt-6 pb-8">
-        <h2 className="text-xl font-semibold mb-4">Admin Dashboard Login</h2>
+    <section className="relative min-h-screen overflow-hidden bg-primary flex items-center justify-center px-4 sm:px-6 lg:px-8 py-10">
+      {/* BACKGROUND BLUR */}
+      <div className="absolute top-1/2 left-1/2 w-125 h-125 bg-secondary/10 blur-[220px] rounded-full -translate-x-1/2 -translate-y-1/2" />
 
-        <form onSubmit={handleSubmit(onSubmit)}>
-          {/* Username */}
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="username"
-            >
-              Username
-            </label>
+      {/* TOP LINE */}
+      <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-secondary/40 to-transparent" />
 
-            <input
-              {...register("username", {
-                required: true,
-              })}
-              type="text"
-              id="username"
-              placeholder="Enter username"
-              className="shadow appearance-none border rounded w-full py-2 px-3 leading-tight focus:outline-none focus:shadow"
+      {/* MAIN CARD */}
+      <div className="relative z-10 w-full max-w-5xl grid lg:grid-cols-2 rounded-[36px] overflow-hidden shadow-2xl border border-secondary/5 backdrop-blur-2xl bg-secondary/10">
+        {/* LEFT SIDE */}
+        <div className="relative p-8 sm:p-10 lg:p-14 border-b lg:border-b-0 lg:border-r border-0 flex flex-col justify-between">
+          {/* HEADER */}
+          <div>
+            <PageHeader
+              title="Admin Dashboard"
+              subtitle="Luxury hotel management access for Kandaw101 Hotel."
             />
-          </div>
 
-          {/* Password */}
-          <div className="mb-4">
-            <label
-              className="block text-gray-700 text-sm font-bold mb-2"
-              htmlFor="password"
-            >
-              Password
-            </label>
+            <div className="mt-10">
+              <div className="w-full h-20 rounded-3xl  flex items-center justify-center">
+                <FaUserShield className="text-accent text-4xl" />
+              </div>
 
-            <div className="relative">
-              <input
-                {...register("password", {
-                  required: true,
-                })}
-                type={showPassword ? "text" : "password"}
-                id="password"
-                placeholder="Enter password"
-                className="shadow appearance-none border border-gray-400 rounded w-full py-2 px-3 pr-10 leading-tight focus:outline-none focus:shadow"
-              />
+              <p className="uppercase tracking-[5px] text-center text-accent text-xs mt-2 mb-3">
+                Secure Access
+              </p>
 
-              <span
-                className="absolute right-3 top-2.5 cursor-pointer text-gray-600"
-                onClick={() => setShowPassword(!showPassword)}
-              >
-                {showPassword ? <FaEyeSlash /> : <FaEye />}
-              </span>
+              <h1 className="text-4xl mt-8 sm:text-5xl font-black text-secondary leading-tight">
+                Welcome Back
+              </h1>
+
+              <p className="text-secondary/45 mt-2 leading-8 max-w-md">
+                Login to manage hotel bookings, rooms, facilities, guests, and
+                all dashboard operations securely.
+              </p>
             </div>
           </div>
 
-          {/* Error Message */}
-          {message && (
-            <p className="text-red-500 text-xs italic mb-3">{message}</p>
-          )}
+          {/* STATS */}
+          <div className="flex flex-col md:flex-row gap-10 mt-10">
+            <StatCard
+              title="Secure Dashboard"
+              value="24/7"
+              icon={<FaLock />}
+              borderColor="border-accent"
+              iconBg="bg-secondary/10"
+              iconColor="text-accent"
+            />
 
-          {/* Login Button */}
-          <div className="w-full">
+            <StatCard
+              title="Hotel Management"
+              value="All In One"
+              icon={<FaHotel />}
+              borderColor="border-primary"
+              iconBg="bg-secondary/10"
+              iconColor="text-primary"
+            />
+          </div>
+        </div>
+
+        {/* RIGHT SIDE */}
+        <div className="p-8 sm:p-10 lg:p-14 flex flex-col justify-center">
+          <form onSubmit={handleSubmit(onSubmit)}>
+            {/* LOGIN TITLE */}
+            <div className="mb-8">
+              <p className="uppercase tracking-[5px] text-accent text-xs mb-3">
+                Admin Login
+              </p>
+
+              <h2 className="text-3xl sm:text-4xl font-black text-secondary">
+                Login
+              </h2>
+            </div>
+
+            {/* USERNAME */}
+            <div className="mb-6">
+              <label className="block text-secondary/80 text-sm mb-3">
+                Username
+              </label>
+
+              <input
+                {...register("username", {
+                  required: true,
+                })}
+                type="text"
+                placeholder="Enter username"
+                className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-secondary placeholder:text-secondary/40 focus:outline-none focus:border-accent transition"
+              />
+            </div>
+
+            {/* PASSWORD */}
+            <div className="mb-5">
+              <label className="block text-secondary/80 text-sm mb-3">
+                Password
+              </label>
+
+              <div className="relative">
+                <input
+                  {...register("password", {
+                    required: true,
+                  })}
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter password"
+                  className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 pr-14 text-secondary placeholder:text-secondary/40 focus:outline-none focus:border-accent transition"
+                />
+
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-5 top-1/2 -translate-y-1/2 text-secondary/50 hover:text-accent transition"
+                >
+                  {showPassword ? <FaEyeSlash /> : <FaEye />}
+                </button>
+              </div>
+            </div>
+
+            {/* ERROR */}
+            {message && (
+              <div className="mb-5 bg-red-500/10 border border-red-500/20 rounded-2xl px-4 py-3">
+                <p className="text-red-400 text-sm">{message}</p>
+              </div>
+            )}
+
+            {/* BUTTON */}
             <button
               type="submit"
-              className="bg-blue-500 w-full hover:bg-blue-700 text-white font-bold py-2 px-8 rounded focus:outline-none"
+              className="w-full bg-accent text-primary py-4 rounded-2xl font-semibold flex items-center justify-center gap-3 hover:scale-[1.02] transition duration-300 shadow-2xl"
             >
-              Login
+              <FaLock />
+              Login To Dashboard
             </button>
-          </div>
 
-          {/* Register Link */}
-          <div className="mt-4 text-center">
-            <p className="text-sm text-gray-600">
-              Don't have an admin account?
+            {/* REGISTER */}
+            <div className="mt-8 text-center">
+              <p className="text-secondary/50 text-sm">
+                Don't have an admin account?
+              </p>
+
+              <Link
+                to="/admin-register"
+                className="inline-block mt-2 text-accent hover:text-accent/80 font-medium transition"
+              >
+                Register First
+              </Link>
+            </div>
+          </form>
+
+          {/* FOOTER */}
+          <div className="mt-10 pt-6 border-t border-white/5 text-center">
+            <p className="text-secondary/40 text-xs tracking-wide">
+              ©2026 Kandaw101Hotel. All rights reserved.
             </p>
-
-            <Link
-              to="/admin-register"
-              className="text-blue-500 hover:text-blue-700 font-medium"
-            >
-              Register First
-            </Link>
           </div>
-        </form>
-
-        <p className="mt-5 text-center text-gray-500 text-xs">
-          ©2026 Kandaw101Hotel. All rights reserved.
-        </p>
+        </div>
       </div>
-    </div>
+    </section>
   );
 };
 

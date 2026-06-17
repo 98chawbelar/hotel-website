@@ -3,7 +3,7 @@ import RoomHeader from "../components/rooms/RoomHeader";
 import { useFetchAllRoomsQuery } from "../redux/features/rooms/roomsApi";
 
 const Rooms = () => {
-  const { data: room, isLoading, error } = useFetchAllRoomsQuery();
+  const { data: rooms = [], isLoading, error } = useFetchAllRoomsQuery();
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -15,10 +15,10 @@ const Rooms = () => {
       </div>
     );
   }
-  const firstRoom = room[0];
+
   return (
     <>
-      <RoomHeader room={firstRoom} />
+      <RoomHeader rooms={rooms} />
       <RoomBody />
     </>
   );

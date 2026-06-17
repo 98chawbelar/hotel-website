@@ -1,216 +1,513 @@
 import React from "react";
-import { assets } from "../../assets/assets";
 import { Link } from "react-router-dom";
-import { FaStar } from "react-icons/fa";
+import {
+  FaArrowRight,
+  FaBed,
+  FaCheckCircle,
+  FaClock,
+  FaMapMarkerAlt,
+  FaParking,
+  FaStar,
+  FaSwimmingPool,
+  FaUtensils,
+  FaWifi,
+} from "react-icons/fa";
 
-const HeroBody = () => {
-  const stars = Array(5).fill(0);
+import { assets, facilities, rooms } from "../../assets/assets";
+
+const HomeBody = () => {
+  const featuredRooms = rooms.slice(0, 3);
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-10">
-      {/* Review Section */}
-      <div className="bg-primary/50 shadow-xl rounded-xl p-5 md:p-6 mb-10 border-0 ">
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-10">
-          {/* Left Side */}
-          <div className="flex items-center gap-6">
-            {/* Review Score */}
-            <div className="bg-accent text-white min-w-24 min-h-24 rounded-full flex flex-col items-center justify-center shadow-md">
-              <p className="text-xl ">8.9</p>
+    <main className="bg-secondary text-primary overflow-hidden">
+      {/* ===================================================== */}
+      {/* HERO SECTION */}
+      {/* ===================================================== */}
+      <section className="relative min-h-screen flex items-center">
+        {/* Background */}
+        <div className="absolute inset-0">
+          <img
+            src={assets.hero_1}
+            alt="Kandaw Hotel"
+            className="w-full h-full object-cover"
+          />
 
-              <p className="text-md">Excellent</p>
-            </div>
+          <div className="absolute inset-0 bg-black/65" />
+          <div className="absolute inset-0 bg-linear-to-r from-primary/90 via-primary/70 to-black/50" />
+        </div>
 
-            {/* Review Text */}
-            <div>
-              <h3 className="text-2xl md:text-4xl font-serif font-semibold mb-2">
-                Trusted Guest Reviews
-              </h3>
+        {/* Content */}
+        <div className="relative z-10 max-w-[1440px] mx-auto w-full px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-16 sm:pb-24">
+          <div className="grid lg:grid-cols-2 gap-12 xl:gap-16 items-center">
+            {/* LEFT */}
+            <div className="order-2 lg:order-1">
+              <div className="inline-flex items-center gap-2 bg-white/10 border border-white/10 backdrop-blur-md px-4 py-2 rounded-full mb-5 sm:mb-6">
+                <FaStar className="text-accent text-sm" />
 
-              <p className="text-gray-700 leading-7 max-w-xl">
-                Guests love the peaceful mountain atmosphere, modern luxury
-                rooms, warm Burmese hospitality, and relaxing experience at
-                Kandaw 101 Hotel in Mogok.
+                <p className="text-secondary text-xs sm:text-sm tracking-wide">
+                  Luxury Mountain Hotel In Mogok
+                </p>
+              </div>
+
+              <h1 className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl leading-tight font-black text-secondary">
+                Modern
+                <span className="text-accent"> Luxury </span>
+                In The Heart Of Mogok
+              </h1>
+
+              <p className="mt-5 sm:mt-6 text-secondary/75 text-base sm:text-lg leading-7 sm:leading-8 max-w-2xl">
+                Experience elegant mountain living, peaceful nature, modern
+                comfort, and premium Burmese hospitality at Kandaw101 Hotel.
+                Designed for travelers who want calm, beauty, and unforgettable
+                stays.
               </p>
 
-              {/* Stars */}
-              <div className="flex items-center gap-0.5 mt-2 text-accent">
-                {stars.map((_, i) => (
-                  <FaStar key={i} />
-                ))}
+              {/* CTA */}
+              <div className="flex flex-col sm:flex-row gap-4 mt-8 sm:mt-10">
+                <Link to="/rooms" className="w-full sm:w-auto">
+                  <button className="w-full sm:w-auto group bg-accent text-primary px-6 sm:px-7 py-4 rounded-2xl font-semibold flex items-center justify-center gap-3 hover:scale-105 transition duration-300 shadow-2xl">
+                    Explore Rooms
+                    <FaArrowRight className="group-hover:translate-x-1 transition" />
+                  </button>
+                </Link>
 
-                <span className="text-gray-600 ml-2 text-sm">
-                  Based on 2024 customer reviews
-                </span>
+                <Link to="/contact" className="w-full sm:w-auto">
+                  <button className="w-full sm:w-auto border border-white/15 bg-white/5 backdrop-blur-md text-secondary px-6 sm:px-7 py-4 rounded-2xl hover:bg-white/10 transition duration-300">
+                    Contact Hotel
+                  </button>
+                </Link>
+              </div>
+
+              {/* STATS */}
+              <div className="grid grid-cols-3 gap-4 sm:gap-5 mt-12 sm:mt-16">
+                <div>
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-accent">
+                    4.9
+                  </h3>
+
+                  <p className="text-secondary/60 text-xs sm:text-sm mt-1">
+                    Guest Rating
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-accent">
+                    24/7
+                  </h3>
+
+                  <p className="text-secondary/60 text-xs sm:text-sm mt-1">
+                    Guest Service
+                  </p>
+                </div>
+
+                <div>
+                  <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-accent">
+                    100+
+                  </h3>
+
+                  <p className="text-secondary/60 text-xs sm:text-sm mt-1">
+                    Happy Guests
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* RIGHT */}
+            <div className="relative order-1 lg:order-2">
+              {/* Main card */}
+              <div className="relative bg-white/10 border border-white/10 backdrop-blur-2xl rounded-[28px] sm:rounded-[32px] overflow-hidden shadow-2xl">
+                <img
+                  src={assets.hero_2}
+                  alt="Hotel"
+                  className="w-full h-[420px] sm:h-[520px] lg:h-[600px] object-cover"
+                />
+
+                <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-6 bg-black/50 backdrop-blur-xl border border-white/10 rounded-2xl sm:rounded-3xl p-4 sm:p-6">
+                  <div className="flex items-center justify-between gap-5">
+                    <div>
+                      <p className="text-secondary/60 text-xs sm:text-sm">
+                        Premium Experience
+                      </p>
+
+                      <h3 className="text-lg sm:text-2xl font-bold text-secondary mt-1">
+                        Kandaw101 Hotel
+                      </h3>
+                    </div>
+
+                    <div className="bg-accent text-primary px-4 sm:px-5 py-3 rounded-2xl text-center min-w-[80px] sm:min-w-[90px]">
+                      <h4 className="font-black text-xl sm:text-2xl">8.9</h4>
+
+                      <p className="text-[10px] sm:text-xs font-medium">
+                        Excellent
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Floating card */}
+              <div className="absolute -bottom-6 sm:-bottom-10 left-1/2 -translate-x-1/2 lg:left-auto lg:translate-x-0 lg:-left-10 bg-secondary p-4 sm:p-6 rounded-3xl shadow-2xl w-[90%] sm:w-72 max-w-xs">
+                <div className="flex items-center gap-4">
+                  <div className="bg-accent/10 w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center">
+                    <FaMapMarkerAlt className="text-accent text-lg sm:text-xl" />
+                  </div>
+
+                  <div>
+                    <h4 className="font-bold text-base sm:text-lg">
+                      Perfect Location
+                    </h4>
+
+                    <p className="text-primary/60 text-xs sm:text-sm">
+                      Peaceful Mogok mountain area
+                    </p>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* OTA Logos */}
-          <div className="flex flex-wrap items-center justify-center gap-4">
-            <div className="bg-transparent border-0  px-4 py-4 rounded-xl shadow-md hover:shadow-lg transition duration-300">
-              <h3 className="text-lg font-semibold text-[#5A2D82]">Agoda</h3>
-            </div>
+        {/* Bottom blur */}
+        <div className="absolute bottom-0 left-0 w-full h-32 sm:h-40 bg-gradient-to-t from-secondary to-transparent" />
+      </section>
 
-            <div className="bg-transparent border-0  px-4 py-4 rounded-xl shadow-md hover:shadow-lg transition duration-300">
-              <h3 className="text-xl font-bold text-[#003580]">Booking.com</h3>
-            </div>
+      {/* ===================================================== */}
+      {/* QUICK INFO */}
+      {/* ===================================================== */}
+      <section className="relative -mt-8 sm:-mt-12 lg:-mt-16 z-20 px-4 sm:px-6">
+        <div className="max-w-[1440px] mx-auto bg-primary rounded-[24px] sm:rounded-[32px] border border-primary/10 overflow-hidden shadow-2xl">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+            {[
+              {
+                icon: <FaWifi />,
+                title: "Free WiFi",
+                desc: "Fast internet access in every room and hotel area.",
+              },
+              {
+                icon: <FaUtensils />,
+                title: "Breakfast",
+                desc: "Fresh Burmese and international breakfast daily.",
+              },
+              {
+                icon: <FaSwimmingPool />,
+                title: "Pool Access",
+                desc: "Relax and recharge in our peaceful swimming pool.",
+              },
+              {
+                icon: <FaParking />,
+                title: "Secure Parking",
+                desc: "Spacious and secure parking for hotel guests.",
+              },
+            ].map((item, index) => (
+              <div
+                key={index}
+                className="p-6 sm:p-8 border-b sm:border-b lg:border-b-0 lg:border-r border-white/5 last:border-b-0 lg:last:border-r-0"
+              >
+                <div className="text-accent text-3xl mb-4">{item.icon}</div>
 
-            <div className="bg-transparent border-0  px-4 py-4 rounded-xl shadow-md hover:shadow-lg transition duration-300">
-              <h3 className="text-xl font-bold text-[#E61E43]">Airbnb</h3>
-            </div>
+                <h3 className="text-secondary text-lg sm:text-xl font-semibold">
+                  {item.title}
+                </h3>
 
-            <div className="bg-transparent border-0  px-4 py-4 rounded-xl shadow-md hover:shadow-lg transition duration-300">
-              <h3 className="text-xl font-bold text-[#2175D9]">Trip.com</h3>
-            </div>
+                <p className="text-secondary/60 mt-2 text-sm leading-7">
+                  {item.desc}
+                </p>
+              </div>
+            ))}
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Modern Experience Section */}
-      <div>
-        {/* Top Heading */}
-        <div className="text-center max-w-2xl mx-auto mb-10">
-          <p className="uppercase tracking-[8px] text-sm text-gray-600 mb-2">
-            Kandaw 101 Hotel
-          </p>
+      {/* ===================================================== */}
+      {/* ABOUT */}
+      {/* ===================================================== */}
+      <section className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 lg:py-28">
+        <div className="grid lg:grid-cols-2 gap-14 lg:gap-16 items-center">
+          {/* Images */}
+          <div className="relative">
+            <div className="overflow-hidden rounded-[28px] sm:rounded-[36px] shadow-2xl">
+              <img
+                src={assets.reception}
+                alt="Reception"
+                className="w-full h-[420px] sm:h-[520px] lg:h-[650px] object-cover hover:scale-105 transition duration-700"
+              />
+            </div>
 
-          <h2 className="text-3xl md:text-4xl font-serif font-semibold text-gray-900 leading-tight mb-3">
-            Experience Modern Luxury In The Heart Of Mogok
-          </h2>
-
-          <p className="text-gray-600 leading-8 text-md">
-            Discover peaceful mountain living, elegant Burmese-inspired
-            interiors, luxury accommodation, and unforgettable hospitality
-            designed for modern travelers seeking comfort and relaxation.
-          </p>
-        </div>
-
-        {/* Section 1 */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center mb-20">
-          {/* Image */}
-          <div className="relative overflow-hidden rounded-3xl shadow-xl group">
-            <img
-              src={assets.king_rooms}
-              alt="Luxury Room"
-              className=" min-w-full w-auto min-h-125 h-full object-cover group-hover:scale-105 transition duration-700"
-            />
-
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-black/20"></div>
-
-            {/* Floating Card */}
-            <div className="absolute bottom-6 left-3 bg-gray-100 backdrop-blur-lg px-2 py-4 rounded-xl shadow-2xl">
-              <p className="text-xs md:text-sm text-gray-600 ">
-                Luxury Accommodation
+            <div className="relative sm:absolute sm:-bottom-10 sm:-right-6 lg:-right-10 mt-6 sm:mt-0 bg-primary rounded-3xl p-6 sm:p-8 shadow-2xl max-w-xs">
+              <p className="text-accent uppercase tracking-[4px] text-xs sm:text-sm mb-2">
+                Since 2024
               </p>
 
-              <h3 className=" md:text-xl lg:text-lg font-serif font-semibold">
-                Elegant Modern Rooms
+              <h3 className="text-secondary text-xl sm:text-2xl font-bold leading-tight">
+                Luxury Hospitality With Burmese Warmth
               </h3>
             </div>
           </div>
 
           {/* Content */}
           <div>
-            <p className="uppercase tracking-[8px] text-sm text-gray-400 mb-2">
-              Luxury Redefined
+            <p className="uppercase tracking-[5px] sm:tracking-[6px] text-accent text-xs sm:text-sm mb-5">
+              About Kandaw101
             </p>
 
-            <h3 className="text-2xl md:text-3xl font-serif font-semibold leading-tight mb-3">
-              A Peaceful Private Paradise
-            </h3>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight">
+              Designed For Comfort, Peace, And Elegant Living
+            </h2>
 
-            <p className="text-gray-600 leading-8 mb-4 text-md">
-              Our rooms are thoughtfully designed with modern comfort, elegant
-              Burmese-inspired decoration, and peaceful mountain atmosphere to
-              create a relaxing sanctuary for every guest.
+            <p className="mt-6 sm:mt-8 text-primary/70 leading-8 sm:leading-9 text-base sm:text-lg">
+              Kandaw101 Hotel combines modern architecture, peaceful mountain
+              scenery, and refined Burmese hospitality to create a luxury hotel
+              experience unlike anywhere else in Mogok.
             </p>
 
-            {/* Features */}
-            <div className="grid grid-cols-2 gap-2 mb-4">
-              <div className="bg-gray-50  p-3">
-                <h4 className="text-2xl font-bold text-accent mb-1">24/7</h4>
+            <div className="grid sm:grid-cols-2 gap-4 sm:gap-5 mt-8 sm:mt-10">
+              {[
+                "Luxury Modern Rooms",
+                "Mountain View Experience",
+                "Professional Guest Service",
+                "Peaceful Environment",
+                "High-Speed WiFi",
+                "Premium Breakfast",
+              ].map((item, index) => (
+                <div key={index} className="flex items-center gap-3">
+                  <FaCheckCircle className="text-accent shrink-0" />
 
-                <p className="text-gray-400 text-sm">Guest Support Service</p>
-              </div>
-
-              <div className="bg-gray-50  p-3">
-                <h4 className="text-2xl font-bold text-accent mb-1">Free</h4>
-
-                <p className="text-gray-400 text-sm">High-Speed WiFi</p>
-              </div>
+                  <p className="text-primary/80 text-sm sm:text-base">{item}</p>
+                </div>
+              ))}
             </div>
 
+            <div className="flex flex-col sm:flex-row gap-4 sm:gap-5 mt-10 sm:mt-12">
+              <Link to="/about" className="w-full sm:w-auto">
+                <button className="w-full sm:w-auto bg-primary text-secondary px-7 py-4 rounded-2xl hover:opacity-90 transition">
+                  Learn More
+                </button>
+              </Link>
+
+              <Link to="/rooms" className="w-full sm:w-auto">
+                <button className="w-full sm:w-auto border border-primary/10 px-7 py-4 rounded-2xl hover:bg-primary hover:text-secondary transition">
+                  View Rooms
+                </button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* ===================================================== */}
+      {/* ROOMS */}
+      {/* ===================================================== */}
+      <section className="bg-primary py-20 sm:py-24 lg:py-28 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1440px] mx-auto">
+          {/* Heading */}
+          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 sm:gap-8 mb-14 sm:mb-16">
+            <div>
+              <p className="uppercase tracking-[5px] sm:tracking-[6px] text-accent text-xs sm:text-sm mb-4">
+                Luxury Accommodation
+              </p>
+
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-secondary leading-tight">
+                Discover Our Rooms
+              </h2>
+            </div>
+
+            <p className="max-w-xl text-secondary/65 leading-7 sm:leading-8 text-sm sm:text-base">
+              Every room is carefully designed with comfort, elegance, and
+              modern hospitality in mind.
+            </p>
+          </div>
+
+          {/* Cards */}
+          <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
+            {featuredRooms.map((room) => (
+              <div
+                key={room.id}
+                className="group bg-white/5 border border-white/10 rounded-[28px] sm:rounded-[32px] overflow-hidden backdrop-blur-xl hover:-translate-y-2 transition duration-500"
+              >
+                <div className="relative overflow-hidden">
+                  <img
+                    src={room.image}
+                    alt={room.name}
+                    className="w-full h-64 sm:h-72 lg:h-80 object-cover group-hover:scale-110 transition duration-700"
+                  />
+
+                  <div className="absolute top-4 sm:top-5 right-4 sm:right-5 bg-accent text-primary px-4 py-2 rounded-full font-semibold shadow-lg text-sm">
+                    Ks {room.price.toLocaleString()}
+                  </div>
+                </div>
+
+                <div className="p-6 sm:p-8">
+                  <div className="flex items-center justify-between mb-4 gap-3">
+                    <h3 className="text-xl sm:text-2xl font-bold text-secondary">
+                      {room.name}
+                    </h3>
+
+                    <div className="flex items-center gap-2 text-accent text-sm">
+                      <FaBed />
+                      <span>{room.beds}</span>
+                    </div>
+                  </div>
+
+                  <p className="text-secondary/65 leading-7 sm:leading-8 text-sm">
+                    {room.description}
+                  </p>
+
+                  <div className="flex flex-wrap gap-2 sm:gap-3 mt-6">
+                    {room.facilities.slice(0, 4).map((item, index) => (
+                      <div
+                        key={index}
+                        className="bg-white/5 border border-white/5 px-3 sm:px-4 py-2 rounded-full text-secondary/70 text-xs sm:text-sm"
+                      >
+                        {item.title}
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="flex items-center justify-between mt-8 gap-4">
+                    <div>
+                      <p className="text-secondary/40 text-xs sm:text-sm">
+                        Room Size
+                      </p>
+
+                      <h4 className="text-secondary font-semibold text-sm sm:text-base">
+                        {room.size}
+                      </h4>
+                    </div>
+
+                    <Link to="/rooms">
+                      <button className="bg-accent text-primary px-4 sm:px-5 py-3 rounded-xl font-semibold hover:scale-105 transition text-sm sm:text-base">
+                        Book Now
+                      </button>
+                    </Link>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Button */}
+          <div className="text-center mt-12 sm:mt-14">
             <Link to="/rooms">
-              <button className="cursor-pointer bg-accent/80 hover:bg-accent  text-white px-4 py-4 rounded-xl transition duration-300 shadow-lg">
-                Explore Rooms
+              <button className="border border-white/10 text-secondary px-7 sm:px-8 py-4 rounded-2xl hover:bg-white/10 transition">
+                View All Rooms
               </button>
             </Link>
           </div>
         </div>
+      </section>
 
-        {/* Section 2 */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-          {/* Content */}
-          <div className="order-2 lg:order-1">
-            <p className="uppercase tracking-[4px] text-sm text-gray-400 mb-4">
-              Nature & Relaxation
+      {/* ===================================================== */}
+      {/* FACILITIES */}
+      {/* ===================================================== */}
+      <section className="py-20 sm:py-24 lg:py-28 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1440px] mx-auto">
+          {/* Heading */}
+          <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-20">
+            <p className="uppercase tracking-[5px] sm:tracking-[6px] text-accent text-xs sm:text-sm mb-4">
+              Hotel Facilities
             </p>
 
-            <h3 className="text-3xl md:text-5xl font-serif font-semibold leading-tight mb-6">
-              Leave Your Worries In The Hills
-            </h3>
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black leading-tight">
+              Everything You Need For A Comfortable Stay
+            </h2>
 
-            <p className="text-gray-600 leading-8 mb-8 text-lg">
-              Surrounded by breathtaking mountain views, fresh air, and peaceful
-              landscapes, Kandaw 101 Hotel offers a calm retreat where guests
-              can relax, recharge, and reconnect with nature.
+            <p className="text-primary/60 mt-6 sm:mt-8 leading-7 sm:leading-8 text-base sm:text-lg">
+              Carefully selected facilities designed for modern travelers and
+              luxury experiences.
             </p>
+          </div>
 
-            {/* Features */}
-            <div className="flex flex-wrap gap-4 mb-8">
-              <div className="bg-gray-100 px-5 py-3 rounded-full text-sm font-medium">
-                Mountain View
+          {/* Facilities Grid */}
+          <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
+            {facilities.map((facility, index) => (
+              <div
+                key={index}
+                className="group relative overflow-hidden rounded-[28px] sm:rounded-[32px] h-[320px] sm:h-[380px] lg:h-[420px]"
+              >
+                <img
+                  src={facility.image}
+                  alt={facility.name}
+                  className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
+                />
+
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
+
+                <div className="absolute bottom-0 p-6 sm:p-8">
+                  <h3 className="text-2xl sm:text-3xl font-bold text-secondary mb-3">
+                    {facility.name}
+                  </h3>
+
+                  <p className="text-secondary/70 leading-6 sm:leading-7 text-sm sm:text-base">
+                    {facility.description}
+                  </p>
+                </div>
               </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
-              <div className="bg-gray-100 px-5 py-3 rounded-full text-sm font-medium">
-                Peaceful Environment
-              </div>
+      {/* ===================================================== */}
+      {/* EXPERIENCE SECTION */}
+      {/* ===================================================== */}
+      <section className="px-4 sm:px-6 lg:px-8 pb-20 sm:pb-24 lg:pb-28">
+        <div className="max-w-[1440px] mx-auto bg-primary rounded-[28px] sm:rounded-[40px] overflow-hidden">
+          <div className="grid lg:grid-cols-2 items-center">
+            {/* LEFT */}
+            <div className="p-6 sm:p-10 md:p-14 lg:p-16">
+              <p className="uppercase tracking-[5px] sm:tracking-[6px] text-accent text-xs sm:text-sm mb-4">
+                Peaceful Experience
+              </p>
 
-              <div className="bg-gray-100 px-5 py-3 rounded-full text-sm font-medium">
-                Modern Comfort
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-secondary leading-tight">
+                Escape The Noise Of The City
+              </h2>
+
+              <p className="text-secondary/65 leading-8 sm:leading-9 mt-6 sm:mt-8 text-base sm:text-lg">
+                Enjoy fresh mountain air, peaceful mornings, luxury rooms, and
+                unforgettable relaxation in the beautiful hills of Mogok.
+              </p>
+
+              <div className="grid sm:grid-cols-2 gap-5 sm:gap-6 mt-10 sm:mt-12">
+                <div className="bg-white/5 border border-white/5 rounded-2xl p-5">
+                  <FaClock className="text-accent text-2xl mb-4" />
+
+                  <h3 className="text-secondary font-semibold mb-2">
+                    Flexible Check-In
+                  </h3>
+
+                  <p className="text-secondary/60 text-sm leading-7">
+                    Smooth and comfortable guest experience anytime.
+                  </p>
+                </div>
+
+                <div className="bg-white/5 border border-white/5 rounded-2xl p-5">
+                  <FaStar className="text-accent text-2xl mb-4" />
+
+                  <h3 className="text-secondary font-semibold mb-2">
+                    Premium Hospitality
+                  </h3>
+
+                  <p className="text-secondary/60 text-sm leading-7">
+                    Warm and professional service for every guest.
+                  </p>
+                </div>
               </div>
             </div>
 
-            <Link to="/rooms">
-              <button className="bg-accent/80 cursor-pointer hover:bg-accent text-white px-4 py-4 rounded-xl transition duration-300 shadow-lg">
-                Discover More
-              </button>
-            </Link>
-          </div>
-
-          {/* Image */}
-          <div className="relative overflow-hidden rounded-3xl shadow-xl group order-1 lg:order-2">
-            <img
-              src={assets.hero_2}
-              alt="Mountain View"
-              className="w-full h-125 object-cover group-hover:scale-105 transition duration-300"
-            />
-
-            {/* Overlay */}
-            <div className="absolute inset-0 bg-black/20"></div>
-
-            {/* Floating Review Card */}
-            <div className="absolute top-6 right-6 text-center bg-white/90 backdrop-blur-md px-2 py-4 rounded-2xl shadow-md">
-              <h3 className="text-lg font-bold text-accent/60">8.9/10</h3>
-
-              <p className="text-xs text-gray-400">Guest Satisfaction</p>
+            {/* RIGHT */}
+            <div className="h-full">
+              <img
+                src={assets.hero_3}
+                alt="Mountain Hotel"
+                className="w-full h-[350px] sm:h-[500px] lg:min-h-[700px] object-cover"
+              />
             </div>
           </div>
         </div>
-      </div>
-    </div>
+      </section>
+    </main>
   );
 };
 
-export default HeroBody;
+export default HomeBody;

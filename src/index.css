@@ -4,9 +4,15 @@
 
 /* Custom Theme for Tailwind CSS */
 @theme {
-  --color-primary: #1e3a5f; /* Deep Royal Blue */
-  --color-secondary: #f8f6f2; /* Soft Ivory */
-  --color-accent: #c9a227; /* Luxury Gold */
+  /* MAIN BRAND COLORS */
+  --color-primary: #0f172a;
+  /* Midnight Slate */
+
+  --color-secondary: #f8fafc;
+  /* Soft Pearl White */
+
+  --color-accent: #d4a017;
+  /* Elegant Gold */
 }
 
 /* Global Styles */
