@@ -75,11 +75,9 @@ const RoomDetails = () => {
 
   return (
     <>
-      <RoomHeader room={room} />
-
-      <div className="bg-primary text-white min-h-screen">
+      <div className="bg-primary  text-white min-h-screen">
         {/* BACK BUTTON */}
-        <div className="max-w-6xl mx-auto px-6 pt-8">
+        <div className="max-w-6xl  mx-auto px-6 pt-20">
           <Link
             to="/rooms"
             className="text-sm text-gray-300 hover:text-white transition"
@@ -95,7 +93,7 @@ const RoomDetails = () => {
             {/* IMAGE */}
             <div className="rounded-2xl overflow-hidden">
               <img
-                src={room.image}
+                src={room.images}
                 alt={room.name}
                 className="w-full h-120 object-cover"
               />
@@ -131,7 +129,7 @@ const RoomDetails = () => {
               <div className="bg-white/5 p-4 rounded-lg flex flex-col items-center gap-2">
                 <FaMoneyBillWave className="text-accent text-2xl md:text-3xl" />
                 <span className="text-sm md:text-base">
-                  {room.price.toLocaleString()} MMK
+                  {room.basePrice.toLocaleString()} Ks
                 </span>
               </div>
             </div>
@@ -187,7 +185,7 @@ const RoomDetails = () => {
 
           {/* RIGHT BOOKING PANEL */}
           <div className="md:col-span-1 self-start sticky top-5">
-            <div className="bg-green-500/10 rounded-xl px-4 py-3">
+            <div className="bg-secondary/25 rounded-xl px-4 py-3">
               <div className="bg-transparent p-3 space-y-3 w-full">
                 <h2 className="text-lg text-center font-bold">Reserve Room</h2>
 
@@ -234,7 +232,7 @@ const RoomDetails = () => {
                   <div className="text-center">
                     <p className="text-sm text-gray-400">Daily Rate</p>
                     <p className="font-semibold">
-                      {room.price.toLocaleString()} MMK
+                      {room.basePrice.toLocaleString()} MMK
                     </p>
                   </div>
 

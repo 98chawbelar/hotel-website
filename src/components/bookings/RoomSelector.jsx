@@ -25,7 +25,7 @@ const RoomSelector = ({ rooms = [], selectedRoom, setSelectedRoom }) => {
             />
 
             <img
-              src={room.image}
+              src={room.images}
               alt={room.name}
               className="w-16 h-12 object-cover rounded-lg shrink-0"
             />
@@ -40,7 +40,7 @@ const RoomSelector = ({ rooms = [], selectedRoom, setSelectedRoom }) => {
             </div>
 
             <span className="text-accent text-sm font-semibold whitespace-nowrap">
-              {Number(room.price || 0).toLocaleString()} MMK
+              {Number(room.basePrice || 0).toLocaleString()} MMK
             </span>
           </label>
         ))}

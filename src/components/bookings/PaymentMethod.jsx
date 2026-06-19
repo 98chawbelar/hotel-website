@@ -10,11 +10,29 @@ import {
 import { Card, CardTitle } from "./Shared";
 
 const paymentOptions = [
-  { value: "credit_card", icon: FaCreditCard, label: "Credit Card" },
-  { value: "paypal", icon: FaPaypal, label: "PayPal" },
-  { value: "mobile", icon: FaMobileAlt, label: "Bank Transfer" },
-  {value: "alipay", icon: FaAlipay , label: "AliPay"},
-  {value:"cash", icon:FaMoneyBillWave,label:"Cash on Arrival"},
+  {
+    value: "cash",
+    icon: FaMoneyBillWave,
+    label: "Cash",
+  },
+
+  {
+    value: "kbzpay",
+    icon: FaMobileAlt,
+    label: "KBZ Pay",
+  },
+
+  {
+    value: "wavepay",
+    icon: FaMobileAlt,
+    label: "Wave Pay",
+  },
+
+  {
+    value: "stripe",
+    icon: FaCreditCard,
+    label: "Stripe",
+  },
 ];
 
 const PaymentMethod = ({ paymentMethod, setPaymentMethod }) => {

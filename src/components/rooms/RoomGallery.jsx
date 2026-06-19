@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { rooms, assets } from "../../assets/assets";
+import { useState } from "react";
+
 import { useFetchAllRoomsQuery } from "../../redux/features/rooms/roomsApi";
 
 const RoomGallery = () => {
@@ -13,9 +13,9 @@ const RoomGallery = () => {
       : [];
 
   const images = rooms
-    .filter((room) => room.image)
+    .filter((room) => room.images)
     .map((room) => ({
-      src: room.image,
+      src: room.images,
       name: room.name,
     }));
 
@@ -129,7 +129,7 @@ const RoomGallery = () => {
       )}
 
       {/* ================= REVIEW SECTION ================= */}
-      <div className="max-w-6xl mx-auto mt-20 px-4">
+      <div className="max-w-6xl mx-auto mt-5 px-4">
         <div className="relative rounded-3xl overflow-hidden">
           {/* glow background */}
           <div className="absolute inset-0 bg-cyan-400/10 blur-3xl" />

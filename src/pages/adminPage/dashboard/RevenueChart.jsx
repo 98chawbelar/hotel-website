@@ -1,48 +1,27 @@
 import { Bar } from "react-chartjs-2";
+
 import {
   Chart as ChartJS,
   CategoryScale,
   LinearScale,
   BarElement,
-  Title,
   Tooltip,
   Legend,
 } from "chart.js";
 
-import { useFetchBookingsAllQuery } from "../../../redux/features/booking/bookingApi";
-import { useMemo } from "react";
+import { FaChartLine } from "react-icons/fa";
 
-// Register Chart.js components
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-);
+import { useGetRevenueAnalyticsQuery } from "../../../redux/features/revenue/revenueApi";
+
+// REGISTER
+ChartJS.register(CategoryScale, LinearScale, BarElement, Tooltip, Legend);
 
 const RevenueChart = () => {
-  const { data: bookings = [], isLoading } = useFetchBookingsAllQuery();
+  const { data, isLoading } = useGetRevenueAnalyticsQuery();
 
-  const revenueData = useMemo(() => {
-    const months = Array(12).fill(0);
-    bookings.forEach((booking) => {
-      if (booking.bookingStatus === "cancelled") return;
+  const revenueData = data?.monthlyRevenue || [];
 
-      const month = new Date(booking.createdAt).getMonth();
-
-      const checkIn = new Date(booking.checkIn);
-      const checkOut = new Date(booking.checkOut);
-
-      const nights = Math.ceil((checkOut - checkIn) / (1000 * 60 * 60 * 24));
-      const roomPrice = booking.room?.price || booking.room?.pricePerNight || 0;
-      months[month] += roomPrice * nights;
-    });
-    return months;
-  }, [bookings]);
-
-  const data = {
+  const chartData = {
     labels: [
       "Jan",
       "Feb",
@@ -57,29 +36,97 @@ const RevenueChart = () => {
       "Nov",
       "Dec",
     ],
+
     datasets: [
       {
         label: "Revenue (MMK)",
+
         data: revenueData,
-        backgroundColor: "rgba(34,197,94,0.7)",
-        borderColor: "rgba(34,197,94,1)",
-        borderWidth: 1,
+
+        backgroundColor: "rgba(255,255,255,0.18)",
+
+        hoverBackgroundColor: "rgba(255,255,255,0.35)",
+
+        borderRadius: 18,
+
+        borderSkipped: false,
+
+        barThickness: 30,
       },
     ],
   };
 
+  const options = {
+    responsive: true,
+
+    maintainAspectRatio: false,
+
+    plugins: {
+      legend: {
+        display: false,
+      },
+
+      tooltip: {
+        backgroundColor: "#111827",
+
+        padding: 14,
+
+        titleColor: "#fff",
+
+        bodyColor: "#fff",
+
+        borderColor: "rgba(255,255,255,0.08)",
+
+        borderWidth: 1,
+
+        displayColors: false,
+      },
+    },
+
+    scales: {
+      x: {
+        ticks: {
+          color: "rgba(255,255,255,0.65)",
+        },
+
+        grid: {
+          display: false,
+        },
+
+        border: {
+          display: false,
+        },
+      },
+
+      y: {
+        ticks: {
+          color: "rgba(255,255,255,0.45)",
+        },
+
+        grid: {
+          color: "rgba(255,255,255,0.06)",
+        },
+
+        border: {
+          display: false,
+        },
+      },
+    },
+  };
+
   if (isLoading) {
-    return <div className="bg-white p-6 rounded-xl">Loading Revenue...</div>;
+    return (
+      <div className="h-[450px] flex items-center justify-center text-secondary">
+        Loading Revenue...
+      </div>
+    );
   }
 
   return (
-    <div className="w-full max-w-3xl mx-auto p-4 bg-white shadow-lg rounded-lg">
-      <h2 className="text-center text-2xl font-bold text-gray-800 mb-4">
-        Monthly Revenue
-      </h2>
-      <div className="hidden md:block">
-        <Bar data={data} className="" />
-      </div>
+    <div className="w-full h-full">
+      {/* CHART */}
+
+      <Bar data={chartData} options={options} />
     </div>
   );
 };

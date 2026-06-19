@@ -64,16 +64,6 @@ const DashboardLayout = () => {
     },
   ];
 
-  const currentPage =
-    sidebarLinks.find((link) => {
-      if (link.to.includes(":id")) {
-        return location.pathname.startsWith("/dashboard/manage-room/");
-      }
-      return link.to === location.pathname;
-    }) || sidebarLinks[0];
-
-  const isDashboardHome = location.pathname === "/dashboard";
-
   const handleLogout = () => {
     clearAdmin();
     setAdminState(null);
@@ -376,28 +366,16 @@ const DashboardLayout = () => {
         <main
           className="
         flex-1
-        p-4
-        sm:p-6
-        lg:p-8
-        xl:p-10
+        p-2
+        sm:p-4
+        lg:p-6
+        xl:p-8
         overflow-x-hidden
       "
         >
           <PageHeader />
 
-          <div
-            className="
-          mt-6
-          rounded-2xl
-          bg-white
-          shadow-sm
-          p-4
-          sm:p-6
-          lg:p-8
-        "
-          >
-            <Outlet />
-          </div>
+          <Outlet />
         </main>
       </div>
     </section>

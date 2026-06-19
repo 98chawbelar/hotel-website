@@ -1,5 +1,3 @@
-import React from "react";
-
 import {
   FaUser,
   FaEnvelope,
@@ -76,14 +74,12 @@ const GuestDetails = ({ form, setField }) => {
                   type={type}
                   placeholder={placeholder}
                   value={form[key]}
-                  onChange={(e) =>
-                    setField(key, e.target.value)
-                  }
+                  onChange={(e) => setField(key, e.target.value)}
                   className="w-full bg-white/10 border border-white/10 rounded-xl pl-9 pr-4 py-2.5 sm:py-3 text-sm text-white placeholder-gray-500 outline-none focus:border-accent transition"
                 />
               </div>
             </div>
-          )
+          ),
         )}
       </div>
 
@@ -95,9 +91,7 @@ const GuestDetails = ({ form, setField }) => {
         <textarea
           rows={3}
           value={form.specialRequest}
-          onChange={(e) =>
-            setField("specialRequest", e.target.value)
-          }
+          onChange={(e) => setField("specialRequest", e.target.value)}
           placeholder="Any special requests or notes..."
           className="w-full bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 outline-none focus:border-accent transition resize-none"
         />
@@ -113,9 +107,7 @@ const GuestDetails = ({ form, setField }) => {
         <input
           type="checkbox"
           checked={form.agreePolicy}
-          onChange={(e) =>
-            setField("agreePolicy", e.target.checked)
-          }
+          onChange={(e) => setField("agreePolicy", e.target.checked)}
           className="accent-accent w-4 h-4 mt-0.5 shrink-0"
         />
 
@@ -123,9 +115,7 @@ const GuestDetails = ({ form, setField }) => {
           <div className="flex items-center gap-2">
             <FaShieldAlt
               className={`text-xs sm:text-sm shrink-0 ${
-                form.agreePolicy
-                  ? "text-accent"
-                  : "text-gray-400"
+                form.agreePolicy ? "text-accent" : "text-gray-400"
               }`}
             />
 
@@ -135,9 +125,8 @@ const GuestDetails = ({ form, setField }) => {
           </div>
 
           <p className="text-xs text-gray-400 mt-1">
-            By continuing, you agree to our cancellation
-            policy, check-in/check-out times, and terms of
-            service.
+            By continuing, you agree to our cancellation policy,
+            check-in/check-out times, and terms of service.
           </p>
         </div>
       </label>

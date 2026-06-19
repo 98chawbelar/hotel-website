@@ -22,7 +22,7 @@ const CheckRow = ({ icon: Icon, label, price, desc, checked, onChange }) => (
 
         <p className="text-xs text-gray-400 truncate">{desc}</p>
       </div>
-      <p className="text-xs text-gray-200 mt-1">{price.toLocaleString()} MMK</p>
+      <p className="text-xs text-gray-200 mt-1">{price.toLocaleString()} Ks</p>
     </div>
 
     <input

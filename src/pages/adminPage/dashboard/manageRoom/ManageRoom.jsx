@@ -29,7 +29,23 @@ const ManageRooms = () => {
 
   const [imageFile, setimageFile] = useState(null);
   const [editingRoom, setEditingRoom] = useState(null);
-  const [formData, setFormData] = useState(null);
+  const [formData, setFormData] = useState({
+    name: "",
+    category: "",
+    description: "",
+    location: "",
+    roomNumber: "",
+    price: "",
+    beds: "",
+    size: "",
+    status: "available",
+    image: "",
+
+    capacity: {
+      adults: 0,
+      child: 0,
+    },
+  });
 
   const { data: rooms, isLoading, refetch } = useFetchAllRoomsQuery();
 
@@ -79,6 +95,7 @@ const ManageRooms = () => {
       category: room.category,
       description: room.description,
       location: room.location,
+      roomNumber: room.roomNumber,
       price: room.price,
       beds: room.beds,
       size: room.size,
@@ -150,6 +167,7 @@ const ManageRooms = () => {
       data.append("category", formData.category);
       data.append("description", formData.description);
       data.append("location", formData.location);
+      data.append("roomNumber", formData.roomNumber);
       data.append("price", formData.price);
       data.append("beds", formData.beds);
       data.append("size", formData.size);
@@ -218,7 +236,7 @@ const ManageRooms = () => {
             >
               {/* IMAGE */}
               <img
-                src={room.image}
+                src={room.images}
                 alt={room.name}
                 className="w-full h-52 sm:h-56 object-cover"
               />
@@ -271,6 +289,13 @@ const ManageRooms = () => {
                       value={formData.location}
                       onChange={handleChange}
                       placeholder="Location"
+                    />
+                    <FormInput
+                      label="roomNumber"
+                      name="roomNumber"
+                      value={formData.roomNumber}
+                      onChange={handleChange}
+                      placeholder="roomNumber"
                     />
 
                     <FormInput
@@ -411,7 +436,7 @@ const ManageRooms = () => {
                     </p>
 
                     <p className="text-2xl font-bold text-accent mb-4">
-                      {room.price} MMK
+                      {room.basePrice} MMK
                     </p>
 
                     {/* ACTIONS */}

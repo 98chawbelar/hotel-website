@@ -4,15 +4,14 @@ import { FaLocationPin } from "react-icons/fa6";
 
 const RoomCard = ({ room }) => {
   const capacity = room?.capacity;
-  console.log(room);
-  console.log(room.capacity);
+
   return (
     <div className="flex flex-col lg:flex-row gap-8 bg-primary/10 p-5 rounded-2xl">
       {/* Image */}
       <div className="lg:w-1/2">
-        {room?.image ? (
+        {room?.images ? (
           <img
-            src={room.image}
+            src={room.images}
             alt={room?.name}
             className="w-full h-70 object-cover rounded-md"
           />
@@ -59,7 +58,7 @@ const RoomCard = ({ room }) => {
             <p className="text-sm text-white/70 mb-2">Starting From</p>
 
             <h2 className="text-2xl font-bold">
-              {Number(room.price || 0).toLocaleString()} MMK
+              {Number(room.basePrice || 0).toLocaleString()} Ks
             </h2>
 
             <span className="text-sm text-white/70 mb-6">/ Night</span>

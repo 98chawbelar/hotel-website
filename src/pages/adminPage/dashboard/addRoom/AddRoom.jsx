@@ -22,22 +22,36 @@ const AddRoom = () => {
     try {
       const formData = new FormData();
 
+      // MUST MATCH BACKEND
       formData.append("name", data.title);
+
       formData.append("description", data.description);
+
       formData.append("location", data.location);
+
       formData.append("image", imageFile);
+
       formData.append("price", Number(data.price));
 
-      formData.append("capacity[adults]", Number(data.adults));
-      formData.append("capacity[child]", Number(data.child));
+      formData.append(
+        "capacity",
+        JSON.stringify({
+          adults: Number(data.adults),
+          child: Number(data.child),
+        }),
+      );
 
       formData.append("category", data.category);
 
       formData.append("status", data.status);
 
-      formData.append("beds", data.beds);
+      formData.append("beds", Number(data.beds));
 
       formData.append("size", data.size);
+
+      formData.append("roomNumber", data.roomNumber);
+
+      formData.append("trending", data.trending);
 
       await addRoom(formData).unwrap();
 
@@ -47,12 +61,14 @@ const AddRoom = () => {
       });
 
       reset();
+
+      setimageFile(null);
     } catch (error) {
       console.error(error);
 
       Swal.fire({
         icon: "error",
-        title: "Failed to add room",
+        title: error?.data?.message || "Failed to add room",
       });
     }
   };
@@ -63,7 +79,7 @@ const AddRoom = () => {
     }
   };
   return (
-    <div className="max-w-lg mx-auto  p-6 bg-secondary sm:p-8 mb-10 rounded-md shadow-2xl">
+    <div className="max-w-lg mx-auto  p-6 bg-linear-to-r  from-transparent via-primary/20 to-transparent bg-primary/40 sm:p-8 mb-10 rounded-md shadow-4xl">
       <PageHeader title={"Add New Room"} subtitle={"Add new room for hotel."} />
       {/* Form starts here */}
       <form onSubmit={handleSubmit(onSubmit)}>
@@ -120,6 +136,14 @@ const AddRoom = () => {
           placeholder="1,2,3"
           register={register}
         />
+        {/* Room Number */}
+        <FormInput
+          label="Room Number"
+          name="roomNumber"
+          type="number"
+          placeholder="101"
+          register={register}
+        />
         {/* Price */}
         <FormInput
           label="Price"
@@ -173,7 +197,7 @@ const AddRoom = () => {
         {/* Cover Image Upload */}
         <ImageUpload
           title="Cover Image"
-          image={imageFile}
+          images={imageFile}
           onChange={handleFileChange}
         />
 

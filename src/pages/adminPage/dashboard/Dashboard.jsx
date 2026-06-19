@@ -51,12 +51,12 @@ const Dashboard = () => {
   if (loading) return <Loading />;
 
   return (
-    <section className="relative min-h-screen overflow-hidden rounded-xl bg-primary px-4 sm:px-6 lg:px-8 py-8">
+    <section className="relative  min-h-screen overflow-hidden rounded-xl bg-gray-600 px-4 sm:px-6 lg:px-8 py-8">
       {/* BACKGROUND BLUR */}
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-175 h-175 bg-secondary/10 blur-[180px] rounded-full" />
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-175 h-175 bg-primary/30 blur-[180px] rounded-full" />
 
       {/* TOP LINE */}
-      <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-secondary/30 to-transparent" />
+      <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-primary/30 to-transparent" />
 
       <div className="relative z-10 max-w-400 mx-auto">
         {/* HEADER */}
@@ -70,12 +70,12 @@ const Dashboard = () => {
         {/* HERO OVERVIEW */}
         <div className="grid grid-cols-1 xl:grid-cols-3 gap-6 mb-8">
           {/* LEFT */}
-          <div className="xl:col-span-2 bg-secondary/10 backdrop-blur-2xl border border-white/5 rounded-[32px] p-8 shadow-2xl overflow-hidden relative">
-            <div className="absolute top-0 right-0 w-72 h-72 bg-accent/10 blur-[120px] rounded-full" />
+          <div className="xl:col-span-2   border-0 rounded-[32px] p-8 shadow-2xl overflow-hidden relative">
+            <div className="absolute top-0 right-0 w-72 h-72  rounded-full" />
 
             <div className="relative z-10">
               <div className="flex items-center gap-4 mb-8">
-                <div className="w-16 h-16 rounded-3xl bg-accent/10 flex items-center justify-center">
+                <div className="w-16 h-16 rounded-3xl  flex items-center justify-center">
                   <FaHotel className="text-accent text-3xl" />
                 </div>
 
@@ -96,8 +96,8 @@ const Dashboard = () => {
               </p>
 
               {/* QUICK STATS */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-5 mt-10">
-                <div className="bg-white/5 border border-white/5 rounded-3xl p-5">
+              <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-5 mt-10">
+                <div className=" rounded-3xl p-5">
                   <h2 className="text-3xl font-black text-accent">
                     {data.totalRooms}
                   </h2>
@@ -105,7 +105,7 @@ const Dashboard = () => {
                   <p className="text-secondary/55 mt-2 text-sm">Total Rooms</p>
                 </div>
 
-                <div className="bg-white/5 border border-white/5 rounded-3xl p-5">
+                <div className=" border-white/5 rounded-3xl p-5">
                   <h2 className="text-3xl font-black text-green-400">
                     {data.availableRooms}
                   </h2>
@@ -113,7 +113,7 @@ const Dashboard = () => {
                   <p className="text-secondary/55 mt-2 text-sm">Available</p>
                 </div>
 
-                <div className="bg-white/5 border border-white/5 rounded-3xl p-5">
+                <div className=" border-white/5 rounded-3xl p-5">
                   <h2 className="text-3xl font-black text-red-400">
                     {data.reservedRooms}
                   </h2>
@@ -121,7 +121,7 @@ const Dashboard = () => {
                   <p className="text-secondary/55 mt-2 text-sm">Reserved</p>
                 </div>
 
-                <div className="bg-white/5 border border-white/5 rounded-3xl p-5">
+                <div className=" rounded-3xl p-5">
                   <h2 className="text-3xl font-black text-primary">
                     {data.totalBookings}
                   </h2>
@@ -133,7 +133,7 @@ const Dashboard = () => {
           </div>
 
           {/* RIGHT PANEL */}
-          <div className="bg-secondary/10 backdrop-blur-2xl border border-white/5 rounded-[32px] p-8 shadow-2xl">
+          <div className="bg-secondary/10 backdrop-blur-2xl border border-gray-600 rounded-4xl p-8 shadow-2xl">
             <div className="flex items-center justify-between mb-8">
               <div>
                 <p className="uppercase tracking-[4px] text-accent text-xs mb-2">
@@ -150,28 +150,28 @@ const Dashboard = () => {
               </div>
             </div>
 
-            <div className="bg-white/5 rounded-[28px] p-6 border border-white/5">
-              <h1 className="text-5xl font-black text-accent break-words">
+            <div className="bg-white/5 rounded-[28px] p-6 ">
+              <h1 className="text-3xl font-black text-accent wrap-break-word">
                 {data.totalRevenue}
               </h1>
 
-              <p className="text-secondary/55 mt-2">MMK Revenue Generated</p>
+              <p className="text-secondary/45  mt-2">MMK Revenue Generated</p>
             </div>
 
             <div className="space-y-4 mt-8">
-              <div className="flex items-center justify-between bg-white/5 border border-white/5 rounded-2xl px-5 py-4">
+              <div className="flex items-center border border-gray-600 justify-betwee shadow-lg rounded-2xl px-5 py-4">
                 <span className="text-secondary/60">Monthly Growth</span>
 
                 <span className="text-green-400 font-bold">+12%</span>
               </div>
 
-              <div className="flex items-center justify-between bg-white/5 border border-white/5 rounded-2xl px-5 py-4">
+              <div className="flex items-center justify-between  border border-gray-600 rounded-2xl px-5 py-4">
                 <span className="text-secondary/60">Occupancy Rate</span>
 
                 <span className="text-accent font-bold">89%</span>
               </div>
 
-              <div className="flex items-center justify-between bg-white/5 border border-white/5 rounded-2xl px-5 py-4">
+              <div className="flex items-center justify-between border border-gray rounded-2xl px-5 py-4">
                 <span className="text-secondary/60">Performance</span>
 
                 <span className="text-primary font-bold">Excellent</span>
@@ -181,7 +181,7 @@ const Dashboard = () => {
         </div>
 
         {/* STAT CARDS */}
-        <section className="grid grid-cols-1 md:grid-cols-2 2xl:grid-cols-4 gap-6">
+        <section className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
           <StatCard
             title="Total Rooms"
             value={data.totalRooms}
@@ -226,7 +226,7 @@ const Dashboard = () => {
         {/* CHART + SUMMARY */}
         <section className="grid grid-cols-1 xl:grid-cols-3 gap-6 mt-10">
           {/* CHART */}
-          <div className="xl:col-span-2 bg-secondary/10 backdrop-blur-2xl border border-white/5 rounded-[32px] p-6 shadow-2xl">
+          <div className="xl:col-span-2   rounded-[32px] p-6 shadow-2xl">
             <div className="flex items-center justify-between mb-8">
               <div>
                 <p className="uppercase tracking-[4px] text-accent text-xs mb-2">
@@ -243,13 +243,13 @@ const Dashboard = () => {
               </div>
             </div>
 
-            <div className="bg-white/5 border border-white/5 rounded-[28px] p-5">
+            <div className=" rounded-[28px] p-5">
               <RevenueChart />
             </div>
           </div>
 
           {/* SUMMARY */}
-          <div className="bg-secondary/10 backdrop-blur-2xl border border-white/5 rounded-[32px] p-6 shadow-2xl">
+          <div className=" rounded-[32px] p-6 shadow-2xl">
             <div className="mb-8">
               <p className="uppercase tracking-[4px] text-accent text-xs mb-2">
                 Hotel Summary
@@ -261,7 +261,7 @@ const Dashboard = () => {
             </div>
 
             <div className="space-y-5">
-              <div className="bg-white/5 border border-white/5 rounded-3xl p-5">
+              <div className=" rounded-3xl p-5">
                 <p className="text-secondary/55 text-sm mb-2">Total Bookings</p>
 
                 <h3 className="text-3xl font-black text-secondary">
@@ -269,7 +269,7 @@ const Dashboard = () => {
                 </h3>
               </div>
 
-              <div className="bg-white/5 border border-white/5 rounded-3xl p-5">
+              <div className=" rounded-3xl p-5">
                 <p className="text-secondary/55 text-sm mb-2">
                   Available Rooms
                 </p>
@@ -279,7 +279,7 @@ const Dashboard = () => {
                 </h3>
               </div>
 
-              <div className="bg-white/5 border border-white/5 rounded-3xl p-5">
+              <div className=" rounded-3xl p-5">
                 <p className="text-secondary/55 text-sm mb-2">Reserved Rooms</p>
 
                 <h3 className="text-3xl font-black text-red-400">
@@ -287,7 +287,7 @@ const Dashboard = () => {
                 </h3>
               </div>
 
-              <div className="bg-white/5 border border-white/5 rounded-3xl p-5">
+              <div className=" rounded-3xl p-5">
                 <p className="text-secondary/55 text-sm mb-2">Total Revenue</p>
 
                 <h3 className="text-3xl font-black text-accent">

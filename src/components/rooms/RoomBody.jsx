@@ -61,7 +61,7 @@ const RoomBody = () => {
   }
 
   return (
-    <div className="max-w-7xl mx-auto px-6 py-10 mt-10">
+    <div className="max-w-7xl mx-auto  px-4 sm:px-6 lg:px-8 py-10 mt-2">
       <div className="bg-primary shadow-md rounded-md overflow-hidden">
         {/* ================= HEADER ================= */}
         <div className="px-6 md:px-8 py-6 border-b border-gray-200">

@@ -91,6 +91,9 @@ const AdminRegister = () => {
               title="Secure Access"
               value="Protected"
               icon={<FaLock />}
+              borderColor="border-accent"
+              iconBg="bg-secondary/10"
+              iconColor="text-accent"
             />
 
             <StatCard title="New Admin" value="Create" icon={<FaUserPlus />} />
@@ -122,7 +125,7 @@ const AdminRegister = () => {
                 type="text"
                 placeholder="Enter username"
                 {...register("username", {
-                  required: "Username is required",
+                  required: "username is required",
                 })}
                 className="w-full bg-white/5 border border-white/10 rounded-2xl px-5 py-4 text-secondary placeholder:text-secondary/40 focus:outline-none focus:border-accent transition"
               />

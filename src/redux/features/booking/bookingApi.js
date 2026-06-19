@@ -12,14 +12,12 @@ const axiosBaseQuery =
         params,
       });
 
-      return {
-        data: result.data,
-      };
-    } catch (axiosError) {
+      return { data: result.data };
+    } catch (error) {
       return {
         error: {
-          status: axiosError.response?.status,
-          data: axiosError.response?.data || axiosError.message,
+          status: error.response?.status,
+          data: error.response?.data || error.message,
         },
       };
     }
@@ -33,7 +31,9 @@ const bookingApi = createApi({
   tagTypes: ["Bookings"],
 
   endpoints: (builder) => ({
-    // ================= PRICE PREVIEW =================
+    // ==========================
+    // PRICE PREVIEW
+    // ==========================
     calculatePricePreview: builder.mutation({
       query: ({ roomId, checkIn, checkOut, extrasTotal = 0 }) => ({
         url: "/api/bookings/price-preview",
@@ -47,7 +47,9 @@ const bookingApi = createApi({
       }),
     }),
 
-    // ================= CREATE BOOKING =================
+    // ==========================
+    // CREATE BOOKING
+    // ==========================
     createBooking: builder.mutation({
       query: (bookingData) => ({
         url: "/api/bookings",
@@ -58,37 +60,51 @@ const bookingApi = createApi({
       invalidatesTags: ["Bookings"],
     }),
 
-    // ================= GET BOOKINGS BY EMAIL =================
-    fetchBookingsByEmail: builder.query({
-      query: (email) => ({
-        url: `/api/bookings/email/${email}`,
-        method: "GET",
-      }),
-
-      providesTags: ["Bookings"],
-    }),
-
-    // ================= GET ALL BOOKINGS =================
+    // ==========================
+    // GET ALL BOOKINGS
+    // ==========================
     fetchBookingsAll: builder.query({
       query: () => ({
         url: "/api/bookings",
         method: "GET",
       }),
 
+      transformResponse: (response) => response?.bookings || response,
+
       providesTags: ["Bookings"],
     }),
 
-    // ================= GET SINGLE BOOKING =================
+    // ==========================
+    // GET SINGLE BOOKING
+    // ==========================
     fetchBookingById: builder.query({
       query: (id) => ({
         url: `/api/bookings/${id}`,
         method: "GET",
       }),
 
+      transformResponse: (response) => response?.booking || response,
+
       providesTags: (result, error, id) => [{ type: "Bookings", id }],
     }),
 
-    // ================= UPDATE BOOKING STATUS =================
+    // ==========================
+    // GET BOOKINGS BY EMAIL
+    // ==========================
+    fetchBookingsByEmail: builder.query({
+      query: (email) => ({
+        url: `/api/bookings/email/${email}`,
+        method: "GET",
+      }),
+
+      transformResponse: (response) => response?.bookings || response,
+
+      providesTags: ["Bookings"],
+    }),
+
+    // ==========================
+    // UPDATE STATUS
+    // ==========================
     updateBookingStatus: builder.mutation({
       query: ({ id, bookingStatus }) => ({
         url: `/api/bookings/${id}/status`,
@@ -101,7 +117,9 @@ const bookingApi = createApi({
       invalidatesTags: ["Bookings"],
     }),
 
-    // ================= CANCEL BOOKING =================
+    // ==========================
+    // CANCEL BOOKING
+    // ==========================
     cancelBooking: builder.mutation({
       query: (id) => ({
         url: `/api/bookings/${id}/cancel`,
@@ -111,7 +129,9 @@ const bookingApi = createApi({
       invalidatesTags: ["Bookings"],
     }),
 
-    // ================= DELETE BOOKING =================
+    // ==========================
+    // DELETE BOOKING
+    // ==========================
     deleteBooking: builder.mutation({
       query: (id) => ({
         url: `/api/bookings/${id}`,
@@ -126,9 +146,9 @@ const bookingApi = createApi({
 export const {
   useCalculatePricePreviewMutation,
   useCreateBookingMutation,
-  useFetchBookingsByEmailQuery,
   useFetchBookingsAllQuery,
   useFetchBookingByIdQuery,
+  useFetchBookingsByEmailQuery,
   useUpdateBookingStatusMutation,
   useCancelBookingMutation,
   useDeleteBookingMutation,
