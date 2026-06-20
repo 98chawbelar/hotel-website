@@ -47,7 +47,9 @@ const ManageRooms = () => {
     },
   });
 
-  const { data: rooms, isLoading, refetch } = useFetchAllRoomsQuery();
+  const { data, isLoading, refetch } = useFetchAllRoomsQuery();
+
+  const rooms = data?.rooms || [];
 
   const [deleteRoom] = useDeleteRoomMutation();
 
@@ -100,7 +102,7 @@ const ManageRooms = () => {
       beds: room.beds,
       size: room.size,
       status: room.status,
-      image: room.image,
+      image: room.images,
 
       capacity: {
         adults: room.capacity?.adults,

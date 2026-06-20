@@ -15,23 +15,24 @@ const AddRoom = () => {
     formState: { errors },
     reset,
   } = useForm();
-  const [imageFile, setimageFile] = useState(null);
+  const [imageFiles, setImageFiles] = useState([]);
   const [addRoom, { isLoading }] = useAddRoomMutation();
 
   const onSubmit = async (data) => {
     try {
       const formData = new FormData();
 
-      // MUST MATCH BACKEND
       formData.append("name", data.title);
 
       formData.append("description", data.description);
 
       formData.append("location", data.location);
 
-      formData.append("image", imageFile);
+      imageFiles.forEach((file) => {
+        formData.append("images", file);
+      });
 
-      formData.append("price", Number(data.price));
+      formData.append("basePrice", Number(data.price));
 
       formData.append(
         "capacity",
@@ -41,7 +42,7 @@ const AddRoom = () => {
         }),
       );
 
-      formData.append("category", data.category);
+      formData.append("roomType", data.category.toLowerCase());
 
       formData.append("status", data.status);
 
@@ -62,21 +63,20 @@ const AddRoom = () => {
 
       reset();
 
-      setimageFile(null);
+      setImageFiles([]);
     } catch (error) {
-      console.error(error);
+      console.log(error);
 
       Swal.fire({
         icon: "error",
-        title: error?.data?.message || "Failed to add room",
+        title: error?.data?.message || "Failed",
       });
     }
   };
   const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setimageFile(file);
-    }
+    const files = Array.from(e.target.files);
+
+    setImageFiles(files);
   };
   return (
     <div className="max-w-lg mx-auto  p-6 bg-linear-to-r  from-transparent via-primary/20 to-transparent bg-primary/40 sm:p-8 mb-10 rounded-md shadow-4xl">
@@ -197,7 +197,7 @@ const AddRoom = () => {
         {/* Cover Image Upload */}
         <ImageUpload
           title="Cover Image"
-          images={imageFile}
+          images={imageFiles}
           onChange={handleFileChange}
         />
 
