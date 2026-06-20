@@ -79,138 +79,146 @@ const AddRoom = () => {
     setImageFiles(files);
   };
   return (
-    <div className="max-w-lg mx-auto  p-6 bg-linear-to-r  from-transparent via-primary/20 to-transparent bg-primary/40 sm:p-8 mb-10 rounded-md shadow-4xl">
-      <PageHeader title={"Add New Room"} subtitle={"Add new room for hotel."} />
-      {/* Form starts here */}
-      <form onSubmit={handleSubmit(onSubmit)}>
-        {/* Reusable Input Field for Title */}
-        <FormInput
-          label="Title"
-          name="title"
-          placeholder="Enter room title"
-          register={register}
+    <section className="relative min-h-screen overflow-hidden rounded-[32px] bg-gray-600 px-4 sm:px-6 lg:px-8 py-8">
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 size-[700px] bg-primary/20 blur-[180px] rounded-full" />
+      <div className="relative z-10 max-w-[1600px] mx-auto">
+        <PageHeader
+          title={"Add New Room"}
+          subtitle={"Add new room for hotel."}
         />
+        {/* Form starts here */}
+        <form onSubmit={handleSubmit(onSubmit)}>
+          {/* Reusable Input Field for Title */}
+          <FormInput
+            label="Title"
+            name="title"
+            placeholder="Enter room title"
+            register={register}
+          />
 
-        {/* Reusable Textarea for Description */}
-        <FormInput
-          label="Description"
-          name="description"
-          placeholder="Enter room description"
-          type="textarea"
-          register={register}
-        />
-        {/* Reusable Textarea for Location */}
-        <FormInput
-          label="Location"
-          name="location"
-          placeholder="Enter room location"
-          type="textarea"
-          register={register}
-        />
+          {/* Reusable Textarea for Description */}
+          <FormInput
+            label="Description"
+            name="description"
+            placeholder="Enter room description"
+            type="textarea"
+            register={register}
+          />
+          {/* Reusable Textarea for Location */}
+          <FormInput
+            label="Location"
+            name="location"
+            placeholder="Enter room location"
+            type="textarea"
+            register={register}
+          />
 
-        {/* Reusable Select Field for Category */}
-        <SelectField
-          label="Category"
-          name="category"
-          options={[
-            { value: "Superior King", label: "Superior King Room" },
-            { value: "Superior Twin", label: "Superior Twin Room" },
-            { value: "Deluxe King", label: "Deluxe King Room" },
-            { value: "Deluxe Twin", label: "Deluxe Twin Room" },
-            { value: "Family", label: "Family Room" },
+          {/* Reusable Select Field for Category */}
+          <SelectField
+            label="Category"
+            name="category"
+            options={[
+              { value: "Superior King", label: "Superior King Room" },
+              { value: "Superior Twin", label: "Superior Twin Room" },
+              { value: "Deluxe King", label: "Deluxe King Room" },
+              { value: "Deluxe Twin", label: "Deluxe Twin Room" },
+              { value: "Family", label: "Family Room" },
 
-            // Add more options as needed
-          ]}
-          register={register}
-        />
-        <FormInput
-          label="Adults"
-          name="adults"
-          placeholder="1,2,3"
-          register={register}
-        />
+              // Add more options as needed
+            ]}
+            register={register}
+          />
+          <FormInput
+            label="Adults"
+            name="adults"
+            placeholder="1,2,3"
+            register={register}
+          />
 
-        <FormInput
-          label="Child"
-          name="child"
-          placeholder="1,2,3"
-          register={register}
-        />
-        {/* Room Number */}
-        <FormInput
-          label="Room Number"
-          name="roomNumber"
-          type="number"
-          placeholder="101"
-          register={register}
-        />
-        {/* Price */}
-        <FormInput
-          label="Price"
-          name="price"
-          type="number"
-          placeholder="Room Price"
-          register={register}
-        />
-        {/* Beds */}
-        <FormInput
-          label="Beds"
-          name="beds"
-          type="number"
-          placeholder="How many beds?"
-          register={register}
-        />
+          <FormInput
+            label="Child"
+            name="child"
+            placeholder="1,2,3"
+            register={register}
+          />
+          {/* Room Number */}
+          <FormInput
+            label="Room Number"
+            name="roomNumber"
+            type="number"
+            placeholder="101"
+            register={register}
+          />
+          {/* Price */}
+          <FormInput
+            label="Price"
+            name="price"
+            type="number"
+            placeholder="Room Price"
+            register={register}
+          />
+          {/* Beds */}
+          <FormInput
+            label="Beds"
+            name="beds"
+            type="number"
+            placeholder="How many beds?"
+            register={register}
+          />
 
-        {/* Room Size */}
-        <FormInput
-          label="Room Size"
-          name="size"
-          placeholder="25 sqm"
-          register={register}
-        />
+          {/* Room Size */}
+          <FormInput
+            label="Room Size"
+            name="size"
+            placeholder="25 sqm"
+            register={register}
+          />
 
-        {/* Status */}
-        <SelectField
-          label="Room Status"
-          name="status"
-          options={[
-            { value: "available", label: "Available" },
-            { value: "reserved", label: "Reserved" },
-          ]}
-          register={register}
-        />
+          {/* Status */}
+          <SelectField
+            label="Room Status"
+            name="status"
+            options={[
+              { value: "available", label: "Available" },
+              { value: "reserved", label: "Reserved" },
+            ]}
+            register={register}
+          />
 
-        {/* Trending Checkbox */}
-        <div className="mb-4">
-          <label className="inline-flex items-center">
-            <input
-              type="checkbox"
-              {...register("trending")}
-              className="rounded  focus-visible:not-enable "
-            />
-            <span className="ml-2 text-sm font-semibold text-gray-400">
-              Most Tranding Room
-            </span>
-          </label>
-        </div>
+          {/* Trending Checkbox */}
+          <div className="mb-4">
+            <label className="inline-flex items-center">
+              <input
+                type="checkbox"
+                {...register("trending")}
+                className="rounded  focus-visible:not-enable "
+              />
+              <span className="ml-2 text-sm font-semibold text-gray-400">
+                Most Tranding Room
+              </span>
+            </label>
+          </div>
 
-        {/* Cover Image Upload */}
-        <ImageUpload
-          title="Cover Image"
-          images={imageFiles}
-          onChange={handleFileChange}
-        />
+          {/* Cover Image Upload */}
+          <ImageUpload
+            title="Cover Image"
+            images={imageFiles}
+            onChange={handleFileChange}
+          />
 
-        {/* Submit Button */}
-        <SubmitButton
-          type="submit"
-          loading={isLoading}
-          loadingText="Adding Room..."
-        >
-          Add Room
-        </SubmitButton>
-      </form>
-    </div>
+          {/* Submit Button */}
+          <SubmitButton
+            type="submit"
+            loading={isLoading}
+            loadingText="Adding Room..."
+          >
+            Add Room
+          </SubmitButton>
+        </form>
+
+        {/* content */}
+      </div>
+    </section>
   );
 };
 

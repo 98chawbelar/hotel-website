@@ -13,40 +13,30 @@ import Loading from "../../../components/Loading";
 import api from "../../../api/client.api";
 import PageHeader from "../components/PageHeader";
 import StatCard from "../components/StatCard";
+import { useFetchAllRoomsQuery } from "../../../redux/features/rooms/roomsApi";
+import { useFetchBookingsAllQuery } from "../../../redux/features/booking/bookingApi";
+import { useGetRevenueAnalyticsQuery } from "../../../redux/features/revenue/revenueApi";
 
 const Dashboard = () => {
-  const [loading, setLoading] = useState(true);
-  const [data, setData] = useState({});
-  const [avatar, setAvatar] = useState(null);
+  const { data: roomsData, isLoading: roomsLoading } = useFetchAllRoomsQuery();
 
-  const handleImageChange = (e) => {
-    setAvatar(e.target.files[0]);
-  };
+  const { data: bookingsData, isLoading: bookingsLoading } =
+    useFetchBookingsAllQuery();
 
-  useEffect(() => {
-    const fetchDashboardData = async () => {
-      try {
-        const token = localStorage.getItem("token");
+  const { data: revenueData, isLoading: revenueLoading } =
+    useGetRevenueAnalyticsQuery();
 
-        const response = await api.get("/api/admin");
+  const rooms = roomsData?.rooms || [];
+  const bookings = Array.isArray(bookingsData) ? bookingsData : [];
+  const totalRooms = rooms.length;
+  const totalBookings = bookings.length;
+  const reservedRooms = bookings.filter((booking) =>
+    ["pending", "confirmed", "checked_in"].includes(booking.bookingStatus),
+  ).length;
+  const availableRooms = Math.max(totalRooms - reservedRooms, 0);
+  const totalRevenue = revenueData?.totalRevenue || 0;
 
-        setData(response.data);
-      } catch (error) {
-        console.error("Dashboard Error:", error);
-
-        if (error.response?.status === 401 || error.response?.status === 403) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("admin");
-
-          window.location.href = "/admin-login";
-        }
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchDashboardData();
-  }, []);
+  const loading = roomsLoading || bookingsLoading || revenueLoading;
 
   if (loading) return <Loading />;
 
@@ -99,7 +89,7 @@ const Dashboard = () => {
               <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-5 mt-10">
                 <div className=" rounded-3xl p-5">
                   <h2 className="text-3xl font-black text-accent">
-                    {data.totalRooms}
+                    {totalRooms || 0}
                   </h2>
 
                   <p className="text-secondary/55 mt-2 text-sm">Total Rooms</p>
@@ -107,7 +97,7 @@ const Dashboard = () => {
 
                 <div className=" border-white/5 rounded-3xl p-5">
                   <h2 className="text-3xl font-black text-green-400">
-                    {data.availableRooms}
+                    {availableRooms || 0}
                   </h2>
 
                   <p className="text-secondary/55 mt-2 text-sm">Available</p>
@@ -115,7 +105,7 @@ const Dashboard = () => {
 
                 <div className=" border-white/5 rounded-3xl p-5">
                   <h2 className="text-3xl font-black text-red-400">
-                    {data.reservedRooms}
+                    {reservedRooms || 0}
                   </h2>
 
                   <p className="text-secondary/55 mt-2 text-sm">Reserved</p>
@@ -123,7 +113,7 @@ const Dashboard = () => {
 
                 <div className=" rounded-3xl p-5">
                   <h2 className="text-3xl font-black text-primary">
-                    {data.totalBookings}
+                    {totalBookings || 0}
                   </h2>
 
                   <p className="text-secondary/55 mt-2 text-sm">Bookings</p>
@@ -133,58 +123,13 @@ const Dashboard = () => {
           </div>
 
           {/* RIGHT PANEL */}
-          <div className="bg-secondary/10 backdrop-blur-2xl border border-gray-600 rounded-4xl p-8 shadow-2xl">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <p className="uppercase tracking-[4px] text-accent text-xs mb-2">
-                  Revenue
-                </p>
-
-                <h2 className="text-3xl font-black text-secondary">
-                  Total Income
-                </h2>
-              </div>
-
-              <div className="w-14 h-14 rounded-2xl bg-accent/10 flex items-center justify-center">
-                <FaMoneyBillWave className="text-accent text-2xl" />
-              </div>
-            </div>
-
-            <div className="bg-white/5 rounded-[28px] p-6 ">
-              <h1 className="text-3xl font-black text-accent wrap-break-word">
-                {data.totalRevenue}
-              </h1>
-
-              <p className="text-secondary/45  mt-2">MMK Revenue Generated</p>
-            </div>
-
-            <div className="space-y-4 mt-8">
-              <div className="flex items-center border border-gray-600 justify-betwee shadow-lg rounded-2xl px-5 py-4">
-                <span className="text-secondary/60">Monthly Growth</span>
-
-                <span className="text-green-400 font-bold">+12%</span>
-              </div>
-
-              <div className="flex items-center justify-between  border border-gray-600 rounded-2xl px-5 py-4">
-                <span className="text-secondary/60">Occupancy Rate</span>
-
-                <span className="text-accent font-bold">89%</span>
-              </div>
-
-              <div className="flex items-center justify-between border border-gray rounded-2xl px-5 py-4">
-                <span className="text-secondary/60">Performance</span>
-
-                <span className="text-primary font-bold">Excellent</span>
-              </div>
-            </div>
-          </div>
         </div>
 
         {/* STAT CARDS */}
         <section className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-4 gap-6">
           <StatCard
             title="Total Rooms"
-            value={data.totalRooms}
+            value={totalRooms}
             icon={<FaBed />}
             borderColor="border-accent"
             iconBg="bg-accent/60"
@@ -195,7 +140,11 @@ const Dashboard = () => {
 
           <StatCard
             title="Total Revenue"
-            value={`${data.totalRevenue} MMK`}
+            value={
+              totalRevenue > 0
+                ? `${totalRevenue.toLocaleString()} Ks`
+                : "No Revenue"
+            }
             icon={<FaMoneyBillWave />}
             borderColor="border-green-500"
             iconBg="bg-green-500/10"
@@ -206,7 +155,7 @@ const Dashboard = () => {
 
           <StatCard
             title="Available Rooms"
-            value={data.availableRooms}
+            value={availableRooms}
             icon={<FaDoorOpen />}
             borderColor="border-primary/60"
             iconBg="bg-primary/5"
@@ -215,7 +164,7 @@ const Dashboard = () => {
 
           <StatCard
             title="Reserved Rooms"
-            value={data.reservedRooms}
+            value={reservedRooms}
             icon={<FaDoorClosed />}
             borderColor="border-red-400"
             iconBg="bg-red-500/10"
@@ -265,7 +214,7 @@ const Dashboard = () => {
                 <p className="text-secondary/55 text-sm mb-2">Total Bookings</p>
 
                 <h3 className="text-3xl font-black text-secondary">
-                  {data?.totalBookings}
+                  {totalBookings}
                 </h3>
               </div>
 
@@ -275,7 +224,7 @@ const Dashboard = () => {
                 </p>
 
                 <h3 className="text-3xl font-black text-green-400">
-                  {data?.availableRooms}
+                  {availableRooms}
                 </h3>
               </div>
 
@@ -283,7 +232,7 @@ const Dashboard = () => {
                 <p className="text-secondary/55 text-sm mb-2">Reserved Rooms</p>
 
                 <h3 className="text-3xl font-black text-red-400">
-                  {data?.reservedRooms}
+                  {reservedRooms}
                 </h3>
               </div>
 
@@ -291,7 +240,9 @@ const Dashboard = () => {
                 <p className="text-secondary/55 text-sm mb-2">Total Revenue</p>
 
                 <h3 className="text-3xl font-black text-accent">
-                  {data?.totalRevenue} MMK
+                  {totalRevenue > 0
+                    ? `${totalRevenue.toLocaleString()} Ks`
+                    : "No Revenue"}
                 </h3>
               </div>
             </div>
