@@ -78,19 +78,6 @@ export const facilitiesApi = createApi({
 
       invalidatesTags: ["Facilities"],
     }),
-
-    // DELETE FACILITY
-    // DELETE /api/facilities/:id
-
-    deleteFacilities: builder.mutation({
-      query: (id) => ({
-        url: `/api/facilities/${id}`,
-
-        method: "DELETE",
-      }),
-
-      invalidatesTags: ["Facilities"],
-    }),
   }),
 });
 
@@ -100,8 +87,6 @@ export const {
   useCreateFacilitiesMutation,
 
   useUpdateFacilitiesMutation,
-
-  useDeleteFacilitiesMutation,
 } = facilitiesApi;
 
 export default facilitiesApi;
