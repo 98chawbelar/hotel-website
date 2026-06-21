@@ -9,24 +9,28 @@ import { Autoplay, EffectFade } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/effect-fade";
 import "swiper/css/pagination";
-
-import { assets } from "../../assets/assets";
+import { useFetchFacilitiesQuery } from "../../redux/features/facilities/facilitiesApi";
+import getBaseUrl from "../../utils/baseURL";
 
 const FacilitiesHeader = () => {
-  const facilitySlides = [
-    assets.gym,
-    assets.gym_1,
-    assets.gym_2,
-    assets.pool,
-    assets.restaurant,
-    assets.restaurant_1,
-    assets.breakfast,
-    assets.american_breakfast,
-    assets.burmese_breakfast,
-    assets.laundry,
-    assets.laundry_1,
-    assets.laundry_2,
-  ];
+  const { data: facilitiesData } = useFetchFacilitiesQuery();
+  const BASE_URL = getBaseUrl();
+  const facilities =
+    facilitiesData?.facilities || facilitiesData?.data || facilitiesData || [];
+
+  const facilitySlides = facilities.flatMap((facility) =>
+    (facility.images || []).map((img) => {
+      if (typeof img === "string") {
+        return img.startsWith("http")
+          ? img
+          : `${BASE_URL}/${img.replace(/^\/+/, "")}`;
+      }
+
+      return (
+        img.url || img.path || img.secure_url || "https://placehold.co/1200x800"
+      );
+    }),
+  );
 
   return (
     <section className="relative h-screen overflow-hidden">

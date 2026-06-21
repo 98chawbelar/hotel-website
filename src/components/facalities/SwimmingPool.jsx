@@ -1,180 +1,200 @@
 import React from "react";
-import { assets } from "../../assets/assets";
 
-const facilities = [
-  {
-    title: "Luxury Swimming Pool",
-    description:
-      "Enjoy a peaceful and refreshing swimming experience surrounded by elegant Burmese-inspired decoration, crystal-clear water, and a relaxing resort atmosphere designed for comfort and leisure.",
-    image: assets.pool,
-    alt: "Swimming Pool",
-  },
-  {
-    title: "Beautiful Garden Area",
-    description:
-      "Relax in our beautifully designed garden space featuring tropical greenery, natural landscapes, and a calm outdoor atmosphere inspired by the natural beauty of Mogok.",
-    image: assets.garden,
-    alt: "Hotel Garden",
-  },
-  {
-    title: "Secure Car Parking",
-    description:
-      "Kandaw 101 Hotel provides spacious and secure parking facilities for guests, ensuring convenience, safety, and easy access throughout your stay.",
-    image: assets.parking,
-    alt: "Hotel Parking",
-  },
-];
-
-const facilityCards = [
-  {
-    title: "Free Pool Access",
-    description:
-      "Complimentary swimming pool access for all hotel guests.",
-  },
-  {
-    title: "Relaxing Garden",
-    description:
-      "Peaceful outdoor garden space perfect for relaxation and photography.",
-  },
-  {
-    title: "Free Parking",
-    description:
-      "Safe and convenient parking area available for hotel guests.",
-  },
-  {
-    title: "24/7 Security",
-    description:
-      "Professional security service ensuring a safe environment.",
-  },
-];
+import Loading from "../Loading";
+import getBaseUrl from "../../utils/baseURL";
+import { useFetchFacilitiesQuery } from "../../redux/features/facilities/facilitiesApi";
 
 const SwimmingPool = () => {
-  return (
-    <div className="w-full">
+  const { data, isLoading } = useFetchFacilitiesQuery();
 
-      {/* Hero Section */}
-      <div className="relative w-full h-[55vh] md:h-[75vh] overflow-hidden">
+  const facilities = data?.facilities || data?.data || data || [];
+
+  const BASE_URL = getBaseUrl();
+
+  const getImageUrl = (img) => {
+    if (!img) return "https://placehold.co/800x600";
+
+    if (typeof img === "object") {
+      img = img.url || img.path || img.secure_url || "";
+    }
+
+    if (!img) return "https://placehold.co/800x600";
+
+    if (img.startsWith("http")) return img;
+
+    return `${BASE_URL}/${img.replace(/^\/+/, "")}`;
+  };
+
+  const pool = facilities.find(
+    (item) =>
+      item.name?.toLowerCase().includes("pool") ||
+      item.slug?.toLowerCase().includes("pool"),
+  );
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (!pool) {
+    return (
+      <div className="py-20 text-center">Swimming Pool data not found</div>
+    );
+  }
+
+  return (
+    <div className="w-full overflow-hidden bg-primary/50">
+      {/* ================= HERO ================= */}
+
+      <section className="relative h-[65vh] md:h-[80vh]">
         <img
-          src={assets.pool}
-          alt="Hotel Facilities"
+          src={getImageUrl(pool.images?.[0])}
+          alt={pool.name}
           className="w-full h-full object-cover"
         />
 
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-          <div className="text-center px-4">
-            <h1 className="text-white text-4xl md:text-6xl font-serif font-bold">
-              Luxury Hotel Facilities
-            </h1>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-black/20 flex items-center">
+          <div className="max-w-7xl mx-auto px-6 w-full">
+            <div className="max-w-3xl">
+              <p className="uppercase tracking-[5px] text-accent text-sm mb-5">
+                Kandaw101 Facilities
+              </p>
 
-            <p className="text-white mt-4 text-lg md:text-2xl">
-              Relax, Refresh & Enjoy Your Stay at Kandaw 101 Hotel
-            </p>
+              <h1 className="text-white text-4xl sm:text-5xl md:text-7xl font-black leading-tight">
+                {pool.name}
+              </h1>
+
+              <p className="text-white/80 text-lg md:text-xl mt-6 leading-8">
+                Relax, refresh and enjoy a premium swimming experience
+                surrounded by comfort and luxury.
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
-      {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-16">
+      {/* ================= CONTENT ================= */}
 
-        {/* Intro */}
-        <div className="text-center max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-serif font-semibold mb-6">
-            Premium Comfort & Relaxation
-          </h2>
+      <section className="max-w-7xl mx-auto px-6 py-20">
+        <div className="grid lg:grid-cols-2 gap-14 items-center">
+          {/* IMAGE CARD */}
 
-          <p className="text-gray-600 text-lg leading-8">
-            Kandaw 101 Hotel offers a collection of modern facilities designed
-            to provide comfort, convenience, and relaxation. From our luxury
-            swimming pool and peaceful garden to secure parking facilities,
-            every space is carefully prepared to create a memorable hospitality
-            experience inspired by the beauty of Mogok.
-          </p>
-        </div>
+          <div className="relative group">
+            <div className="overflow-hidden rounded-[35px] shadow-2xl">
+              <img
+                src={getImageUrl(pool.images?.[0])}
+                alt={pool.name}
+                className="
 
-        {/* Facility Sections */}
-        <div className="mt-20 space-y-20">
-          {facilities.map((facility, index) => (
-            <div
-              key={index}
-              className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center"
-            >
+w-full
 
-              {/* Image */}
-              <div
-                className={`overflow-hidden rounded-2xl shadow-xl ${
-                  index % 2 !== 0 ? "order-1 lg:order-2" : ""
-                }`}
-              >
-                <img
-                  src={facility.image}
-                  alt={facility.alt}
-                  className="w-full h-[300px] md:h-[450px] object-cover hover:scale-105 transition duration-500"
-                />
-              </div>
+h-[350px]
 
-              {/* Text */}
-              <div
-                className={`${
-                  index % 2 !== 0 ? "order-2 lg:order-1" : ""
-                }`}
-              >
-                <h3 className="text-3xl md:text-4xl font-serif font-semibold mb-6">
-                  {facility.title}
-                </h3>
+md:h-[500px]
 
-                <p className="text-gray-600 text-lg leading-9">
-                  {facility.description}
+object-cover
+
+group-hover:scale-110
+
+transition
+
+duration-700
+
+"
+              />
+            </div>
+
+            <div className="absolute bottom-6 left-6 right-6 bg-black/50 backdrop-blur-xl rounded-3xl p-6">
+              <p className="text-accent uppercase tracking-[3px] text-xs">
+                Premium Experience
+              </p>
+
+              <h3 className="text-white text-2xl font-bold mt-2">
+                {pool.name}
+              </h3>
+            </div>
+          </div>
+
+          {/* DESCRIPTION */}
+
+          <div>
+            <p className="uppercase tracking-[5px] text-accent text-sm mb-5">
+              Luxury Relaxation
+            </p>
+
+            <h2 className="text-3xl md:text-5xl font-black leading-tight">
+              Premium Comfort & Refreshing Moments
+            </h2>
+
+            <p className="mt-8 text-primary/70 text-lg leading-9">
+              {pool.description}
+            </p>
+
+            <div className="grid sm:grid-cols-2 gap-5 mt-10">
+              <div className="bg-white rounded-2xl p-6 shadow">
+                <h3 className="font-bold text-xl">Pool Access</h3>
+
+                <p className="text-gray-600 mt-3">
+                  Enjoy a relaxing swimming experience during your stay.
                 </p>
               </div>
 
+              <div className="bg-white rounded-2xl p-6 shadow">
+                <h3 className="font-bold text-xl">Peaceful Environment</h3>
+
+                <p className="text-gray-600 mt-3">
+                  Perfect place for relaxation and unforgettable moments.
+                </p>
+              </div>
             </div>
-          ))}
+          </div>
         </div>
 
-        {/* Facility Cards */}
-        <div className="mt-28 bg-gray-50 rounded-3xl p-8 md:p-12">
+        {/* ================= FEATURE SECTION ================= */}
 
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-serif font-semibold mb-4">
-              Additional Facilities
+        <div className="mt-24 bg-primary rounded-[40px] p-8 md:p-14 text-secondary">
+          <div className="text-center max-w-3xl mx-auto">
+            <h2 className="text-3xl md:text-5xl font-black">
+              Enjoy Every Moment
             </h2>
 
-            <p className="text-gray-600 text-lg leading-8 max-w-3xl mx-auto">
-              Enjoy premium facilities and services designed to make your stay
-              comfortable, safe, and enjoyable at Kandaw 101 Hotel.
+            <p className="mt-5 text-secondary/70 text-lg leading-8">
+              Kandaw101 Hotel provides a peaceful atmosphere where guests can
+              relax, refresh and enjoy modern hospitality with beautiful
+              surroundings.
             </p>
           </div>
 
-          {/* Cards */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-            {facilityCards.map((item, index) => (
+          <div className="grid md:grid-cols-3 gap-6 mt-12">
+            {[
+              {
+                title: "Relaxing Pool",
+                desc: "Clean and comfortable swimming area for guests.",
+              },
+
+              {
+                title: "Modern Facility",
+                desc: "Designed with guest comfort and luxury in mind.",
+              },
+
+              {
+                title: "Beautiful Atmosphere",
+                desc: "Enjoy peaceful moments surrounded by nature.",
+              },
+            ].map((item, index) => (
               <div
                 key={index}
-                className="bg-white rounded-2xl p-6 shadow-sm hover:shadow-xl transition duration-300 text-center"
+                className="bg-white/10 rounded-3xl p-7 backdrop-blur-xl"
               >
-                <h3 className="text-xl font-semibold mb-4">
-                  {item.title}
-                </h3>
+                <h3 className="text-xl font-bold">{item.title}</h3>
 
-                <p className="text-gray-600 leading-7">
-                  {item.description}
+                <p className="mt-3 text-secondary/70 leading-7">
+                  {item.description || item.desc}
                 </p>
               </div>
             ))}
           </div>
-
-          {/* Bottom Text */}
-          <div className="text-center mt-14">
-            <p className="text-gray-700 text-lg leading-8 max-w-4xl mx-auto">
-              At Kandaw 101 Hotel, we are committed to creating a peaceful,
-              secure, and enjoyable environment where guests can relax and
-              experience warm hospitality with modern luxury facilities.
-            </p>
-          </div>
-
         </div>
-      </div>
+      </section>
     </div>
   );
 };

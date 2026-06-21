@@ -1,117 +1,172 @@
-import React from "react";
-import { assets } from "../../assets/assets";
+import { Autoplay, EffectFade } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 
-const restaurantSections = [
-  {
-    title: "Morning Flavors at Kandaw 101",
-    description:
-      "Start your day with a carefully crafted breakfast experience featuring both American classics and authentic Burmese specialties. From freshly toasted bread, coffee, and hearty breakfast sets to traditional favorites like Shan noodles and Mohinga, every dish is prepared to bring comfort, flavor, and a memorable dining experience in a cozy and elegant setting.",
-    image: assets.restaurant_1,
-    alt: "Restaurant Interior",
-  },
-  {
-    title: "American Breakfast Set",
-    description:
-      "Enjoy a classic American-style breakfast featuring toasted bread, boiled eggs, a fresh sandwich served with salad, and two delicious sausages. The set is complemented with your choice of freshly brewed coffee or refreshing juice for a perfect morning start.",
-    image: assets.american_breakfast,
-    alt: "American Breakfast",
-    price: "$5",
-  },
-  {
-    title: "Burmese Breakfast Set",
-    description:
-      "Enjoy a traditional Burmese-style breakfast featuring authentic Shan noodles, crispy E Kyar Kway, flavorful Mohinga, and a selection of local morning favorites. The meal is perfectly paired with traditional Burmese milk tea or a refreshing beverage, offering a warm and satisfying start to your day.",
-    image: assets.burmese_breakfast,
-    alt: "Burmese Breakfast",
-    price: "$5",
-  },
-];
+import "swiper/css";
+import "swiper/css/effect-fade";
+
+import Loading from "../Loading";
+import getBaseUrl from "../../utils/baseURL";
+import { useFetchFacilitiesQuery } from "../../redux/features/facilities/facilitiesApi";
 
 const Restaurant = () => {
+  const { data, isLoading } = useFetchFacilitiesQuery();
+
+  const facilities = data?.facilities || data?.data || data || [];
+
+  const BASE_URL = getBaseUrl();
+
+  const getImageUrl = (img) => {
+    if (!img) {
+      return "https://placehold.co/600x400";
+    }
+
+    if (typeof img === "object") {
+      img = img.url || img.path || img.secure_url || "";
+    }
+
+    if (!img) {
+      return "https://placehold.co/600x400";
+    }
+
+    if (img.startsWith("http")) {
+      return img;
+    }
+
+    return `${BASE_URL}/${img.replace(/^\/+/, "")}`;
+  };
+
+  const restaurant = facilities.find(
+    (item) =>
+      item.name?.toLowerCase().includes("restaurant") ||
+      item.slug?.toLowerCase().includes("restaurant"),
+  );
+
+  // FRONTEND IMAGE DESCRIPTIONS
+
+  const imageDescriptions = [
+    {
+      title: "Luxury Restaurant Interior",
+      description:
+        "Enjoy a premium dining atmosphere at Kandaw101 Hotel Restaurant. Our elegant interior provides a comfortable environment where guests can relax and enjoy delicious meals with warm hospitality.",
+    },
+
+    {
+      title: "American Breakfast Experience",
+      description:
+        "Start your morning with our American breakfast selection prepared with fresh ingredients. Enjoy a balanced meal with quality flavors and a relaxing dining experience.",
+    },
+
+    {
+      title: "Traditional Burmese Breakfast",
+      description:
+        "Experience authentic Burmese breakfast flavors prepared with traditional recipes. Our dishes bring local taste together with comfortable hotel dining.",
+    },
+
+    {
+      title: "Restaurant Dining Area",
+      description:
+        "A peaceful dining space designed for families, friends, and guests who want to enjoy great food in a relaxing atmosphere.",
+    },
+  ];
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (!restaurant) {
+    return <div className="text-center py-20">Restaurant data not found</div>;
+  }
+
   return (
-    <div className="w-full">
-      
-      {/* Hero Section */}
-      <div className="relative w-full h-[50vh] md:h-[70vh] overflow-hidden">
-        <img
-          src={assets.restaurant}
-          alt="Hotel Restaurant"
-          className="w-full h-full object-cover"
-        />
+    <div className="w-full bg-white">
+      {/* HERO SLIDER */}
 
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-          <h1 className="text-white text-4xl md:text-6xl font-serif font-bold text-center">
-            Luxury Restaurant Experience
-          </h1>
-        </div>
-      </div>
+      <section className="relative h-[60vh] overflow-hidden">
+        <Swiper
+          modules={[Autoplay, EffectFade]}
+          effect="fade"
+          loop
+          speed={1200}
+          autoplay={{
+            delay: 2500,
+            disableOnInteraction: false,
+          }}
+          className="h-full"
+        >
+          {restaurant.images?.map((image, index) => (
+            <SwiperSlide key={index}>
+              <img
+                src={getImageUrl(image)}
+                alt={restaurant.name}
+                className="w-full h-full object-cover"
+              />
 
-      {/* Content Section */}
-      <div className="max-w-7xl mx-auto px-6 py-16">
-        
-        {/* Intro */}
+              <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                <h1 className="text-white text-4xl md:text-6xl font-serif font-bold">
+                  {restaurant.name}
+                </h1>
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+      </section>
+
+      {/* INTRO */}
+
+      <section className="max-w-7xl mx-auto px-6 py-16">
         <div className="text-center max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-serif font-semibold mb-6">
+          <h2 className="text-4xl font-serif font-semibold mb-6">
             Delicious Dining Experience
           </h2>
 
           <p className="text-gray-600 text-lg leading-8">
-            At Kandaw 101 Hotel, we offer a delightful culinary journey with our
-            diverse menu featuring both local and international cuisines. Our
-            restaurant provides a warm and inviting atmosphere where guests can
-            savor exquisite dishes prepared by our talented chefs.
+            {restaurant.description}
           </p>
         </div>
 
-        {/* Restaurant Sections */}
-        <div className="mt-16 space-y-16">
-          {restaurantSections.map((section, index) => (
+        {/* EACH IMAGE WITH OWN DESCRIPTION */}
+
+        <div className="mt-20 space-y-20">
+          {restaurant.images?.map((image, index) => (
             <div
               key={index}
-              className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center"
+              className={`grid lg:grid-cols-2 gap-10 items-center ${
+                index % 2 !== 0 ? "lg:[&>*:first-child]:order-2" : ""
+              }`}
             >
+              {/* IMAGE */}
 
-              {/* Image */}
-              <div
-                className={`overflow-hidden rounded-sm shadow-lg ${
-                  index % 2 !== 0 ? "order-1 lg:order-2" : ""
-                }`}
-              >
+              <div className="overflow-hidden rounded-2xl shadow-xl">
                 <img
-                  src={section.image}
-                  alt={section.alt}
-                  className="w-full h-full object-cover hover:scale-105 transition duration-500"
+                  src={getImageUrl(image)}
+                  alt={restaurant.name}
+                  className="
+                w-full
+                h-[420px]
+                object-cover
+                hover:scale-105
+                transition
+                duration-500
+                "
                 />
               </div>
 
-              {/* Text */}
-              <div
-                className={`${
-                  index % 2 !== 0 ? "order-2 lg:order-1" : ""
-                }`}
-              >
-                <h3 className="text-2xl md:text-3xl font-serif font-semibold mb-4">
-                  {section.title}
+              {/* TEXT */}
+
+              <div>
+                <h3 className="text-3xl font-serif font-semibold mb-5">
+                  {imageDescriptions[index]?.title || restaurant.name}
                 </h3>
 
-                <p className="text-gray-600 leading-8 text-lg">
-                  {section.description}
+                <p className="text-gray-600 text-lg leading-8">
+                  {imageDescriptions[index]?.description ||
+                    restaurant.description}
                 </p>
-
-                {/* Price Tag */}
-                {section.price && (
-                  <div className="mt-2 inline-block bg-accent/50 text-black px-1 py-1 rounded-md text-md font-medium shadow-xs">
-                    Starting From {section.price}
-                  </div>
-                )}
               </div>
-
             </div>
           ))}
         </div>
-
-      </div>
+      </section>
     </div>
   );
 };

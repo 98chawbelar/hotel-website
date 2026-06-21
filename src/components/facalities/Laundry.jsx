@@ -1,21 +1,14 @@
-import { assets } from "../../assets/assets";
+import React from "react";
 
-const laundryServices = [
-  {
-    title: "Premium Laundry & Garment Care",
-    description:
-      "Our professional laundry service is designed to provide guests with fresh, clean, and perfectly cared-for clothing throughout their stay. From everyday garments to delicate fabrics, every item is handled with attention and care to ensure comfort, cleanliness, and convenience in a luxury hotel environment.",
-    image: assets.laundry_1,
-    alt: "Laundry Service",
-  },
-  {
-    title: "Fast & Convenient Service",
-    description:
-      "Kandaw 101 Hotel offers reliable laundry solutions including washing, ironing, drying, and same-day service options for added convenience. Guests can enjoy freshly prepared clothing delivered neatly and professionally, allowing for a relaxing and worry-free stay in the heart of Mogok.",
-    image: assets.laundry_2,
-    alt: "Luxury Laundry Service",
-  },
-];
+import Loading from "../Loading";
+import getBaseUrl from "../../utils/baseURL";
+import { useFetchFacilitiesQuery } from "../../redux/features/facilities/facilitiesApi";
+
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay, EffectFade } from "swiper/modules";
+
+import "swiper/css";
+import "swiper/css/effect-fade";
 
 const pricing = [
   {
@@ -35,16 +28,14 @@ const pricing = [
   },
 ];
 
-const facilities = [
+const hotelFacilities = [
   {
     title: "Free WiFi",
-    description:
-      "High-speed internet access available throughout the hotel.",
+    description: "High-speed internet access available throughout the hotel.",
   },
   {
     title: "Free Car Parking",
-    description:
-      "Secure and convenient parking space for hotel guests.",
+    description: "Secure and convenient parking space for hotel guests.",
   },
   {
     title: "Android TV",
@@ -59,111 +50,145 @@ const facilities = [
 ];
 
 const Laundry = () => {
-  return (
-    <>
-      {/* Hero Section */}
-      <div className="relative max-w-screen h-fit">
-        <img
-          src={assets.laundry}
-          alt="Hotel Laundry"
-          className="w-full h-full object-cover"
-        />
+  const { data, isLoading } = useFetchFacilitiesQuery();
 
-        {/* Overlay */}
-        <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-          <h1 className="text-white text-4xl md:text-6xl font-serif font-bold text-center">
-            Professional Laundry Service
-          </h1>
-        </div>
+  const facilities = data?.facilities || data?.data || data || [];
+
+  const BASE_URL = getBaseUrl();
+
+  const getImageUrl = (img) => {
+    if (!img) return "https://placehold.co/600x400";
+
+    if (typeof img === "object") {
+      img = img.url || img.path || img.secure_url || "";
+    }
+
+    if (!img) return "https://placehold.co/600x400";
+
+    if (img.startsWith("http")) {
+      return img;
+    }
+
+    return `${BASE_URL}/${img.replace(/^\/+/, "")}`;
+  };
+
+  const laundry = facilities.find(
+    (item) =>
+      item.name?.toLowerCase().includes("laundry") ||
+      item.slug?.toLowerCase().includes("laundry"),
+  );
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
+  if (!laundry) {
+    return <div className="text-center py-20">Laundry data not found</div>;
+  }
+
+  return (
+    <div className="w-full">
+      {/* ================= HERO SWIPER ================= */}
+
+      <div className="relative w-full h-[50vh] md:h-[70vh] overflow-hidden">
+        <Swiper
+          modules={[Autoplay, EffectFade]}
+          effect="fade"
+          loop={true}
+          speed={1200}
+          autoplay={{
+            delay: 2500,
+
+            disableOnInteraction: false,
+          }}
+          className="h-full w-full"
+        >
+          {laundry.images?.map((image, index) => (
+            <SwiperSlide key={index}>
+              <img
+                src={getImageUrl(image)}
+                alt="Laundry"
+                className="w-full h-full object-cover"
+              />
+
+              <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
+                <h1 className="text-white text-4xl md:text-6xl font-serif font-bold text-center">
+                  Professional Laundry Service
+                </h1>
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
       </div>
 
-      {/* Content */}
-      <div className="max-w-7xl mx-auto px-6 py-16">
+      {/* ================= CONTENT ================= */}
 
-        {/* Intro */}
+      <div className="max-w-7xl mx-auto px-6 py-16">
         <div className="text-center max-w-4xl mx-auto">
           <h2 className="text-3xl md:text-4xl font-serif font-semibold mb-6">
-            Fresh, clean, and carefully handled laundry service for a
-            comfortable stay at Kandaw 101 Hotel.
+            Fresh, Clean And Carefully Handled Laundry Service
           </h2>
 
           <p className="text-gray-600 text-lg leading-8">
-            At Kandaw 101 Hotel, we provide convenient and reliable laundry
-            services to ensure our guests enjoy a comfortable and worry-free
-            stay. From daily clothing care to special garment handling, our
-            team delivers fresh and neatly prepared laundry with professional
-            attention.
+            {laundry.description}
           </p>
         </div>
 
-        {/* Laundry Service Sections */}
+        {/* ================= IMAGES + DESCRIPTION ================= */}
+
         <div className="mt-16 space-y-16">
-          {laundryServices.map((service, index) => (
+          {laundry.images?.map((image, index) => (
             <div
               key={index}
               className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center"
             >
-              {/* Image Left */}
               <div
-                className={`overflow-hidden rounded-sm shadow-lg ${
-                  index % 2 !== 0 ? "order-1 lg:order-2" : ""
-                }`}
+                className={`overflow-hidden rounded-xl shadow-lg
+
+${index % 2 !== 0 ? "order-1 lg:order-2" : ""}
+
+`}
               >
                 <img
-                  src={service.image}
-                  alt={service.alt}
-                  className="w-full h-full object-cover hover:scale-105 transition duration-500"
+                  src={getImageUrl(image)}
+                  alt="Laundry"
+                  className="w-full h-[320px] md:h-[450px] object-cover hover:scale-105 transition duration-500"
                 />
               </div>
 
-              {/* Text Right */}
-              <div
-                className={`${
-                  index % 2 !== 0 ? "order-2 lg:order-1" : ""
-                }`}
-              >
+              <div className={index % 2 !== 0 ? "order-2 lg:order-1" : ""}>
                 <h3 className="text-2xl md:text-3xl font-serif font-semibold mb-4">
-                  {service.title}
+                  {index === 0
+                    ? "Premium Laundry & Garment Care"
+                    : "Fast & Convenient Service"}
                 </h3>
 
-                <p className="text-gray-600 leading-8 text-lg">
-                  {service.description}
+                <p className="text-gray-600 text-lg leading-8">
+                  {laundry.description}
                 </p>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Pricing Section */}
+        {/* ================= PRICE ================= */}
+
         <div className="mt-20">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-serif font-semibold mb-4">
-              Laundry Service Pricing
-            </h2>
+          <h2 className="text-3xl font-serif font-semibold text-center mb-10">
+            Laundry Service Pricing
+          </h2>
 
-            <p className="text-gray-600 text-lg leading-8 max-w-3xl mx-auto">
-              We provide affordable and professional laundry services designed
-              for your comfort and convenience during your stay at Kandaw 101
-              Hotel.
-            </p>
-          </div>
-
-          {/* Pricing Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid md:grid-cols-3 gap-6">
             {pricing.map((item, index) => (
               <div
                 key={index}
-                className="border border-gray-200 rounded-xl p-6 shadow-sm hover:shadow-lg transition duration-300 bg-white"
+                className="border rounded-xl p-6 shadow bg-white"
               >
-                <h3 className="text-2xl font-semibold mb-4">
-                  {item.title}
-                </h3>
+                <h3 className="text-2xl font-semibold">{item.title}</h3>
 
-                <p className="text-gray-600 mb-4">
-                  {item.description}
-                </p>
+                <p className="text-gray-600 my-4">{item.description}</p>
 
-                <span className="mt-2 inline-block bg-accent/50 text-black px-1 py-1 rounded-md text-md font-medium shadow-xs">
+                <span className="bg-accent/50 px-3 py-1 rounded">
                   {item.price}
                 </span>
               </div>
@@ -171,49 +196,28 @@ const Laundry = () => {
           </div>
         </div>
 
-        {/* Complimentary Facilities */}
+        {/* ================= HOTEL FACILITIES ================= */}
+
         <div className="mt-24 bg-gray-50 rounded-2xl p-10">
-          <div className="text-center mb-10">
-            <h2 className="text-3xl md:text-4xl font-serif font-semibold mb-4">
-              Complimentary Hotel Facilities
-            </h2>
+          <h2 className="text-3xl font-serif text-center mb-10">
+            Complimentary Hotel Facilities
+          </h2>
 
-            <p className="text-gray-600 text-lg leading-8 max-w-3xl mx-auto">
-              Kandaw 101 Hotel is committed to providing guests with comfort,
-              convenience, and a relaxing hospitality experience through our
-              premium complimentary facilities.
-            </p>
-          </div>
-
-          {/* Facilities Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {facilities.map((facility, index) => (
+          <div className="grid md:grid-cols-4 gap-6">
+            {hotelFacilities.map((item, index) => (
               <div
                 key={index}
-                className="bg-white rounded-xl p-6 shadow-sm text-center"
+                className="bg-white rounded-xl p-6 text-center shadow"
               >
-                <h3 className="text-xl font-semibold mb-3">
-                  {facility.title}
-                </h3>
+                <h3 className="font-semibold text-xl">{item.title}</h3>
 
-                <p className="text-gray-600">
-                  {facility.description}
-                </p>
+                <p className="text-gray-600 mt-3">{item.description}</p>
               </div>
             ))}
           </div>
-
-          {/* Bottom Text */}
-          <div className="text-center mt-12">
-            <p className="text-gray-700 text-lg leading-8 max-w-4xl mx-auto">
-              At Kandaw 101 Hotel, we strive to create a safe, clean, and
-              enjoyable environment where every guest can relax comfortably and
-              experience warm hospitality throughout their stay.
-            </p>
-          </div>
         </div>
       </div>
-    </>
+    </div>
   );
 };
 
