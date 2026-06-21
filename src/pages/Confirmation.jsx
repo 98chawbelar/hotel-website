@@ -8,11 +8,11 @@ import {
 import SubmitButton from "../pages/adminPage/components/SubmitButton";
 
 const Confirmation = () => {
-  const { id } = useParams();
+  const { code } = useParams();
 
   const navigate = useNavigate();
 
-  const { data: booking, isLoading, isError } = useFetchBookingByIdQuery(id);
+  const { data: booking, isLoading, isError } = useFetchBookingByIdQuery(code);
 
   const [cancelBooking, { isLoading: cancelling }] = useCancelBookingMutation();
 

@@ -19,7 +19,7 @@ const useBooking = () => {
 
   const [selectedRoom, setSelectedRoom] = useState("");
 
-  const [paymentMethod, setPaymentMethod] = useState("credit_card");
+  const [paymentMethod, setPaymentMethod] = useState("cash");
 
   const [specialRequests, setSpecialRequests] = useState("");
 
@@ -103,6 +103,7 @@ const useBooking = () => {
           checkOut,
           extrasTotal,
         }).unwrap();
+        console.log("PRICE RESPONSE FROM API:", result);
 
         setPricing(result);
       } catch (error) {

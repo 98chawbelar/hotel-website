@@ -1,6 +1,5 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import { IoIosArrowDown } from "react-icons/io";
 import { CiCalendar } from "react-icons/ci";
 
 import { Swiper, SwiperSlide } from "swiper/react";
@@ -9,107 +8,77 @@ import { Autoplay, EffectFade } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/effect-fade";
 
+import getBaseUrl from "../../utils/baseURL";
+
 const RoomHeader = ({ rooms = [] }) => {
+  const BASE_URL = getBaseUrl();
+
+  const getImageUrl = (img) => {
+    if (!img) {
+      return "https://placehold.co/1200x800";
+    }
+
+    // if image is object
+    if (typeof img === "object") {
+      img = img.url || img.path || img.secure_url || "";
+    }
+
+    if (!img) {
+      return "https://placehold.co/1200x800";
+    }
+
+    // already full url
+    if (img.startsWith("http")) {
+      return img;
+    }
+
+    return `${BASE_URL}/${img.replace(/^\/+/, "")}`;
+  };
+
   return (
-    <header className="relative  h-screen overflow-hidden ">
-      {/* ================= SLIDER ================= */}
+    <header className="relative h-screen overflow-hidden">
       <Swiper
         modules={[Autoplay, EffectFade]}
         effect="fade"
-        loop={rooms.length > 3}
-        slidesPerView={3}
-        spaceBetween={20}
+        loop={rooms.length > 1}
+        slidesPerView={1}
         speed={1200}
         autoplay={{
           delay: 3500,
           disableOnInteraction: false,
         }}
-        className="absolute  inset-0 h-full w-full"
+        className="absolute inset-0 h-full w-full"
       >
         {rooms.map((room) => (
           <SwiperSlide key={room._id}>
-            <div className="relative  w-full h-screen">
-              {/* IMAGE */}
+            <div className="relative h-screen w-full">
               <img
-                src={room.images}
+                src={getImageUrl(
+                  Array.isArray(room.images) ? room.images[0] : room.images,
+                )}
                 alt={room.name}
                 loading="lazy"
                 className="w-full h-full object-cover"
               />
 
-              {/* GRADIENT */}
-              <div className="absolute  inset-0 bg-linear-to-r from-black/70 via-black/40 to-black/20" />
+              <div className="absolute inset-0 bg-black/50" />
 
-              {/* CONTENT */}
-              <div className="absolute  max-w-7xl inset-0 z-20  mx-auto px-4 sm:px-6 lg:px-8 flex items-center">
-                <div className="max-w-4xl">
-                  {/* Badge */}
-                  <div className="inline-flex w-fit items-center gap-2 bg-white/10 border border-white/10 backdrop-blur-xl px-4 py-2 rounded-full mb-6">
-                    <span className="w-2 h-2 rounded-full bg-accent animate-pulse" />
-
-                    <p className="text-white text-xs sm:text-sm tracking-[3px] uppercase">
-                      Luxury Room Experience
-                    </p>
-                  </div>
-
-                  {/* TITLE */}
-                  <h1 className="text-white text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black leading-tight">
+              <div className="absolute inset-0 flex items-center z-20">
+                <div className="max-w-7xl mx-auto px-6">
+                  <h1 className="text-white text-5xl md:text-7xl font-black">
                     {room.name}
                   </h1>
 
-                  {/* DESCRIPTION */}
-                  <p className="mt-6 text-white/75 text-base sm:text-lg leading-8 max-w-2xl">
+                  <p className="mt-5 text-white/80 max-w-2xl text-lg">
                     {room.description}
                   </p>
 
-                  {/* BUTTONS */}
-                  <div className="flex flex-col sm:flex-row gap-4 mt-10">
-                    <Link to="/booking">
-                      <button className="w-full sm:w-auto bg-accent text-primary px-7 py-4 rounded-2xl font-semibold flex items-center justify-center gap-3 hover:scale-105 transition duration-300 shadow-2xl">
-                        <CiCalendar className="text-xl" />
-                        Book Now
-                      </button>
-                    </Link>
-
-                    <Link to="/rooms">
-                      <button className="w-full sm:w-auto border border-white/10 bg-white/5 backdrop-blur-xl text-white px-7 py-4 rounded-2xl hover:bg-white/10 transition duration-300">
-                        Explore Rooms
-                      </button>
-                    </Link>
-                  </div>
-
-                  {/* STATS */}
-                  <div className="grid grid-cols-3 gap-6 mt-14 max-w-xl">
-                    <div>
-                      <h3 className="text-2xl sm:text-4xl font-black text-gray-400">
-                        {room.beds}
-                      </h3>
-
-                      <p className="text-white/60 text-xs sm:text-sm mt-2">
-                        Beds
-                      </p>
-                    </div>
-
-                    <div>
-                      <h3 className="text-2xl sm:text-4xl font-black text-gray-400">
-                        {room.size}
-                      </h3>
-
-                      <p className="text-white/60 text-xs sm:text-sm mt-2">
-                        Room Size
-                      </p>
-                    </div>
-
-                    <div>
-                      <h3 className="text-2xl sm:text-4xl font-black text-gray-400">
-                        {room.basePrice?.toLocaleString()} Ks
-                      </h3>
-
-                      <p className="text-white/60 text-xs sm:text-sm mt-2">
-                        Per Night
-                      </p>
-                    </div>
-                  </div>
+                  <Link to="/booking">
+                    <button className="mt-8 bg-accent px-7 py-4 rounded-xl">
+                      <CiCalendar className="inline mr-2" />
+                      Book Now
+                    </button>
+                  </Link>
                 </div>
               </div>
             </div>

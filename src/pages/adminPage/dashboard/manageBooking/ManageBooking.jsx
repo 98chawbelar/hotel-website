@@ -16,13 +16,18 @@ import PageHeader from "../../components/PageHeader";
 
 import {
   useCancelBookingMutation,
+  useUpdateBookingStatusMutation,
   useFetchBookingsAllQuery,
 } from "../../../../redux/features/booking/bookingApi";
+import { useNavigate } from "react-router-dom";
 
 const ManageBooking = () => {
+  const navigate = useNavigate();
   const { data, isLoading, error } = useFetchBookingsAllQuery();
 
   const [cancelBooking] = useCancelBookingMutation();
+
+  const [updateBookingStatus] = useUpdateBookingStatusMutation();
 
   const [searchTerm, setSearchTerm] = useState("");
 
@@ -32,7 +37,8 @@ const ManageBooking = () => {
 
   const filteredBookings = useMemo(() => {
     return bookings.filter((booking) => {
-      const fullName = `${booking.firstName} ${booking.lastName}`.toLowerCase();
+      const fullName =
+        `${booking.guest?.firstName || ""} ${booking.guest?.lastName || ""}`.toLowerCase();
 
       const roomName = booking.room?.name?.toLowerCase() || "";
 
@@ -70,6 +76,23 @@ const ManageBooking = () => {
       console.error(err);
 
       alert("Failed to cancel booking");
+    }
+  };
+
+  const handleStatusChange = async (id, bookingStatus) => {
+    try {
+      const result = await updateBookingStatus({
+        id,
+        bookingStatus,
+      }).unwrap();
+
+      console.log("Updated:", result);
+
+      alert(`Booking ${bookingStatus} successfully`);
+    } catch (error) {
+      console.error("Update error:", error);
+
+      alert(error?.data?.message || "Failed to update booking");
     }
   };
 
@@ -199,17 +222,17 @@ const ManageBooking = () => {
         <div className="grid gap-5 lg:hidden">
           {filteredBookings.map((booking) => (
             <div
-              key={booking.id}
+              key={booking._id}
               className="bg-white/5 backdrop-blur-xl border border-white/10 rounded-[28px] p-5 shadow-2xl"
             >
               <div className="flex justify-between items-start mb-5">
                 <div>
                   <h2 className="text-xl font-bold text-white">
-                    {booking.firstName} {booking.lastName}
+                    {booking.guest?.firstName} {booking.guest?.lastName}
                   </h2>
 
                   <p className="text-secondary/50 text-sm mt-1">
-                    Booking ID : #{booking.id}
+                    Booking ID : #{booking.bookingCode}
                   </p>
                 </div>
 
@@ -233,25 +256,44 @@ const ManageBooking = () => {
                   <FaCalendarAlt className="text-green-400" />
 
                   <span>
-                    {new Date(booking.checkIn).toLocaleDateString()} -{" "}
-                    {new Date(booking.checkOut).toLocaleDateString()}
+                    {new Date(booking.stay?.checkIn).toLocaleDateString()} -{" "}
+                    {new Date(booking.stay?.checkOut).toLocaleDateString()}
                   </span>
                 </div>
               </div>
 
               <div className="grid grid-cols-2 gap-3 mt-6">
-                <button className="flex items-center justify-center gap-2 py-3 rounded-2xl bg-primary text-white font-semibold">
-                  <FaEye />
-                  View
-                </button>
+                <div className="flex items-center justify-center gap-3">
+                  <button
+                    onClick={() => navigate(`/confirmation/${booking._id}`)}
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-white"
+                  >
+                    <FaEye />
+                    View
+                  </button>
 
-                <button
-                  onClick={() => handleCancelBooking(booking.id)}
-                  className="flex items-center justify-center gap-2 py-3 rounded-2xl bg-red-500 text-white font-semibold"
-                >
-                  <FaBan />
-                  Cancel
-                </button>
+                  {booking.bookingStatus === "pending" && (
+                    <>
+                      <button
+                        onClick={() =>
+                          handleStatusChange(booking._id, "confirmed")
+                        }
+                        className="px-4 py-2 rounded-xl bg-green-500 text-white"
+                      >
+                        Confirm
+                      </button>
+
+                      <button
+                        onClick={() =>
+                          handleStatusChange(booking._id, "cancelled")
+                        }
+                        className="px-4 py-2 rounded-xl bg-red-500 text-white"
+                      >
+                        Reject
+                      </button>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
           ))}
@@ -298,11 +340,12 @@ const ManageBooking = () => {
                     <td className="px-6 py-5">
                       <div>
                         <h3 className="font-semibold text-white">
-                          {booking.firstName} {booking.lastName}
+                          {booking.guest?.firstName} {booking.guest?.lastName}{" "}
+                          {booking.lastName}
                         </h3>
 
                         <p className="text-secondary/40 text-sm mt-1">
-                          ID : #{booking.id}
+                          ID : #{booking.bookingCode}
                         </p>
                       </div>
                     </td>
@@ -312,11 +355,11 @@ const ManageBooking = () => {
                     </td>
 
                     <td className="px-6 py-5 text-secondary">
-                      {new Date(booking.checkIn).toLocaleDateString()}
+                      {new Date(booking.stay?.checkIn).toLocaleDateString()}
                     </td>
 
                     <td className="px-6 py-5 text-secondary">
-                      {new Date(booking.checkOut).toLocaleDateString()}
+                      {new Date(booking.stay?.checkOut).toLocaleDateString()}
                     </td>
 
                     <td className="px-6 py-5">
@@ -331,18 +374,37 @@ const ManageBooking = () => {
 
                     <td className="px-6 py-5">
                       <div className="flex items-center justify-center gap-3">
-                        <button className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-white font-medium hover:scale-105 transition-all">
+                        <button
+                          onClick={() =>
+                            navigate(`/confirmation/${booking._id}`)
+                          }
+                          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-white"
+                        >
                           <FaEye />
                           View
                         </button>
 
-                        <button
-                          onClick={() => handleCancelBooking(booking.id)}
-                          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-red-500 text-white font-medium hover:scale-105 transition-all"
-                        >
-                          <FaBan />
-                          Cancel
-                        </button>
+                        {booking.bookingStatus === "pending" && (
+                          <>
+                            <button
+                              onClick={() =>
+                                handleStatusChange(booking._id, "confirmed")
+                              }
+                              className="px-4 py-2 rounded-xl bg-green-500 text-white"
+                            >
+                              Confirm
+                            </button>
+
+                            <button
+                              onClick={() =>
+                                handleStatusChange(booking._id, "cancelled")
+                              }
+                              className="px-4 py-2 rounded-xl bg-red-500 text-white"
+                            >
+                              Reject
+                            </button>
+                          </>
+                        )}
                       </div>
                     </td>
                   </tr>

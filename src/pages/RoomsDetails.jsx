@@ -1,14 +1,16 @@
-import { useState, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { hotelMap } from "../assets/assets";
 import { useFetchRoomByIdQuery } from "../redux/features/rooms/roomsApi";
-import RoomHeader from "../components/rooms/RoomHeader";
+import { useCalculatePricePreviewMutation } from "../redux/features/booking/bookingApi";
+
 import {
   FaBed,
   FaMoneyBillWave,
   FaRulerCombined,
   FaUserFriends,
 } from "react-icons/fa";
+import getBaseUrl from "../utils/baseURL";
 
 const RoomDetails = () => {
   const { id } = useParams();
@@ -22,7 +24,36 @@ const RoomDetails = () => {
   const [adults, setAdults] = useState(1);
   const [child, setChild] = useState(0);
 
+  const [calculatePricePreview, { data: priceData }] =
+    useCalculatePricePreviewMutation();
+
   const today = new Date().toISOString().split("T")[0];
+
+  const BASE_URL = getBaseUrl();
+
+  const getImageUrl = (image) => {
+    if (!image) {
+      return "https://placehold.co/600x400";
+    }
+
+    if (Array.isArray(image)) {
+      image = image[0];
+    }
+
+    if (typeof image === "object") {
+      image = image.url || image.path || image.secure_url || "";
+    }
+
+    if (!image) {
+      return "https://placehold.co/600x400";
+    }
+
+    if (image.startsWith("http")) {
+      return image;
+    }
+
+    return `${BASE_URL}/${image.replace(/^\/+/, "")}`;
+  };
 
   const policies = [
     "Check-in: 12:00 PM",
@@ -40,21 +71,27 @@ const RoomDetails = () => {
     },
   ];
 
-  const { totalPrice, monthlyPrice, days } = useMemo(() => {
-    if (!checkIn || !checkOut || !room)
-      return { totalPrice: 0, monthlyPrice: 0, days: 0 };
+  const handlePricePreview = () => {
+    if (!checkIn || !checkOut) return;
 
-    const start = new Date(checkIn);
-    const end = new Date(checkOut);
-    const days = (end - start) / (1000 * 60 * 60 * 24);
+    calculatePricePreview({
+      roomId: room._id,
+      checkIn,
+      checkOut,
+      extrasTotal: 0,
+    });
+  };
 
-    if (days <= 0) return { totalPrice: 0, monthlyPrice: 0, days: 0 };
-
-    let total = days * room.price;
-    if (days >= 7) total -= 10000;
-
-    return { totalPrice: total, monthlyPrice: room.price * 30 - 50000, days };
-  }, [checkIn, checkOut, room]);
+  useEffect(() => {
+    if (checkIn && checkOut && room?._id) {
+      calculatePricePreview({
+        roomId: room._id,
+        checkIn,
+        checkOut,
+        extrasTotal: 0,
+      });
+    }
+  }, [checkIn, checkOut, room?._id]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -93,7 +130,7 @@ const RoomDetails = () => {
             {/* IMAGE */}
             <div className="rounded-2xl overflow-hidden">
               <img
-                src={room.images}
+                src={getImageUrl(room.images)}
                 alt={room.name}
                 className="w-full h-120 object-cover"
               />
@@ -116,10 +153,10 @@ const RoomDetails = () => {
               <div className="bg-white/5 p-4 rounded-lg flex flex-col items-center gap-2">
                 <FaUserFriends className="text-accent text-2xl md:text-3xl" />
                 <span className=" px-2 py-2 text-xs md:text-sm text-nowrap">
-                  Max Adults: {room.capacity.adults}
+                  Max Adults: {room.capacity?.adults || 0}
                 </span>
                 <span className="px-2 py-2 text-nowrap text-xs md:text-sm">
-                  Max Childs: {room.capacity.child}
+                  Max Childs: {room.capacity?.child || 0}
                 </span>
               </div>
               <div className="bg-white/5 p-4 rounded-lg flex flex-col items-center gap-2">
@@ -144,14 +181,12 @@ const RoomDetails = () => {
             <div>
               <h2 className="text-xl font-semibold mb-3">Facilities</h2>
               <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-gray-300">
-                {room.facilities.map((item, index) => {
-                  return (
-                    <div key={index} className="flex items-center gap-2">
-                      <span>•</span>
-                      <span>{item.title}</span>
-                    </div>
-                  );
-                })}
+                {room.facilities?.map((item, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <span>•</span>
+                    <span>{item.title}</span>
+                  </div>
+                ))}
               </div>
             </div>
 
@@ -207,7 +242,7 @@ const RoomDetails = () => {
                   onChange={(e) => setAdults(Number(e.target.value))}
                   className="w-full p-2 rounded text-black"
                 >
-                  {Array.from({ length: room.capacity.adults }, (_, i) => (
+                  {Array.from({ length: room.capacity?.adults }, (_, i) => (
                     <option key={i + 1} value={i + 1}>
                       {i + 1} {i === 0 ? "Adult" : "Adults"}
                     </option>
@@ -220,7 +255,7 @@ const RoomDetails = () => {
                   onChange={(e) => setChild(Number(e.target.value))}
                   className="w-full p-2 rounded text-black"
                 >
-                  {Array.from({ length: room.capacity.child }, (_, i) => (
+                  {Array.from({ length: room.capacity?.child }, (_, i) => (
                     <option key={i + 1} value={i + 1}>
                       {i + 1} {i === 0 ? "Child" : "Childs"}
                     </option>
@@ -228,39 +263,50 @@ const RoomDetails = () => {
                 </select>
 
                 {/* PRICE SECTION */}
-                <div className="pt-3 space-y-4">
-                  <div className="text-center">
-                    <p className="text-sm text-gray-400">Daily Rate</p>
-                    <p className="font-semibold">
-                      {room.basePrice.toLocaleString()} MMK
-                    </p>
+
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span>Nights</span>
+                    <span>{priceData?.nights || 0}</span>
                   </div>
 
-                  <div className="text-center">
-                    <p className="text-sm text-gray-400">Monthly Rate</p>
-                    <p className="font-semibold">
-                      {monthlyPrice.toLocaleString()} MMK
-                    </p>
+                  <div className="flex justify-between">
+                    <span>Subtotal</span>
+                    <span>{priceData?.subtotal?.toLocaleString() || 0} Ks</span>
                   </div>
 
-                  <div className="border-t border-white/10 pt-3">
-                    <p className="text-sm text-gray-400">Total Price</p>
-                    <p className="text-2xl font-bold text-accent">
-                      {totalPrice > 0
-                        ? `${totalPrice.toLocaleString()} MMK`
-                        : "Select dates"}
-                    </p>
-                    {days >= 7 && (
-                      <p className="text-green-500 text-xs mt-1">
-                        Weekly discount applied
-                      </p>
-                    )}
+                  {priceData?.weeklyDiscount > 0 && (
+                    <div className="flex justify-between text-green-500">
+                      <span>Weekly Discount</span>
+                      <span>
+                        -{priceData.weeklyDiscount.toLocaleString()} Ks
+                      </span>
+                    </div>
+                  )}
+
+                  {priceData?.monthlyDiscount > 0 && (
+                    <div className="flex justify-between text-green-500">
+                      <span>Monthly Discount</span>
+                      <span>
+                        -{priceData.monthlyDiscount.toLocaleString()} Ks
+                      </span>
+                    </div>
+                  )}
+
+                  <div className="border-t pt-2 flex justify-between font-bold">
+                    <span>Total</span>
+                    <span>
+                      {priceData?.totalPrice?.toLocaleString() || 0} Ks
+                    </span>
                   </div>
                 </div>
-
                 {/* BUTTON */}
                 <button
-                  onClick={() => navigate("/booking")}
+                  onClick={() =>
+                    navigate(
+                      `/booking?roomId=${room._id}&checkIn=${checkIn}&checkOut=${checkOut}&adults=${adults}&child=${child}`,
+                    )
+                  }
                   disabled={!checkIn || !checkOut}
                   className="w-full bg-accent hover:bg-accent/60 py-3 rounded-lg disabled:bg-accent/30"
                 >

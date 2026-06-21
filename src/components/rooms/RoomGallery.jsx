@@ -1,27 +1,66 @@
 import { useState } from "react";
 
 import { useFetchAllRoomsQuery } from "../../redux/features/rooms/roomsApi";
+import getBaseUrl from "../../utils/baseURL";
 
 const RoomGallery = () => {
   const [selectedImage, setSelectedImage] = useState(null);
 
   const { data, isLoading, error } = useFetchAllRoomsQuery();
-  const rooms = Array.isArray(data)
-    ? data
-    : Array.isArray(data?.rooms)
-      ? data.rooms
-      : [];
 
-  const images = rooms
-    .filter((room) => room.images)
-    .map((room) => ({
-      src: room.images,
-      name: room.name,
-    }));
+  const rooms = Array.isArray(data) ? data : data?.rooms || [];
 
-  const closeModal = () => setSelectedImage(null);
+  const BASE_URL = getBaseUrl();
+
+  const getImageUrl = (image) => {
+    if (!image) {
+      return "https://placehold.co/600x400";
+    }
+
+    if (Array.isArray(image)) {
+      image = image[0];
+    }
+
+    if (typeof image === "object") {
+      image = image.url || image.path || image.secure_url || "";
+    }
+
+    if (!image) {
+      return "https://placehold.co/600x400";
+    }
+
+    if (image.startsWith("http")) {
+      return image;
+    }
+
+    return `${BASE_URL}/${image.replace(/^\/+/, "")}`;
+  };
+
+  const images = rooms.flatMap((room) => {
+    if (!room.images) {
+      return [];
+    }
+
+    if (Array.isArray(room.images)) {
+      return room.images.map((img) => ({
+        src: getImageUrl(img),
+
+        name: room.name,
+      }));
+    }
+
+    return [
+      {
+        src: getImageUrl(room.images),
+        name: room.name,
+      },
+    ];
+  });
+
   if (isLoading) {
-    return <div className="text-center py-20 text-white">Loading...</div>;
+    return (
+      <div className="text-center py-20 text-white">Loading gallery...</div>
+    );
   }
 
   if (error) {
@@ -33,165 +72,380 @@ const RoomGallery = () => {
   }
 
   return (
-    <section className="py-20 px-4 bg-transparent overflow-hidden">
-      {/* ================= GALLERY HEADER ================= */}
-      <div className="text-center mb-14">
-        <h2 className="text-3xl md:text-5xl font-serif text-white mb-4">
+    <section className="py-20 px-4 overflow-hidden">
+      {/* HEADER */}
+
+      <div className="text-center mb-10">
+        <h2
+          className="
+text-3xl
+md:text-5xl
+font-serif
+text-white
+mb-4
+"
+        >
           Explore Our Gallery
         </h2>
 
-        <p className="text-white/60 max-w-2xl mx-auto">
-          Experience luxury interiors and unforgettable comfort.
+        <p
+          className="
+text-white/60
+max-w-2xl
+mx-auto
+"
+        >
+          Experience luxury rooms, elegant interiors and unforgettable comfort.
         </p>
       </div>
 
-      {/* ================= 3D STACK GALLERY ================= */}
-      <div className="flex justify-center">
-        <div className="relative w-full max-w-5xl h-[520px] sm:h-[550px] md:h-[600px]">
-          {images.map((img, index) => (
+      {/* HALF CIRCLE GALLERY */}
+
+      <div
+        className="
+
+relative
+
+max-w-7xl
+
+mx-auto
+
+h-[350px]
+
+sm:h-[420px]
+
+md:h-[500px]
+
+flex
+
+justify-center
+
+overflow-hidden
+
+"
+      >
+        {images.map((img, index) => (
+          <div
+            key={index}
+            onClick={() => setSelectedImage(img)}
+            className="
+
+absolute
+
+bottom-0
+
+cursor-pointer
+
+group
+
+transition-all
+
+duration-500
+
+"
+            style={{
+              left:
+                window.innerWidth < 640 ? `${index * 28}%` : `${index * 16}%`,
+
+              zIndex: index,
+            }}
+          >
             <div
-              key={index}
-              onClick={() => setSelectedImage(img)}
               className="
-                absolute cursor-pointer group
-                left-1/2 -translate-x-1/2
-                transition-all duration-500
-              "
-              style={{
-                top: `${index * 35}px`,
-                zIndex: images.length - index,
-                transform: `rotate(${index % 2 === 0 ? -2 : 2}deg)`,
-              }}
+
+
+w-[220px]
+
+sm:w-[260px]
+
+md:w-[320px]
+
+
+h-[260px]
+
+sm:h-[330px]
+
+md:h-[420px]
+
+
+
+rounded-t-full
+
+
+overflow-hidden
+
+
+shadow-2xl
+
+
+border
+
+border-white/20
+
+
+
+bg-white/10
+
+
+
+backdrop-blur-xl
+
+
+
+group-hover:-translate-y-8
+
+
+transition
+
+duration-500
+
+
+"
             >
-              {/* CARD */}
+              <img
+                src={img.src}
+                alt={img.name}
+                className="
+
+w-full
+
+h-full
+
+object-cover
+
+
+group-hover:scale-110
+
+
+transition
+
+duration-700
+
+"
+              />
+
               <div
                 className="
-                  w-[260px]
-                  sm:w-[320px]
-                  md:w-[380px]
-                  h-[320px]
-                  sm:h-[360px]
-                  md:h-[420px]
-                  overflow-hidden
-                  rounded-2xl
-                  shadow-2xl
-                  border border-white/10
-                  bg-white/5
-                  backdrop-blur-xl
-                  transition-transform duration-500
-                  group-hover:scale-105
-                "
+
+absolute
+
+inset-0
+
+bg-gradient-to-t
+
+from-black/70
+
+via-black/10
+
+to-transparent
+
+"
+              />
+
+              <div
+                className="
+
+absolute
+
+bottom-6
+
+left-0
+
+right-0
+
+
+text-center
+
+
+text-white
+
+
+opacity-0
+
+
+group-hover:opacity-100
+
+
+transition
+
+"
               >
-                <img
-                  src={img.src}
-                  alt={img.name}
+                <h3
                   className="
-                    w-full h-full object-cover
-                    transition duration-700
-                    group-hover:scale-110
-                  "
-                />
 
-                {/* overlay */}
-                <div className="absolute inset-0 bg-black/20 group-hover:bg-black/40 transition" />
+text-xl
 
-                {/* label */}
-                <div className="absolute bottom-3 left-3 text-white text-sm opacity-0 group-hover:opacity-100 transition">
+font-serif
+
+"
+                >
                   {img.name}
-                </div>
+                </h3>
               </div>
             </div>
-          ))}
-        </div>
+          </div>
+        ))}
       </div>
 
-      {/* ================= MODAL ================= */}
+      {/* IMAGE MODAL */}
+
       {selectedImage && (
         <div
-          onClick={closeModal}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-xl"
+          onClick={() => setSelectedImage(null)}
+          className="
+
+fixed
+
+inset-0
+
+z-50
+
+bg-black/80
+
+backdrop-blur-xl
+
+flex
+
+items-center
+
+justify-center
+
+px-4
+
+"
         >
           <div
             onClick={(e) => e.stopPropagation()}
-            className="max-w-5xl w-full px-4 text-center"
+            className="
+
+max-w-6xl
+
+w-full
+
+text-center
+
+"
           >
             <img
               src={selectedImage.src}
               alt={selectedImage.name}
-              className="w-full max-h-[80vh] object-contain rounded-xl shadow-2xl"
+              className="
+
+w-full
+
+max-h-[85vh]
+
+object-contain
+
+rounded-3xl
+
+shadow-2xl
+
+"
             />
 
-            <p className="text-white mt-4 text-lg md:text-xl font-serif">
+            <p
+              className="
+
+text-white
+
+mt-5
+
+text-2xl
+
+font-serif
+
+"
+            >
               {selectedImage.name}
             </p>
           </div>
         </div>
       )}
 
-      {/* ================= REVIEW SECTION ================= */}
-      <div className="max-w-6xl mx-auto mt-5 px-4">
-        <div className="relative rounded-3xl overflow-hidden">
-          {/* glow background */}
-          <div className="absolute inset-0 bg-cyan-400/10 blur-3xl" />
+      {/* REVIEW SECTION */}
 
-          {/* glass container */}
-          <div className="relative backdrop-blur-2xl bg-white/5 border border-white/10 rounded-3xl p-6 md:p-10 shadow-2xl">
-            <div className="flex flex-col lg:flex-row items-center justify-between gap-10">
-              {/* LEFT SIDE */}
-              <div className="flex items-center gap-6">
-                {/* SCORE */}
-                <div className="relative w-24 h-24 flex flex-col items-center justify-center rounded-2xl bg-white/5 border border-white/10">
-                  <h2 className="text-3xl font-bold text-white">8.9</h2>
-                  <p className="text-xs text-white/60">Excellent</p>
+      <div
+        className="
 
-                  <div className="absolute inset-0 rounded-2xl bg-cyan-400/10 blur-xl -z-10" />
-                </div>
+max-w-6xl
 
-                {/* TEXT */}
-                <div>
-                  <h3 className="text-2xl md:text-3xl font-serif text-white mb-2">
-                    Trusted Guest Reviews
-                  </h3>
+mx-auto
 
-                  <p className="text-white/60 max-w-xl leading-7">
-                    Guests love the peaceful mountain atmosphere, modern luxury
-                    rooms, and warm hospitality at Kandaw 101 Hotel.
-                  </p>
+mt-20
 
-                  <div className="flex items-center gap-1 mt-3 text-yellow-400">
-                    ★★★★★
-                    <span className="text-white/50 text-sm ml-3">
-                      Based on verified stays
-                    </span>
-                  </div>
-                </div>
+
+rounded-3xl
+
+
+bg-white/5
+
+
+border
+
+border-white/10
+
+
+backdrop-blur-xl
+
+
+p-8
+
+md:p-12
+
+"
+      >
+        <div
+          className="
+
+flex
+
+flex-col
+
+lg:flex-row
+
+justify-between
+
+items-center
+
+gap-10
+
+"
+        >
+          <div>
+            <h3
+              className="
+
+text-3xl
+
+font-serif
+
+text-white
+
+mb-4
+
+"
+            >
+              Trusted Guest Reviews
+            </h3>
+
+            <p className="text-white/60 leading-7 max-w-xl">
+              Guests enjoy peaceful mountain views, luxury rooms and warm
+              hospitality at Kandaw 101 Hotel.
+            </p>
+
+            <div className="mt-4 text-yellow-400 text-xl">★★★★★</div>
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-4">
+            {["Agoda", "Booking", "Airbnb", "Trip.com"].map((item) => (
+              <div
+                key={item}
+                className="px-5 py-3 rounded-xl bg-white/10 text-white borde border-white/10"
+              >
+                {item}
               </div>
-
-              {/* RIGHT SIDE */}
-              <div className="flex flex-wrap justify-center gap-3">
-                {[
-                  { name: "Agoda", color: "text-purple-300" },
-                  { name: "Booking", color: "text-blue-300" },
-                  { name: "Airbnb", color: "text-red-300" },
-                  { name: "Trip.com", color: "text-cyan-300" },
-                ].map((item, i) => (
-                  <div
-                    key={i}
-                    className="
-                      px-5 py-3
-                      rounded-2xl
-                      bg-white/5
-                      border border-white/10
-                      backdrop-blur-xl
-                      hover:scale-105
-                      transition
-                    "
-                  >
-                    <p className={`font-semibold ${item.color}`}>{item.name}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
+            ))}
           </div>
         </div>
       </div>

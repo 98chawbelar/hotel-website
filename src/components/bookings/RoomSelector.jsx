@@ -1,6 +1,28 @@
+import getBaseUrl from "../../utils/baseURL";
 import { Card, CardTitle } from "./Shared";
 
 const RoomSelector = ({ rooms = [], selectedRoom, setSelectedRoom }) => {
+  const BASE_URL = getBaseUrl();
+
+  const getImageUrl = (image) => {
+    if (!image) return "https://placehold.co/600x400";
+
+    if (Array.isArray(image)) {
+      image = image[0];
+    }
+
+    if (typeof image === "object") {
+      image = image.url || image.path || image.secure_url || "";
+    }
+
+    if (!image) return "https://placehold.co/600x400";
+
+    if (image.startsWith("http")) {
+      return image;
+    }
+
+    return `${BASE_URL}/${image.replace(/^\/+/, "")}`;
+  };
   return (
     <Card>
       <CardTitle>Select Room Type</CardTitle>
@@ -25,7 +47,7 @@ const RoomSelector = ({ rooms = [], selectedRoom, setSelectedRoom }) => {
             />
 
             <img
-              src={room.images}
+              src={getImageUrl(room.images)}
               alt={room.name}
               className="w-16 h-12 object-cover rounded-lg shrink-0"
             />

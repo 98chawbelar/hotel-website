@@ -25,6 +25,7 @@ ChartJS.register(
 
 const RevenueChart = () => {
   const { data, isLoading } = useGetRevenueAnalyticsQuery();
+  console.log("Revenue Analytics", data);
 
   if (isLoading) {
     return (

@@ -1,10 +1,8 @@
-import React from "react";
 import {
   FaCreditCard,
-  FaPaypal,
   FaMobileAlt,
   FaMoneyBillWave,
-  FaAlipay,
+  FaUniversity,
 } from "react-icons/fa";
 
 import { Card, CardTitle } from "./Shared";
@@ -33,6 +31,12 @@ const paymentOptions = [
     icon: FaCreditCard,
     label: "Stripe",
   },
+
+  {
+    value: "bank_transfer",
+    icon: FaUniversity,
+    label: "Bank Transfer",
+  },
 ];
 
 const PaymentMethod = ({ paymentMethod, setPaymentMethod }) => {
@@ -40,18 +44,20 @@ const PaymentMethod = ({ paymentMethod, setPaymentMethod }) => {
     <Card>
       <CardTitle icon={FaCreditCard}>Payment Method</CardTitle>
 
-      <div className="grid grid-cols-3 gap-2 sm:gap-3">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
         {paymentOptions.map(({ value, icon: Icon, label }) => (
           <button
             key={value}
+            type="button"
             onClick={() => setPaymentMethod(value)}
-            className={`flex flex-col items-center gap-1 sm:gap-2 p-3 sm:p-4 rounded-xl border transition duration-200 ${
+            className={`flex flex-col items-center gap-2 p-4 rounded-xl border transition ${
               paymentMethod === value
                 ? "border-accent bg-accent/10 text-accent"
                 : "border-white/10 bg-white/5 text-gray-400 hover:border-white/30"
             }`}
           >
             <Icon className="text-xl sm:text-2xl" />
+
             <span className="text-xs">{label}</span>
           </button>
         ))}

@@ -7,9 +7,14 @@ import RoomSelector from "../components/bookings/RoomSelector";
 import BookingSummary from "../components/bookings/BookingSummary";
 import PageHeader from "./adminPage/components/PageHeader";
 import SubmitButton from "./adminPage/components/SubmitButton";
+import { useNavigate } from "react-router-dom";
 
 const Booking = () => {
   const booking = useBooking();
+
+  const navigate = useNavigate();
+  console.log("PRICE PREVIEW RESPONSE");
+  console.log(booking);
 
   if (booking.roomsLoading) {
     return (
@@ -122,13 +127,18 @@ const Booking = () => {
 
         {/* BUTTONS */}
         <div className="mt-10 flex justify-between">
-          {booking.step === 2 ? (
-            <SubmitButton fullWidth={false} onClick={() => booking.setStep(1)}>
-              ← Back
-            </SubmitButton>
-          ) : (
-            <div />
-          )}
+          <SubmitButton
+            fullWidth={false}
+            onClick={() => {
+              if (booking.step === 2) {
+                booking.setStep(1);
+              } else {
+                navigate(-1);
+              }
+            }}
+          >
+            ← Back
+          </SubmitButton>
 
           <SubmitButton
             fullWidth={false}
