@@ -14,10 +14,48 @@ import {
 } from "react-icons/fa";
 
 import { assets, facilities, rooms } from "../../assets/assets";
+import { useFetchAllRoomsQuery } from "../../redux/features/rooms/roomsApi";
+import { useFetchFacilitiesQuery } from "../../redux/features/facilities/facilitiesApi";
+import Loading from "../Loading";
+import getBaseUrl from "../../utils/baseURL";
 
 const HomeBody = () => {
+  const { data: roomsData, isLoading: roomsLoading } = useFetchAllRoomsQuery();
+  const { data: facilitiesData, isLoading: facilitiesLoading } =
+    useFetchFacilitiesQuery();
+
+  const rooms = Array.isArray(roomsData) ? roomsData : roomsData?.rooms || [];
+  const facilities =
+    facilitiesData?.facilities || facilitiesData?.data || facilitiesData || [];
+
   const featuredRooms = rooms.slice(0, 3);
 
+  const BASE_URL = getBaseUrl();
+
+  const getImageUrl = (img) => {
+    if (!img) return "https://placehold.co/600x400";
+    // array support
+    if (Array.isArray(img)) {
+      img = img[0];
+    }
+    // object support
+    if (typeof img === "object") {
+      img = img.url || img.path || img.secure_url || img.filename || "";
+    }
+
+    if (!img) return "https://placehold.co/600x400";
+
+    // already full url
+    if (img.startsWith("http")) {
+      return img;
+    }
+
+    return `${BASE_URL}/${img.replace(/^\/+/, "")}`;
+  };
+
+  if (roomsLoading || facilitiesLoading) {
+    return <Loading />;
+  }
   return (
     <main className="bg-secondary text-primary overflow-hidden">
       {/* ===================================================== */}
@@ -326,13 +364,12 @@ const HomeBody = () => {
               >
                 <div className="relative overflow-hidden">
                   <img
-                    src={room.image}
+                    src={getImageUrl(room.images?.[0])}
                     alt={room.name}
                     className="w-full h-64 sm:h-72 lg:h-80 object-cover group-hover:scale-110 transition duration-700"
                   />
-
                   <div className="absolute top-4 sm:top-5 right-4 sm:right-5 bg-accent text-primary px-4 py-2 rounded-full font-semibold shadow-lg text-sm">
-                    Ks {room.price.toLocaleString()}
+                    Ks {Number(room.basePrice || 0).toLocaleString()}
                   </div>
                 </div>
 
@@ -353,7 +390,7 @@ const HomeBody = () => {
                   </p>
 
                   <div className="flex flex-wrap gap-2 sm:gap-3 mt-6">
-                    {room.facilities.slice(0, 4).map((item, index) => (
+                    {(room.facilities || []).slice(0, 4).map((item, index) => (
                       <div
                         key={index}
                         className="bg-white/5 border border-white/5 px-3 sm:px-4 py-2 rounded-full text-secondary/70 text-xs sm:text-sm"
@@ -425,7 +462,7 @@ const HomeBody = () => {
                 className="group relative overflow-hidden rounded-[28px] sm:rounded-[32px] h-[320px] sm:h-[380px] lg:h-[420px]"
               >
                 <img
-                  src={facility.image}
+                  src={getImageUrl(facility.images || facility.images)}
                   alt={facility.name}
                   className="w-full h-full object-cover group-hover:scale-110 transition duration-700"
                 />
@@ -477,7 +514,7 @@ const HomeBody = () => {
                   </h3>
 
                   <p className="text-secondary/60 text-sm leading-7">
-                    Smooth and comfortable guest experience anytime.
+                    Check-in available from 12:00 PM for your comfort.
                   </p>
                 </div>
 
