@@ -312,6 +312,9 @@ const ManageBooking = () => {
                   <th className="px-6 py-5 text-left text-secondary font-semibold">
                     Room
                   </th>
+                  <th className="px-6 py-5 text-left text-secondary font-semibold">
+                    Room Number
+                  </th>
 
                   <th className="px-6 py-5 text-left text-secondary font-semibold">
                     Check In
@@ -352,6 +355,9 @@ const ManageBooking = () => {
 
                     <td className="px-6 py-5 text-secondary">
                       {booking.room?.name}
+                    </td>
+                    <td className="px-6 py-5 text-secondary">
+                      {booking.room?.roomNumber || "N/A"}
                     </td>
 
                     <td className="px-6 py-5 text-secondary">

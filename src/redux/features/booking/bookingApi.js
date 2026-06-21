@@ -103,6 +103,25 @@ const bookingApi = createApi({
     }),
 
     // ==========================
+    // GET BOOKING BY BOOKING CODE
+    // ==========================
+    fetchBookingByCode: builder.query({
+      query: (code) => ({
+        url: `/api/bookings/code/${code}`,
+        method: "GET",
+      }),
+
+      transformResponse: (response) => response?.booking || response,
+
+      providesTags: (result, error, code) => [
+        {
+          type: "Bookings",
+          id: code,
+        },
+      ],
+    }),
+
+    // ==========================
     // UPDATE STATUS
     // ==========================
     updateBookingStatus: builder.mutation({
@@ -149,6 +168,7 @@ export const {
   useFetchBookingsAllQuery,
   useFetchBookingByIdQuery,
   useFetchBookingsByEmailQuery,
+  useFetchBookingByCodeQuery,
   useUpdateBookingStatusMutation,
   useCancelBookingMutation,
   useDeleteBookingMutation,

@@ -29,6 +29,7 @@ import ManageRoom from "../pages/adminPage/dashboard/manageRoom/ManageRoom";
 import ManageBooking from "../pages/adminPage/dashboard/manageBooking/ManageBooking";
 import AddFacilities from "../pages/adminPage/dashboard/addFacilities/AddFacilities";
 import AddExtraFacilities from "../pages/adminPage/dashboard/addExtraFacilities/AddExtraFacilities";
+import UserDashboard from "../pages/UserDashboard";
 import Confirmation from "../pages/Confirmation";
 
 const Router = createBrowserRouter([
@@ -78,6 +79,14 @@ const Router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <Booking />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/userdashboard",
+        element: (
+          <PrivateRoute>
+            <UserDashboard />
           </PrivateRoute>
         ),
       },
