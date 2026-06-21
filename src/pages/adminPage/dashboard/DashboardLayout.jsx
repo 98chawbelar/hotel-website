@@ -4,15 +4,14 @@ import getBaseUrl from "../../../utils/baseURL";
 import {
   HiOutlineHome,
   HiOutlineMenuAlt2,
-  HiOutlineSearch,
-  HiOutlineBell,
   HiOutlineLogout,
   HiOutlineX,
 } from "react-icons/hi";
+import { FiSettings, FiUser, FiEdit } from "react-icons/fi";
 import { useState, useEffect } from "react";
 
 import { MdOutlineManageHistory, MdHotel } from "react-icons/md";
-import { FiSettings } from "react-icons/fi";
+
 import { AiOutlineAppstoreAdd, AiOutlineProduct } from "react-icons/ai";
 import { TbCalendarPlus } from "react-icons/tb";
 import { clearAdmin, getAdmin, setAdmin } from "../../../utils/auth";
@@ -24,6 +23,7 @@ const DashboardLayout = () => {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const navigate = useNavigate();
   const location = useLocation();
+  const [profileOpen, setProfileOpen] = useState(false);
 
   const sidebarLinks = [
     {
@@ -85,15 +85,13 @@ const DashboardLayout = () => {
   }, []);
   return (
     <section className="min-h-screen bg-secondary flex">
-      {/* ==========================
-        DESKTOP SIDEBAR
-    ========================== */}
       <aside
         className="
       hidden
       md:flex
       flex-col
       w-72
+      
       xl:w-60
       bg-primary
       border-r
@@ -126,7 +124,7 @@ const DashboardLayout = () => {
         </div>
 
         {/* MENU */}
-        <nav className="flex-1 overflow-y-auto p-4">
+        <nav className="flex-1 overflow-y-auto p-4 mt-5 lg:mt-10">
           <div className="flex flex-col gap-6">
             {sidebarLinks.map((item) => {
               const Icon = item.icon;
@@ -167,32 +165,113 @@ const DashboardLayout = () => {
         </nav>
 
         {/* SETTINGS */}
-        <div className="p-4 border-t mb-5 border-white/10">
-          <button
-            className="
-          w-full
-          flex
-          items-center
-          gap-2
-          px-5
-          py-4
-          rounded-2xl
-          text-white
-          hover:bg-accent/80
-          transition-all
-          duration-300
-        "
-          >
-            <FiSettings className="text-2xl shrink-0" />
+        <div className="p-6 border-t border-white/10">
+          <div className="flex flex-col items-center justify-center text-center">
+            {/* Avatar */}
+            <img
+              src={
+                admin?.avatar
+                  ? `${getBaseUrl()}${admin.avatar}`
+                  : "https://ui-avatars.com/api/?name=Admin"
+              }
+              alt="admin"
+              className="
+        w-20
+        h-20
+        rounded-full
+        object-cover
+        border-4
+        border-accent
+        shadow-lg
+      "
+            />
 
-            <span className="font-medium">Settings</span>
-          </button>
+            {/* Name */}
+            <h3 className="mt-4 text-white font-semibold text-base truncate max-w-full">
+              {admin?.username || "Administrator"}
+            </h3>
+
+            {/* Role */}
+            <p className="text-sm text-gray-400 mt-1">
+              {admin?.role || "Admin"}
+            </p>
+
+            {/* Settings Button */}
+            <button
+              onClick={() => setProfileOpen(!profileOpen)}
+              className="
+        mt-5
+        w-full
+        flex
+        items-center
+        justify-center
+        gap-2
+        px-4
+        py-3
+        rounded-2xl
+        bg-white/5
+        hover:bg-white/10
+        text-white
+        transition-all
+        duration-300
+      "
+            >
+              <FiSettings className="text-lg" />
+              <span>Settings</span>
+            </button>
+
+            {/* Dropdown */}
+            {profileOpen && (
+              <div
+                className="
+          mt-4
+          w-full
+          bg-white
+          rounded-3xl
+          overflow-hidden
+          shadow-2xl
+        "
+              >
+                <Link
+                  to="/dashboard/profile"
+                  className="
+            flex
+            items-center
+            gap-3
+            px-5
+            py-4
+            hover:bg-gray-100
+            transition
+          "
+                >
+                  <FiUser />
+                  Profile
+                </Link>
+
+                <button
+                  onClick={handleLogout}
+                  className="
+            w-full
+            flex
+            items-center
+            gap-3
+            px-5
+            py-4
+            text-red-500
+            hover:bg-red-50
+            transition
+          "
+                >
+                  <HiOutlineLogout />
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </aside>
 
-      {/* ==========================
-        MOBILE DRAWER
-    ========================== */}
+      {/* MOBILE DRAWER */}
       {mobileMenuOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           {/* OVERLAY */}
@@ -296,38 +375,114 @@ const DashboardLayout = () => {
             </nav>
 
             {/* SETTINGS */}
-            <div className="p-4 border-t border-white/10">
-              <button
-                className="
-              w-full
-              flex
-              items-center
-              gap-4
-              px-5
-              py-4
-              rounded-2xl
-              text-white
-              hover:bg-white/10
-              transition-all
-            "
-              >
-                <FiSettings className="text-2xl shrink-0" />
+            <div className="p-3 border-t border-white/10">
+              <div className="flex flex-col items-center justify-center text-center">
+                {/* Avatar */}
+                <img
+                  src={
+                    admin?.avatar
+                      ? `${getBaseUrl()}${admin.avatar}`
+                      : "https://ui-avatars.com/api/?name=Admin"
+                  }
+                  alt="admin"
+                  className="
+        w-10
+        h-10
+        rounded-full
+        object-cover
+        border-2
+        border-accent
+        shadow-lg
+      "
+                />
 
-                <span>Settings</span>
-              </button>
+                {/* Name */}
+                <h3 className="mt-4 text-white font-semibold text-xs truncate max-w-full">
+                  {admin?.username || "Administrator"}
+                </h3>
+
+                {/* Role */}
+                <p className="text-sm text-gray-400 mt-1">
+                  {admin?.role || "Admin"}
+                </p>
+
+                {/* Settings Button */}
+                <button
+                  onClick={() => setProfileOpen(!profileOpen)}
+                  className="
+        mt-5
+        w-full
+        flex
+        items-center
+        justify-center
+        gap-2
+        px-4
+        py-3
+        rounded-2xl
+        bg-white/5
+        hover:bg-white/10
+        text-white
+        transition-all
+        duration-300
+      "
+                >
+                  <FiSettings className="text-lg" />
+                  <span>Settings</span>
+                </button>
+
+                {/* Dropdown */}
+                {profileOpen && (
+                  <div
+                    className="
+          mt-4
+          w-full
+          bg-white
+          rounded-3xl
+          overflow-hidden
+          shadow-2xl
+        "
+                  >
+                    <Link
+                      to="/dashboard/profile"
+                      className="
+            flex
+            items-center
+            gap-3
+            px-5
+            py-4
+            hover:bg-gray-100
+            transition
+          "
+                    >
+                      <FiUser />
+                      Profile
+                    </Link>
+
+                    <button
+                      onClick={handleLogout}
+                      className="
+            w-full
+            flex
+            items-center
+            gap-3
+            px-5
+            py-4
+            text-red-500
+            hover:bg-red-50
+            transition
+          "
+                    >
+                      <HiOutlineLogout />
+                      Logout
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </aside>
         </div>
       )}
-
-      {/* ==========================
-        CONTENT AREA
-    ========================== */}
       <div className="flex-1 min-w-0 flex flex-col">
-        {/* ==========================
-          HEADER
-          IMPORT YOUR HEADER HERE
-      ========================== */}
         <header
           className="
         h-16
@@ -356,13 +511,7 @@ const DashboardLayout = () => {
           >
             <HiOutlineMenuAlt2 className="text-2xl" />
           </button>
-
-          {/* IMPORT YOUR HEADER CONTENT HERE */}
         </header>
-
-        {/* ==========================
-          PAGE CONTENT
-      ========================== */}
         <main
           className="
         flex-1

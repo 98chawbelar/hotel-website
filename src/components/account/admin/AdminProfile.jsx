@@ -69,12 +69,31 @@ const AdminProfile = () => {
 
         <p className="text-gray-500">{admin?.role}</p>
 
-        <input
-          type="file"
-          accept="image/*"
-          className="mt-4 cursor-pointer"
-          onChange={(e) => setAvatar(e.target.files[0])}
-        />
+        <div className="mt-4 w-full flex flex-col items-center">
+          <p className="text-sm  mb-2">
+            Upload profile image (Maximum size: 5MB)
+          </p>
+
+          <input
+            type="file"
+            accept="image/*"
+            className="cursor-pointer bg-primary/20 rounded-md px-2 py-2  "
+            onChange={(e) => {
+              const file = e.target.files[0];
+
+              if (!file) return;
+
+              // 2MB validation
+              if (file.size > 5 * 1024 * 1024) {
+                alert("Image size must be less than 5MB");
+                e.target.value = "";
+                return;
+              }
+
+              setAvatar(file);
+            }}
+          />
+        </div>
 
         <button
           onClick={handleUpload}

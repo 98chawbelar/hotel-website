@@ -12,7 +12,9 @@ const axiosBaseQuery =
         params,
       });
 
-      return { data: result.data };
+      return {
+        data: result.data,
+      };
     } catch (axiosError) {
       return {
         error: {
@@ -31,6 +33,7 @@ const roomsApi = createApi({
   tagTypes: ["Rooms"],
 
   endpoints: (builder) => ({
+    // Get All Rooms
     fetchAllRooms: builder.query({
       query: () => ({
         url: "/api/rooms",
@@ -40,6 +43,17 @@ const roomsApi = createApi({
       providesTags: ["Rooms"],
     }),
 
+    // Get Archived Rooms
+    fetchArchivedRooms: builder.query({
+      query: () => ({
+        url: "/api/rooms/archived/all",
+        method: "GET",
+      }),
+
+      providesTags: ["Rooms"],
+    }),
+
+    //  Get Single Room
     fetchRoomById: builder.query({
       query: (id) => ({
         url: `/api/rooms/${id}`,
@@ -49,6 +63,7 @@ const roomsApi = createApi({
       providesTags: (result, error, id) => [{ type: "Rooms", id }],
     }),
 
+    //  Add Room
     addRoom: builder.mutation({
       query: (newRoom) => ({
         url: "/api/rooms/create-room",
@@ -59,6 +74,7 @@ const roomsApi = createApi({
       invalidatesTags: ["Rooms"],
     }),
 
+    // Update Room
     updateRoom: builder.mutation({
       query: ({ id, data }) => ({
         url: `/api/rooms/edit/${id}`,
@@ -69,9 +85,30 @@ const roomsApi = createApi({
       invalidatesTags: ["Rooms"],
     }),
 
+    // Soft Delete
     deleteRoom: builder.mutation({
       query: (id) => ({
         url: `/api/rooms/${id}`,
+        method: "DELETE",
+      }),
+
+      invalidatesTags: ["Rooms"],
+    }),
+
+    //Restore Archived Room
+    restoreRoom: builder.mutation({
+      query: (id) => ({
+        url: `/api/rooms/restore/${id}`,
+        method: "PATCH",
+      }),
+
+      invalidatesTags: ["Rooms"],
+    }),
+
+    //  Permanent Delete Room
+    permanentDeleteRoom: builder.mutation({
+      query: (id) => ({
+        url: `/api/rooms/permanent-delete/${id}`,
         method: "DELETE",
       }),
 
@@ -82,10 +119,13 @@ const roomsApi = createApi({
 
 export const {
   useFetchAllRoomsQuery,
+  useFetchArchivedRoomsQuery,
   useFetchRoomByIdQuery,
   useAddRoomMutation,
   useUpdateRoomMutation,
   useDeleteRoomMutation,
+  useRestoreRoomMutation,
+  usePermanentDeleteRoomMutation,
 } = roomsApi;
 
 export default roomsApi;
