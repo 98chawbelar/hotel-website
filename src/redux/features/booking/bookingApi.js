@@ -88,6 +88,13 @@ const bookingApi = createApi({
       providesTags: (result, error, id) => [{ type: "Bookings", id }],
     }),
 
+    resendBookingEmail: builder.mutation({
+      query: (id) => ({
+        url: `/api/bookings/${id}/resend-email`,
+        method: "POST",
+      }),
+    }),
+
     // ==========================
     // GET BOOKINGS BY EMAIL
     // ==========================
@@ -125,14 +132,14 @@ const bookingApi = createApi({
     // UPDATE STATUS
     // ==========================
     updateBookingStatus: builder.mutation({
-      query: ({ id, bookingStatus }) => ({
+      query: ({ id, bookingStatus, paymentStatus }) => ({
         url: `/api/bookings/${id}/status`,
         method: "PATCH",
         data: {
           bookingStatus,
+          paymentStatus,
         },
       }),
-
       invalidatesTags: ["Bookings"],
     }),
 
@@ -172,6 +179,7 @@ export const {
   useUpdateBookingStatusMutation,
   useCancelBookingMutation,
   useDeleteBookingMutation,
+  useResendBookingEmailMutation,
 } = bookingApi;
 
 export default bookingApi;

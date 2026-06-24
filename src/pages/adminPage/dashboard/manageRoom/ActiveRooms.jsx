@@ -156,6 +156,29 @@ const ActiveRooms = () => {
     }
   };
 
+  const handleStatusUpdate = async (id, status) => {
+    try {
+      await updateRoom({
+        id,
+        data: { status },
+      }).unwrap();
+
+      Swal.fire({
+        icon: "success",
+        title: `Room marked as ${status}`,
+      });
+
+      refetch();
+    } catch (error) {
+      console.log(error);
+
+      Swal.fire({
+        icon: "error",
+        title: "Status update failed",
+      });
+    }
+  };
+
   // ================= DELETE =================
 
   const handleDelete = async (id) => {
@@ -227,6 +250,7 @@ const ActiveRooms = () => {
               handleUpdate={handleUpdate}
               handleDelete={handleDelete}
               handleEditClick={handleEditClick}
+              handleStatusUpdate={handleStatusUpdate}
               updating={updating}
             />
           ))}

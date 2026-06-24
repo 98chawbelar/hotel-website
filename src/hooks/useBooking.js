@@ -1,17 +1,22 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 
-import { extraServices } from "../assets/assets";
-
 import {
   useCreateBookingMutation,
   useCalculatePricePreviewMutation,
+  useFetchBookingsAllQuery,
 } from "../redux/features/booking/bookingApi";
 
 import { useFetchAllRoomsQuery } from "../redux/features/rooms/roomsApi";
+import { useFetchFacilitiesQuery } from "../redux/features/facilities/facilitiesApi";
+
+import { useFetchExtraFacilitiesQuery } from "../redux/features/extrafacilities/extraFacilitiesApi";
 
 const useBooking = () => {
   const navigate = useNavigate();
+
+  const { data: facilitiesData } = useFetchFacilitiesQuery();
+  const { data: extraFacilitiesData } = useFetchExtraFacilitiesQuery();
 
   const [searchParams] = useSearchParams();
 
@@ -38,6 +43,35 @@ const useBooking = () => {
     agreePolicy: false,
   });
 
+  const facilities =
+    facilitiesData?.facilities || facilitiesData?.data || facilitiesData || [];
+
+  const extraFacilities =
+    extraFacilitiesData?.extraFacilities ||
+    extraFacilitiesData?.data ||
+    extraFacilitiesData ||
+    [];
+
+  const freeFacilities = facilities.map((facility) => ({
+    key: facility._id,
+    label: facility.name,
+    desc: facility.description,
+    price: 0,
+    type: "facility",
+  }));
+
+  const paidExtras = extraFacilities.map((item) => ({
+    key: item.key,
+    label: item.label,
+    desc: item.desc,
+    price: item.price,
+    type: "extra",
+  }));
+
+  const allExtras = [...paidExtras, ...freeFacilities];
+
+  // SEARCH PARAMS
+
   const checkIn = searchParams.get("checkIn") || "";
 
   const checkOut = searchParams.get("checkOut") || "";
@@ -48,44 +82,117 @@ const useBooking = () => {
 
   const child = Number(searchParams.get("child") || 0);
 
+  // FETCH ROOMS
+
   const { data, isLoading: roomsLoading, isError } = useFetchAllRoomsQuery();
 
-  const rooms = data?.rooms || data || [];
+  // FETCH BOOKINGS
+
+  const { data: bookingData } = useFetchBookingsAllQuery();
+
+  // ROOMS ARRAY
+
+  const rooms = Array.isArray(data) ? data : data?.rooms || [];
+
+  // BOOKINGS ARRAY
+
+  const bookings = Array.isArray(bookingData)
+    ? bookingData
+    : bookingData?.bookings || [];
+
+  // CREATE BOOKING
 
   const [createBooking, { isLoading: bookingLoading }] =
     useCreateBookingMutation();
 
+  // PRICE PREVIEW
+
   const [calculatePricePreview] = useCalculatePricePreviewMutation();
+
+  // FILTER AVAILABLE ROOMS
 
   const availableRooms = Array.isArray(rooms)
     ? rooms.filter((room) => {
+        // ROOM STATUS CHECK
+        const roomStatus = room?.status?.toLowerCase();
+
+        // HIDE RESERVED & BOOKED ROOMS
+        if (roomStatus === "reserved" || roomStatus === "booked") {
+          return false;
+        }
+
+        // CAPACITY CHECK
         const roomAdults = room?.capacity?.adults || 0;
 
         const roomChild = room?.capacity?.child || 0;
 
-        return adults <= roomAdults && child <= roomChild;
+        const capacityMatch = adults <= roomAdults && child <= roomChild;
+
+        if (!capacityMatch) {
+          return false;
+        }
+
+        // ROOM BOOKINGS
+        const roomBookings = bookings.filter(
+          (booking) =>
+            booking?.room?._id === room?._id &&
+            booking?.bookingStatus?.toLowerCase() !== "cancelled",
+        );
+
+        // DATE OVERLAP CHECK
+        const isBooked = roomBookings.some((booking) => {
+          const bookingCheckIn = new Date(booking?.stay?.checkIn);
+
+          const bookingCheckOut = new Date(booking?.stay?.checkOut);
+
+          const selectedCheckIn = new Date(checkIn);
+
+          const selectedCheckOut = new Date(checkOut);
+
+          return (
+            selectedCheckIn < bookingCheckOut &&
+            selectedCheckOut > bookingCheckIn
+          );
+        });
+
+        // ONLY AVAILABLE ROOMS
+        return !isBooked;
       })
     : [];
+
+  // SORT ROOM NUMBERS
+
+  availableRooms.sort((a, b) => Number(a.roomNumber) - Number(b.roomNumber));
+
+  // DEFAULT ROOM
 
   const room =
     availableRooms.find((r) => String(r?._id) === String(roomId)) ||
     availableRooms?.[0];
 
+  // SELECTED ROOM DATA
+
   const selectedRoomData = availableRooms.find(
     (room) => String(room?._id) === String(selectedRoom),
   );
 
-  const extrasTotal = extraServices.reduce(
+  // EXTRA TOTAL
+
+  const extrasTotal = allExtras.reduce(
     (total, service) =>
       extras.includes(service.key) ? total + service.price : total,
     0,
   );
+
+  // AUTO SELECT FIRST ROOM
 
   useEffect(() => {
     if (room?._id && !selectedRoom) {
       setSelectedRoom(room._id);
     }
   }, [room?._id, selectedRoom]);
+
+  // FETCH PRICE
 
   useEffect(() => {
     const fetchPricing = async () => {
@@ -103,7 +210,6 @@ const useBooking = () => {
           checkOut,
           extrasTotal,
         }).unwrap();
-        console.log("PRICE RESPONSE FROM API:", result);
 
         setPricing(result);
       } catch (error) {
@@ -114,11 +220,15 @@ const useBooking = () => {
     fetchPricing();
   }, [selectedRoom, checkIn, checkOut, extrasTotal, calculatePricePreview]);
 
+  // TOGGLE EXTRA
+
   const toggleExtra = (key) => {
     setExtras((prev) =>
       prev.includes(key) ? prev.filter((item) => item !== key) : [...prev, key],
     );
   };
+
+  // SET FORM FIELD
 
   const setField = (key, value) => {
     setForm((prev) => ({
@@ -126,6 +236,11 @@ const useBooking = () => {
       [key]: value,
     }));
   };
+
+  const user = JSON.parse(localStorage.getItem("user"));
+  const isAdmin = user?.role === "admin";
+
+  // HANDLE BOOKING
 
   const handleBooking = async () => {
     try {
@@ -146,15 +261,19 @@ const useBooking = () => {
         return;
       }
 
-      const selectedExtras = extraServices
+      if (!selectedRoom) {
+        alert("Please Select A Room!");
+      }
+
+      const selectedExtras = allExtras
         .filter((service) => extras.includes(service.key))
         .map((service) => ({
           name: service.label,
-          price: service.price,
+          price: service.price || 0,
         }));
 
       const bookingData = {
-        room: selectedRoomData._id,
+        room: selectedRoomData?._id,
 
         guest: {
           firstName: form.firstName,
@@ -182,7 +301,13 @@ const useBooking = () => {
 
       const response = await createBooking(bookingData).unwrap();
 
-      navigate(`/confirmation/${response.booking._id}`);
+      if (isAdmin) {
+        navigate(`/confirmation/${response.booking._id}`);
+      } else {
+        // CUSTOMER FLOW
+        alert("Booking Confirmed Successfully!");
+        navigate("/");
+      }
     } catch (error) {
       console.error(error);
 
@@ -234,7 +359,7 @@ const useBooking = () => {
     handleBooking,
 
     // data
-    extraServices,
+    extraServices: allExtras,
   };
 };
 

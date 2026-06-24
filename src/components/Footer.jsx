@@ -5,28 +5,12 @@ import { FaFacebookF, FaInstagram, FaGithub } from "react-icons/fa";
 const Footer = () => {
   return (
     <>
-      <div className="w-screen flex justify-center ">
+      <div className="w-screen mt-20 flex justify-center ">
         <div className="w-full h-px bg-linear-to-r from-transparent via-primary/60 to-transparent shadow-xs"></div>
       </div>
-      <footer className="bg-secondary text-white mt-10 px-4 sm:px-6 lg:px-8 py-10">
+      <footer className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-15 sm:pt-20 pb-16 sm:pb-24">
         {/* MAIN CONTAINER */}
-        <div
-          className="
-      max-w-7xl
-      mx-auto
-      grid
-      grid-cols-1
-      sm:grid-cols-2
-      md:grid-cols-2
-      lg:grid-cols-4
-      gap-10
-      lg:gap-8
-      place-items-center
-      lg:place-items-start
-      text-center
-      lg:text-left
-    "
-        >
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-7  lg:place-items-start text-center lg:text-left">
           {/* LOGO + ADDRESS */}
           <div className="flex flex-col items-center lg:items-start w-full max-w-62.5">
             <Link to="/">
@@ -55,15 +39,24 @@ const Footer = () => {
             </h2>
 
             <div className="flex flex-col gap-3 text-gray-400">
-              <Link to="/about" className="hover:text-accent transition">
+              <Link
+                to="/about"
+                className="hover:text-accent hover:underline transition"
+              >
                 About Us
               </Link>
 
-              <Link to="/contact" className="hover:text-accent transition">
+              <Link
+                to="/contact"
+                className="hover:text-accent  hover:underline transition"
+              >
                 Contact
               </Link>
 
-              <Link to="/terms" className="hover:text-accent transition">
+              <Link
+                to="/terms"
+                className="hover:text-accent  hover:underline transition"
+              >
                 Terms & Conditions
               </Link>
             </div>
@@ -78,7 +71,7 @@ const Footer = () => {
             <div className="flex flex-col gap-4 text-gray-400">
               <Link
                 to="/facebook"
-                className="flex items-center gap-2 hover:text-[#1877F2] transition"
+                className="flex items-center  hover:underline gap-2 hover:text-[#1877F2] transition"
               >
                 <FaFacebookF />
                 Facebook
@@ -86,7 +79,7 @@ const Footer = () => {
 
               <Link
                 to="/github"
-                className="flex items-center gap-2 hover:text-gray-600 transition"
+                className="flex items-center  hover:underline gap-2 hover:text-gray-600 transition"
               >
                 <FaGithub />
                 Github
@@ -94,7 +87,7 @@ const Footer = () => {
 
               <Link
                 to="/instagram"
-                className="flex items-center gap-2 hover:text-pink-500 transition"
+                className="flex items-center  hover:underline gap-2 hover:text-pink-500 transition"
               >
                 <FaInstagram />
                 Instagram
@@ -103,8 +96,8 @@ const Footer = () => {
           </div>
 
           {/* NEWSLETTER */}
-          <div className="flex flex-col items-center lg:items-start w-fit max-w-50">
-            <h2 className="text-xl font-semibold mb-4 text-primary">
+          <div className="flex flex-col items-center lg:items-start w-fit max-w-70">
+            <h2 className="text-xl font-semibold mb-2 text-primary">
               Newsletter
             </h2>
 
@@ -112,12 +105,12 @@ const Footer = () => {
               Subscribe to receive hotel updates, promotions and special offers.
             </p>
 
-            <div className="w-full flex flex-col sm:flex-row items-stretch gap-3">
+            <div className="max-w-50 w-full flex flex-col sm:flex-row items-stretch gap-3">
               <input
                 type="email"
                 placeholder="Enter your email"
                 className=" text-center
-              w-full
+              w-fit
               sm:flex-1
               min-w-0
               rounded-xl
@@ -137,8 +130,8 @@ const Footer = () => {
             hover:bg-accent/80
               transition
               rounded-xl
-              px-1.5
-              py-1.5
+              px-2
+              py-2
             text-black
               font-semibold
               whitespace-nowrap"
@@ -150,7 +143,7 @@ const Footer = () => {
         </div>
 
         {/* DIVIDER */}
-        <div className="mt-10 pt-6 border-0">
+        <div className="mt-10  border-0">
           <div className="w-full h-[1.5px] bg-linear-to-r from-transparent via-primary/60 to-transparent shadow-xs"></div>
           <p className="text-center text-sm text-gray-500">
             © {new Date().getFullYear()} Kandaw 101 Hotel. All rights reserved.

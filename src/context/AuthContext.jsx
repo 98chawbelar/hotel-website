@@ -40,8 +40,26 @@ export const AuthProvider = ({ children }) => {
   /**
    * Register User
    */
-  const registerUser = (email, password) =>
-    createUserWithEmailAndPassword(auth, email, password);
+  const registerUser = async (name, email, password, phone) => {
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+
+    await updateProfile(result.user, {
+      displayName: name,
+      photoURL: `https://ui-avatars.com/api/?name=${name}`,
+    });
+
+    // REFRESH USER STATE
+    setCurrentUser({
+      uid: result.user.uid,
+      email: result.user.email,
+      name: name,
+      photo: `https://ui-avatars.com/api/?name=${name}`,
+      phone,
+    });
+
+    return result.user;
+  };
+
   /**
    * Login User
    */

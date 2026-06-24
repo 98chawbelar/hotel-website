@@ -65,7 +65,12 @@ const Navbar = () => {
     { name: "Home", href: "/" },
     { name: "Facilities", href: "/facilities" },
     { name: "Rooms", href: "/rooms" },
-    { name: "UserDashboard", href: "/userdashboard" },
+
+    {
+      ...(currentUser?.hasBooking
+        ? [{ name: "UserDashboard", href: "/userdashboard" }]
+        : ["/login"]),
+    },
     { name: "Contact", href: "/contact" },
     { name: "About", href: "/about" },
   ];
@@ -146,6 +151,7 @@ const Navbar = () => {
             {facilitiesLinks.map((item) => (
               <li key={item.name}>
                 <Link
+                  key={item.path}
                   to={item.href}
                   className="block px-4 py-2 text-sm text-white hover:bg-accent/20 transition"
                   onClick={() => {
@@ -169,7 +175,11 @@ const Navbar = () => {
   return (
     <nav
       className={`absolute top-0 left-0 w-full z-50 transition-all duration-300 ${
-        isAuthPage ? "bg-black/20 backdrop-blur-md" : "bg-transparent"
+        isAuthPage
+          ? "bg-black/20 backdrop-blur-md"
+          : location.pathname.startsWith("/userdashboard")
+            ? "bg-gray-400"
+            : "bg-transparent"
       }`}
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -195,17 +205,40 @@ const Navbar = () => {
           <div className="hidden lg:flex items-center gap-3 xl:gap-4">
             {/* PROFILE */}
             {currentUser && (
-              <div>
+              <div className="relative group">
                 <label htmlFor="profileUpload" className="cursor-pointer">
                   <img
                     src={
                       currentUser?.photo ||
                       "https://ui-avatars.com/api/?name=User"
                     }
-                    alt="avatar"
+                    alt={currentUser?.name}
                     className="w-10 h-10 rounded-full object-cover ring-2 ring-accent"
                   />
                 </label>
+
+                {/* HOVER USERNAME */}
+                <div
+                  className="
+        absolute
+        top-12
+        left-1/2
+        -translate-x-1/2
+        bg-black/90
+        text-white
+        text-xs
+        px-3
+        py-1
+        rounded-md
+        opacity-0
+        group-hover:opacity-100
+        transition
+        whitespace-nowrap
+        pointer-events-none
+      "
+                >
+                  {currentUser?.name}
+                </div>
 
                 <input
                   type="file"
@@ -258,9 +291,9 @@ const Navbar = () => {
           <div
             className="
             absolute
-            top-13
-            right-4
-            sm:right-6
+            top-16
+            
+            sm:right-5
             w-[90vw]
             max-w-[320px]
             lg:hidden
@@ -281,17 +314,40 @@ const Navbar = () => {
 
               {/* PROFILE */}
               {currentUser && (
-                <div>
+                <div className="relative group">
                   <label htmlFor="profileUpload" className="cursor-pointer">
                     <img
                       src={
                         currentUser?.photo ||
                         "https://ui-avatars.com/api/?name=User"
                       }
-                      alt="avatar"
+                      alt={currentUser?.name}
                       className="w-10 h-10 rounded-full object-cover ring-2 ring-accent"
                     />
                   </label>
+
+                  {/* HOVER USERNAME */}
+                  <div
+                    className="
+        absolute
+        top-12
+        left-1/2
+        -translate-x-1/2
+        bg-black/90
+        text-white
+        text-xs
+        px-3
+        py-1
+        rounded-md
+        opacity-0
+        group-hover:opacity-100
+        transition
+        whitespace-nowrap
+        pointer-events-none
+      "
+                  >
+                    {currentUser?.name}
+                  </div>
 
                   <input
                     type="file"

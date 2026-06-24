@@ -36,10 +36,10 @@ const FacilitiesBody = () => {
   return (
     <main className="bg-primary/50 text-primary overflow-hidden">
       {/* HERO */}
-      <section className="relative py-24 sm:py-28 lg:py-36">
+      <section className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-16 sm:pb-24">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(201,162,39,0.12),transparent_45%)]" />
 
-        <div className="relative max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative max-w-360 mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center p-6 rounded-md shadow-xl max-w-4xl bg-primary text-white mx-auto">
             <p className="uppercase tracking-[6px] text-accent text-xs sm:text-sm mb-5">
               Hotel Facilities
@@ -79,7 +79,7 @@ const FacilitiesBody = () => {
       {/* FACILITIES */}
 
       <section className="pb-20">
-        <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative z-10 max-w-7xl  w-full    mx-auto ">
           <div className="space-y-16">
             {facilities.map((item, index) => (
               <div
@@ -97,9 +97,9 @@ const FacilitiesBody = () => {
                       alt={item.name}
                       className="
                       w-full
-                      h-[320px]
-                      sm:h-[450px]
-                      lg:h-[520px]
+                      h-80
+                      sm:h-113
+                      lg:h-130
                       object-cover
                       group-hover:scale-105
                       transition
@@ -111,7 +111,7 @@ const FacilitiesBody = () => {
                   <div
                     className="
                     absolute inset-0 
-                    bg-gradient-to-t 
+                    bg-linear-to-t 
                     from-black/60 
                     to-transparent
                     rounded-[30px]

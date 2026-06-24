@@ -30,6 +30,9 @@ const RoomCard = ({ room }) => {
             <h3 className="text-3xl font-bold text-gray-300 mb-4">
               {room.name}
             </h3>
+            <p className="text-md font-bold text-gray-300 mb-4">
+              {room.roomNumber}
+            </p>
 
             <p className="text-gray-300 mb-5 leading-7">{room?.description}</p>
 

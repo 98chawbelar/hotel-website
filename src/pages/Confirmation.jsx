@@ -3,18 +3,25 @@ import { useParams, useNavigate } from "react-router-dom";
 import {
   useFetchBookingByIdQuery,
   useCancelBookingMutation,
+  useUpdateBookingStatusMutation,
+  useResendBookingEmailMutation,
 } from "../redux/features/booking/bookingApi";
 
 import SubmitButton from "../pages/adminPage/components/SubmitButton";
 
 const Confirmation = () => {
   const { code } = useParams();
-
   const navigate = useNavigate();
 
   const { data: booking, isLoading, isError } = useFetchBookingByIdQuery(code);
 
   const [cancelBooking, { isLoading: cancelling }] = useCancelBookingMutation();
+
+  const [updateBookingStatus, { isLoading: updating }] =
+    useUpdateBookingStatusMutation();
+
+  const [resendBookingEmail, { isLoading: resending }] =
+    useResendBookingEmailMutation();
 
   if (isLoading) {
     return (
@@ -33,23 +40,44 @@ const Confirmation = () => {
   }
 
   const checkInDate = new Date(booking.stay.checkIn);
-
   const today = new Date();
-
   const diffTime = checkInDate - today;
-
   const daysBeforeCheckIn = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
   const canCancel =
     booking.bookingStatus !== "cancelled" && daysBeforeCheckIn >= 7;
 
+  // CANCEL BOOKING
   const handleCancel = async () => {
     try {
       await cancelBooking(booking._id).unwrap();
-
       alert("Booking cancelled successfully");
     } catch (error) {
       alert(error?.data?.message || "Cancellation failed");
+    }
+  };
+
+  // REJECT BOOKING (ADMIN ACTION STYLE)
+  const handleReject = async () => {
+    try {
+      await updateBookingStatus({
+        id: booking._id,
+        bookingStatus: "cancelled",
+      }).unwrap();
+
+      alert("Booking rejected successfully");
+    } catch (error) {
+      alert("Failed to reject booking");
+    }
+  };
+
+  // RESEND EMAIL
+  const handleResendEmail = async () => {
+    try {
+      await resendBookingEmail(booking._id).unwrap();
+      alert("Email resent successfully");
+    } catch (error) {
+      alert("Failed to resend email");
     }
   };
 
@@ -86,7 +114,6 @@ const Confirmation = () => {
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <p className="text-gray-400">Guest</p>
-
               <p>
                 {booking.guest.firstName} {booking.guest.lastName}
               </p>
@@ -94,24 +121,21 @@ const Confirmation = () => {
 
             <div>
               <p className="text-gray-400">Email</p>
-
               <p>{booking.guest.email}</p>
             </div>
 
             <div>
               <p className="text-gray-400">Check In</p>
-
               <p>{new Date(booking.stay.checkIn).toLocaleDateString()}</p>
             </div>
 
             <div>
               <p className="text-gray-400">Check Out</p>
-
               <p>{new Date(booking.stay.checkOut).toLocaleDateString()}</p>
             </div>
 
             <div
-              className={`inline-flex px-3 py-1 rounded-full text-sm font-medium ${
+              className={`inline-flex w-fit px-2 py-2 rounded-xl items-center text-sm font-medium ${
                 booking.bookingStatus === "cancelled"
                   ? "bg-red-500/20 text-red-400"
                   : booking.bookingStatus === "confirmed"
@@ -124,7 +148,6 @@ const Confirmation = () => {
 
             <div>
               <p className="text-gray-400">Payment</p>
-
               <p>{booking.payment.method}</p>
             </div>
           </div>
@@ -133,20 +156,19 @@ const Confirmation = () => {
 
           <div className="flex justify-between text-2xl font-bold">
             <span>Total</span>
-
             <span>
               {booking.pricing.totalPrice} {booking.pricing.currency}
             </span>
           </div>
         </div>
+
+        {/* POLICY */}
         <div className="mt-6 bg-white/5 border border-white/10 rounded-2xl p-5">
           <h3 className="text-lg font-semibold mb-3">Cancellation Policy</h3>
 
           <ul className="space-y-2 text-sm text-gray-400">
             <li>• Free cancellation up to 7 days before check-in</li>
-
-            <li>• Cancellation is unavailable within 7 days of check-in</li>
-
+            <li>• Cancellation is unavailable within 7 days</li>
             <li>• Date modifications are allowed before check-in</li>
           </ul>
         </div>
@@ -157,6 +179,7 @@ const Confirmation = () => {
             Back To Home
           </SubmitButton>
 
+          {/* CANCEL (USER RULE) */}
           {canCancel && (
             <SubmitButton
               loading={cancelling}
@@ -165,6 +188,30 @@ const Confirmation = () => {
               onClick={handleCancel}
             >
               Cancel Booking
+            </SubmitButton>
+          )}
+
+          {/* REJECT (ADMIN STYLE) */}
+          {booking.bookingStatus === "pending" && (
+            <SubmitButton
+              loading={updating}
+              loadingText="Rejecting..."
+              className="bg-red-700 hover:bg-red-800"
+              onClick={handleReject}
+            >
+              Reject Booking
+            </SubmitButton>
+          )}
+
+          {/* RESEND EMAIL */}
+          {booking.bookingStatus === "confirmed" && (
+            <SubmitButton
+              loading={resending}
+              loadingText="Sending..."
+              className="bg-blue-500 hover:bg-blue-600"
+              onClick={handleResendEmail}
+            >
+              Resend Email
             </SubmitButton>
           )}
         </div>

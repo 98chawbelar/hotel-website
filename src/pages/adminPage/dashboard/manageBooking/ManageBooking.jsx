@@ -18,12 +18,16 @@ import {
   useCancelBookingMutation,
   useUpdateBookingStatusMutation,
   useFetchBookingsAllQuery,
+  useResendBookingEmailMutation,
 } from "../../../../redux/features/booking/bookingApi";
 import { useNavigate } from "react-router-dom";
 
 const ManageBooking = () => {
   const navigate = useNavigate();
   const { data, isLoading, error } = useFetchBookingsAllQuery();
+
+  const [resendBookingEmail, { isLoading: isResending }] =
+    useResendBookingEmailMutation();
 
   const [cancelBooking] = useCancelBookingMutation();
 
@@ -96,6 +100,39 @@ const ManageBooking = () => {
     }
   };
 
+  const handleMarkPaid = async (booking) => {
+    try {
+      await updateBookingStatus({
+        id: booking._id,
+        bookingStatus: "confirmed",
+        paymentStatus: "paid",
+      }).unwrap();
+
+      alert("Payment marked as PAID and booking confirmed");
+    } catch (err) {
+      console.log(err);
+      alert(err?.data?.message || "Failed");
+    }
+  };
+
+  const handleMarkPaidAndSendEmail = async (booking) => {
+    try {
+      const res = await updateBookingStatus({
+        id: booking._id,
+        paymentStatus: "paid",
+      }).unwrap();
+
+      // small delay ensures DB sync (important in some setups)
+      await new Promise((r) => setTimeout(r, 300));
+
+      await resendBookingEmail(booking._id).unwrap();
+
+      alert("Paid + Email sent successfully");
+    } catch (error) {
+      console.error(error);
+      alert(error?.data?.message || "Failed");
+    }
+  };
   const getStatusStyle = (status) => {
     switch (status?.toLowerCase()) {
       case "confirmed":
@@ -219,7 +256,7 @@ const ManageBooking = () => {
         </div>
 
         {/* MOBILE CARDS */}
-        <div className="grid gap-5 lg:hidden">
+        <div className="grid gap-2 lg:hidden">
           {filteredBookings.map((booking) => (
             <div
               key={booking._id}
@@ -250,9 +287,6 @@ const ManageBooking = () => {
                   <FaBed className="text-primary" />
 
                   <span>{booking.room?.name}</span>
-                </div>
-
-                <div className="flex items-center gap-3 text-secondary">
                   <FaCalendarAlt className="text-green-400" />
 
                   <span>
@@ -260,6 +294,14 @@ const ManageBooking = () => {
                     {new Date(booking.stay?.checkOut).toLocaleDateString()}
                   </span>
                 </div>
+
+                <div className="flex items-center gap-3 text-secondary"></div>
+                <button
+                  onClick={() => handleMarkPaid(booking)}
+                  className="px-3 py-1 bg-blue-600 text-white rounded"
+                >
+                  Mark Paid
+                </button>
               </div>
 
               <div className="grid grid-cols-2 gap-3 mt-6">
@@ -300,124 +342,105 @@ const ManageBooking = () => {
         </div>
 
         {/* DESKTOP TABLE */}
-        <div className="hidden lg:block overflow-hidden rounded-[32px] border border-white/10 bg-white/5 backdrop-blur-xl shadow-2xl">
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="border-b border-white/10 bg-black/10">
-                <tr>
-                  <th className="px-6 py-5 text-left text-secondary font-semibold">
-                    Guest
-                  </th>
+        <div className="hidden lg:block overflow-x-auto">
+          <table className="w-full min-w-[900px] border border-white/10 rounded-xl overflow-hidden">
+            <thead className="bg-black/20 text-left">
+              <tr>
+                <th className="p-4">Guest</th>
+                <th className="p-4">Room</th>
+                <th className="p-4">Room No</th>
+                <th className="p-4">Check In</th>
+                <th className="p-4">Check Out</th>
+                <th className="p-4">Status</th>
+                <th className="p-4 text-center">Payment</th>
+                <th className="p-4 text-center">Actions</th>
+              </tr>
+            </thead>
 
-                  <th className="px-6 py-5 text-left text-secondary font-semibold">
-                    Room
-                  </th>
-                  <th className="px-6 py-5 text-left text-secondary font-semibold">
-                    Room Number
-                  </th>
+            <tbody>
+              {filteredBookings.map((booking) => (
+                <tr
+                  key={booking._id}
+                  className="border-t border-white/10 hover:bg-white/5"
+                >
+                  <td className="p-4">
+                    <p className="text-white font-semibold">
+                      {booking.guest?.firstName} {booking.guest?.lastName}
+                    </p>
+                    <p className="text-xs text-gray-400">
+                      #{booking.bookingCode}
+                    </p>
+                  </td>
 
-                  <th className="px-6 py-5 text-left text-secondary font-semibold">
-                    Check In
-                  </th>
+                  <td className="p-4 text-gray-300">{booking.room?.name}</td>
 
-                  <th className="px-6 py-5 text-left text-secondary font-semibold">
-                    Check Out
-                  </th>
+                  <td className="p-4 text-gray-300">
+                    {booking.room?.roomNumber || "N/A"}
+                  </td>
 
-                  <th className="px-6 py-5 text-left text-secondary font-semibold">
-                    Status
-                  </th>
+                  <td className="p-4 text-gray-300">
+                    {new Date(booking.stay?.checkIn).toLocaleDateString()}
+                  </td>
 
-                  <th className="px-6 py-5 text-center text-secondary font-semibold">
-                    Actions
-                  </th>
-                </tr>
-              </thead>
+                  <td className="p-4 text-gray-300">
+                    {new Date(booking.stay?.checkOut).toLocaleDateString()}
+                  </td>
 
-              <tbody>
-                {filteredBookings.map((booking) => (
-                  <tr
-                    key={booking.id}
-                    className="border-b border-white/5 hover:bg-white/5 transition-all"
-                  >
-                    <td className="px-6 py-5">
-                      <div>
-                        <h3 className="font-semibold text-white">
-                          {booking.guest?.firstName} {booking.guest?.lastName}{" "}
-                          {booking.lastName}
-                        </h3>
+                  <td className="p-4">
+                    <span
+                      className={`px-3 py-1 rounded-full text-xs ${getStatusStyle(
+                        booking.bookingStatus,
+                      )}`}
+                    >
+                      {booking.bookingStatus}
+                    </span>
+                  </td>
 
-                        <p className="text-secondary/40 text-sm mt-1">
-                          ID : #{booking.bookingCode}
-                        </p>
-                      </div>
-                    </td>
+                  {/* PAYMENT */}
+                  <td className="p-4 text-center">
+                    <button
+                      onClick={() => handleMarkPaid(booking)}
+                      className="px-3 py-1 bg-blue-600 text-white rounded"
+                    >
+                      Mark Paid
+                    </button>
+                  </td>
 
-                    <td className="px-6 py-5 text-secondary">
-                      {booking.room?.name}
-                    </td>
-                    <td className="px-6 py-5 text-secondary">
-                      {booking.room?.roomNumber || "N/A"}
-                    </td>
+                  {/* ACTIONS */}
+                  <td className="p-4 text-center space-x-2">
+                    <button
+                      onClick={() => navigate(`/confirmation/${booking._id}`)}
+                      className="px-3 py-1 bg-primary text-white rounded"
+                    >
+                      View
+                    </button>
 
-                    <td className="px-6 py-5 text-secondary">
-                      {new Date(booking.stay?.checkIn).toLocaleDateString()}
-                    </td>
-
-                    <td className="px-6 py-5 text-secondary">
-                      {new Date(booking.stay?.checkOut).toLocaleDateString()}
-                    </td>
-
-                    <td className="px-6 py-5">
-                      <span
-                        className={`px-4 py-2 rounded-full text-xs font-semibold ${getStatusStyle(
-                          booking.bookingStatus,
-                        )}`}
-                      >
-                        {booking.bookingStatus}
-                      </span>
-                    </td>
-
-                    <td className="px-6 py-5">
-                      <div className="flex items-center justify-center gap-3">
+                    {booking.bookingStatus === "pending" && (
+                      <>
                         <button
                           onClick={() =>
-                            navigate(`/confirmation/${booking._id}`)
+                            handleStatusChange(booking._id, "confirmed")
                           }
-                          className="flex items-center gap-2 px-4 py-2 rounded-xl bg-primary text-white"
+                          className="px-3 py-1 bg-green-600 text-white rounded"
                         >
-                          <FaEye />
-                          View
+                          Confirm
                         </button>
 
-                        {booking.bookingStatus === "pending" && (
-                          <>
-                            <button
-                              onClick={() =>
-                                handleStatusChange(booking._id, "confirmed")
-                              }
-                              className="px-4 py-2 rounded-xl bg-green-500 text-white"
-                            >
-                              Confirm
-                            </button>
-
-                            <button
-                              onClick={() =>
-                                handleStatusChange(booking._id, "cancelled")
-                              }
-                              className="px-4 py-2 rounded-xl bg-red-500 text-white"
-                            >
-                              Reject
-                            </button>
-                          </>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+                        <button
+                          onClick={() =>
+                            handleStatusChange(booking._id, "cancelled")
+                          }
+                          className="px-3 py-1 bg-red-600 text-white rounded"
+                        >
+                          Reject
+                        </button>
+                      </>
+                    )}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
 
         {/* FOOTER */}

@@ -53,7 +53,9 @@ const RoomSelector = ({ rooms = [], selectedRoom, setSelectedRoom }) => {
             />
 
             <div className="flex-1 min-w-0">
-              <p className="font-medium text-sm truncate">{room.name}</p>
+              <p className="font-medium text-sm truncate">
+                {room.name} {room.roomNumber}
+              </p>
 
               <p className="text-xs text-gray-400 truncate">
                 {room.size} m² • {room.capacity?.adults || 0} Adults •{" "}

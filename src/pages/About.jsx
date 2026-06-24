@@ -4,9 +4,47 @@ import { Navigation, Pagination, Autoplay } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
-import { assets, facilities, rooms } from "../assets/assets";
+import { assets } from "../assets/assets";
+import { useFetchAllRoomsQuery } from "../redux/features/rooms/roomsApi";
+import { useFetchFacilitiesQuery } from "../redux/features/facilities/facilitiesApi";
+import getBaseUrl from "../utils/baseURL";
+import Loading from "../components/Loading";
 
 const About = () => {
+  const { data: roomsData, isLoading: roomsLoading } = useFetchAllRoomsQuery();
+  const { data: facilitiesData, isLoading: facilitiesLoading } =
+    useFetchFacilitiesQuery();
+
+  const rooms = Array.isArray(roomsData) ? roomsData : roomsData?.rooms || [];
+  const facilities =
+    facilitiesData?.facilites || facilitiesData?.data || facilitiesData || [];
+
+  const BASE_URL = getBaseUrl();
+
+  const getImageUrl = (img) => {
+    if (!img) return "https://placehold.co/600x400";
+
+    if (Array.isArray(img)) {
+      img = img[0];
+    }
+
+    if (typeof img === "object") {
+      img = img.url || img.path || img.secure_url || img.filename || "";
+    }
+
+    if (!img) return "https://placehold.co/600x400";
+
+    if (img.startsWith("http")) {
+      return img;
+    }
+
+    return `${BASE_URL}/${img.replace(/^\/+/, "")}`;
+  };
+
+  if (roomsLoading || facilitiesLoading) {
+    return <Loading />;
+  }
+
   return (
     <>
       {/* HERO IMAGE */}
@@ -65,10 +103,29 @@ const About = () => {
               Hotel Facilities
             </h2>
 
-            <div className="flex flex-wrap flex-col justify-center gap-x-4 gap-y-2">
+            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
               {facilities.map((item, index) => (
-                <div key={index} className="text-md sm:text-lg text-gray-700">
-                  • {item.name}
+                <div
+                  key={index}
+                  className="
+        bg-white
+        rounded-2xl
+        p-5
+        shadow-sm
+        border
+        border-gray-100
+        hover:shadow-lg
+        transition
+        duration-300
+      "
+                >
+                  <h3 className="text-lg font-semibold text-primary">
+                    {item.name}
+                  </h3>
+
+                  <p className="text-sm text-gray-600 mt-2 line-clamp-3">
+                    {item.description}
+                  </p>
                 </div>
               ))}
             </div>
@@ -84,13 +141,16 @@ const About = () => {
               autoplay={false}
               loop={true}
               breakpoints={{
+                0: {
+                  slidesPerView: 1,
+                },
                 640: {
                   slidesPerView: 1,
                 },
                 768: {
                   slidesPerView: 2,
                 },
-                1024: {
+                1280: {
                   slidesPerView: 3,
                 },
               }}
@@ -100,9 +160,9 @@ const About = () => {
                 <SwiperSlide key={room.id}>
                   <div className="overflow-hidden rounded-2xl shadow-lg">
                     <img
-                      src={room.image}
-                      alt="room"
-                      className="w-full h-63 sm:h-75 object-cover hover:scale-110 transition duration-500"
+                      src={getImageUrl(room.images?.[0])}
+                      alt={room.name}
+                      className="w-full h-65 sm:h-80 object-cover hover:scale-110 transition duration-500"
                     />
                   </div>
                 </SwiperSlide>

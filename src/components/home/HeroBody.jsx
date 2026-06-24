@@ -58,9 +58,6 @@ const HomeBody = () => {
   }
   return (
     <main className="bg-secondary text-primary overflow-hidden">
-      {/* ===================================================== */}
-      {/* HERO SECTION */}
-      {/* ===================================================== */}
       <section className="relative min-h-screen flex items-center">
         {/* Background */}
         <div className="absolute inset-0">
@@ -75,7 +72,7 @@ const HomeBody = () => {
         </div>
 
         {/* Content */}
-        <div className="relative z-10 max-w-[1440px] mx-auto w-full px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-16 sm:pb-24">
+        <div className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-16 sm:pb-24">
           <div className="grid lg:grid-cols-2 gap-12 xl:gap-16 items-center">
             {/* LEFT */}
             <div className="order-2 lg:order-1">
@@ -153,11 +150,11 @@ const HomeBody = () => {
             {/* RIGHT */}
             <div className="relative order-1 lg:order-2">
               {/* Main card */}
-              <div className="relative bg-white/10 border border-white/10 backdrop-blur-2xl rounded-[28px] sm:rounded-[32px] overflow-hidden shadow-2xl">
+              <div className="relative bg-white/10 border border-white/10 backdrop-blur-2xl rounded-[28px] sm:rounded-4xl overflow-hidden shadow-2xl">
                 <img
                   src={assets.hero_2}
                   alt="Hotel"
-                  className="w-full h-[420px] sm:h-[520px] lg:h-[600px] object-cover"
+                  className="w-full h-105 sm:h-130 lg:h-150 object-cover"
                 />
 
                 <div className="absolute bottom-4 sm:bottom-6 left-4 sm:left-6 right-4 sm:right-6 bg-black/50 backdrop-blur-xl border border-white/10 rounded-2xl sm:rounded-3xl p-4 sm:p-6">
@@ -172,10 +169,10 @@ const HomeBody = () => {
                       </h3>
                     </div>
 
-                    <div className="bg-accent text-primary px-4 sm:px-5 py-3 rounded-2xl text-center min-w-[80px] sm:min-w-[90px]">
-                      <h4 className="font-black text-xl sm:text-2xl">8.9</h4>
+                    <div className="bg-accent text-primary px-4 sm:px-5 py-3 mt-10 rounded-2xl text-center min-w-20 sm:min-w-23">
+                      <h4 className="text-gray-600 text-xl sm:text-2xl">8.9</h4>
 
-                      <p className="text-[10px] sm:text-xs font-medium">
+                      <p className="text-[12px] sm:text-[10px] font-bold">
                         Excellent
                       </p>
                     </div>
@@ -184,10 +181,10 @@ const HomeBody = () => {
               </div>
 
               {/* Floating card */}
-              <div className="absolute -bottom-6 sm:-bottom-10 left-1/2 -translate-x-1/2 lg:left-auto lg:translate-x-0 lg:-left-10 bg-secondary p-4 sm:p-6 rounded-3xl shadow-2xl w-[90%] sm:w-72 max-w-xs">
-                <div className="flex items-center gap-4">
-                  <div className="bg-accent/10 w-12 h-12 sm:w-14 sm:h-14 rounded-2xl flex items-center justify-center">
-                    <FaMapMarkerAlt className="text-accent text-lg sm:text-xl" />
+              <div className="absolute border-b-0 -bottom-6 sm:-bottom-10 left-1/2 -translate-x-1/2 lg:left-10 lg:translate-x-0  bg-secondary p-2 sm:p-4 rounded-2xl shadow-xl w-[50%] sm:w-65 max-w-sm">
+                <div className="flex items-center gap-2">
+                  <div className="bg-accent/10 w-12 h-12 sm:w-14 sm:h-14 rounded-xl  flex items-center justify-center">
+                    <FaMapMarkerAlt className="text-accent shadow-2xl  text-lg sm:text-xl" />
                   </div>
 
                   <div>
@@ -206,14 +203,12 @@ const HomeBody = () => {
         </div>
 
         {/* Bottom blur */}
-        <div className="absolute bottom-0 left-0 w-full h-32 sm:h-40 bg-gradient-to-t from-secondary to-transparent" />
+        <div className="absolute bottom-0 left-0 w-full h-32 sm:h-40 bg-linear-to-t from-secondary to-transparent" />
       </section>
 
-      {/* ===================================================== */}
       {/* QUICK INFO */}
-      {/* ===================================================== */}
       <section className="relative -mt-8 sm:-mt-12 lg:-mt-16 z-20 px-4 sm:px-6">
-        <div className="max-w-[1440px] mx-auto bg-primary rounded-[24px] sm:rounded-[32px] border border-primary/10 overflow-hidden shadow-2xl">
+        <div className="  mx-auto bg-primary rounded-3xl sm:rounded-4xl border border-primary/10 relative z-10 max-w-7xl  w-full px-4 sm:px-6 lg:px-6 pt-20 sm:pt-28 pb-12 sm:pb-18 overflow-hidden shadow-2xl">
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
             {[
               {
@@ -259,7 +254,7 @@ const HomeBody = () => {
       {/* ===================================================== */}
       {/* ABOUT */}
       {/* ===================================================== */}
-      <section className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-24 lg:py-28">
+      <section className="relative z-10 max-w-7xl mx-auto w-full  pt-28 sm:pt-32 pb-16 sm:pb-24  px-4 sm:px-6 lg:px-8 py-20 sm:py-24 lg:py-28">
         <div className="grid lg:grid-cols-2 gap-14 lg:gap-16 items-center">
           {/* Images */}
           <div className="relative">
@@ -267,7 +262,7 @@ const HomeBody = () => {
               <img
                 src={assets.reception}
                 alt="Reception"
-                className="w-full h-[420px] sm:h-[520px] lg:h-[650px] object-cover hover:scale-105 transition duration-700"
+                className="w-full h-105 sm:h-130 lg:h-162.5 object-cover hover:scale-105 transition duration-700"
               />
             </div>
 
@@ -335,10 +330,10 @@ const HomeBody = () => {
       {/* ===================================================== */}
       {/* ROOMS */}
       {/* ===================================================== */}
-      <section className="bg-primary py-20 sm:py-24 lg:py-28 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-[1440px] mx-auto">
+      <section className=" bg-primary py-20 sm:py-24 lg:py-28 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-360 mx-auto">
           {/* Heading */}
-          <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 sm:gap-8 mb-14 sm:mb-16">
+          <div className=" relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-16 sm:pb-24 flex flex-col lg:flex-row lg:items-end justify-between gap-6 sm:gap-8 mb-14 sm:mb-16">
             <div>
               <p className="uppercase tracking-[5px] sm:tracking-[6px] text-accent text-xs sm:text-sm mb-4">
                 Luxury Accommodation
@@ -359,8 +354,8 @@ const HomeBody = () => {
           <div className="grid md:grid-cols-2 xl:grid-cols-3 gap-6 sm:gap-8">
             {featuredRooms.map((room) => (
               <div
-                key={room.id}
-                className="group bg-white/5 border border-white/10 rounded-[28px] sm:rounded-[32px] overflow-hidden backdrop-blur-xl hover:-translate-y-2 transition duration-500"
+                key={room.title}
+                className="group bg-white/5 border border-white/10 rounded-[28px] sm:rounded-4xl overflow-hidden backdrop-blur-xl hover:-translate-y-2 transition duration-500"
               >
                 <div className="relative overflow-hidden">
                   <img
@@ -390,7 +385,7 @@ const HomeBody = () => {
                   </p>
 
                   <div className="flex flex-wrap gap-2 sm:gap-3 mt-6">
-                    {(room.facilities || []).slice(0, 4).map((item, index) => (
+                    {(room.facilities || []).slice(0, 5).map((item, index) => (
                       <div
                         key={index}
                         className="bg-white/5 border border-white/5 px-3 sm:px-4 py-2 rounded-full text-secondary/70 text-xs sm:text-sm"
@@ -437,7 +432,7 @@ const HomeBody = () => {
       {/* FACILITIES */}
       {/* ===================================================== */}
       <section className="py-20 sm:py-24 lg:py-28 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-[1440px] mx-auto">
+        <div className="relative z-10 max-w-7xl  w-full px-4 sm:px-6 lg:px-8 pt-28 sm:pt-32 pb-16 sm:pb-24 mx-auto">
           {/* Heading */}
           <div className="text-center max-w-3xl mx-auto mb-14 sm:mb-20">
             <p className="uppercase tracking-[5px] sm:tracking-[6px] text-accent text-xs sm:text-sm mb-4">
@@ -474,7 +469,7 @@ const HomeBody = () => {
                     {facility.name}
                   </h3>
 
-                  <p className="text-secondary/70 leading-6 sm:leading-7 text-sm sm:text-base">
+                  <p className="text-secondary/25 leading-6 sm:leading-7 text-[8px] sm:text-[10px]">
                     {facility.description}
                   </p>
                 </div>

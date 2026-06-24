@@ -35,7 +35,7 @@ const Register = () => {
 
   const onSubmit = async (data) => {
     try {
-      await registerUser(data.email, data.password, data.phone);
+      await registerUser(data.name, data.email, data.password, data.phone);
 
       alert("Register successful!");
 
@@ -115,6 +115,25 @@ const Register = () => {
               <p className="text-red-400 text-xs mt-2">
                 Phone Number is required
               </p>
+            )}
+          </div>
+
+          {/* User Name */}
+          <div className="mb-5">
+            <label htmlFor="name" className="block text-secondary text-sm mb-2">
+              User Name
+            </label>
+
+            <input
+              type="text"
+              id="name"
+              placeholder="User Name Please"
+              {...register("name", { required: true })}
+              className="w-full h-12 px-4 rounded-xl bg-white/5 border border-white/10 text-secondary placeholder-secondary/40 focus:outline-none focus:ring-2 focus:ring-accent/40 focus:border-accent transition"
+            />
+
+            {errors.name && (
+              <p className="text-red-400 text-xs mt-2">User Name is required</p>
             )}
           </div>
 
