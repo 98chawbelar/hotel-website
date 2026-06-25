@@ -72,13 +72,6 @@ const RoomHeader = ({ rooms = [] }) => {
                   <p className="mt-5 text-white/80 max-w-2xl text-lg">
                     {room.description}
                   </p>
-
-                  <Link to="/booking">
-                    <button className="mt-8 bg-accent px-7 py-4 rounded-xl">
-                      <CiCalendar className="inline mr-2" />
-                      Book Now
-                    </button>
-                  </Link>
                 </div>
               </div>
             </div>

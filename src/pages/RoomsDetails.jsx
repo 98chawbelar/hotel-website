@@ -12,6 +12,7 @@ import {
 } from "react-icons/fa";
 import getBaseUrl from "../utils/baseURL";
 import { useFetchFacilitiesQuery } from "../redux/features/facilities/facilitiesApi";
+import { useFetchExtraFacilitiesQuery } from "../redux/features/extrafacilities/extraFacilitiesApi";
 
 const RoomDetails = () => {
   const { id } = useParams();
@@ -19,7 +20,8 @@ const RoomDetails = () => {
   const navigate = useNavigate();
 
   const { data: room, isLoading, error } = useFetchRoomByIdQuery(id);
-  const { data: facilitiesData = [] } = useFetchFacilitiesQuery();
+  const { data: extrafacilitiesData, isLoading: extrafacilitiesLoading } =
+    useFetchExtraFacilitiesQuery();
 
   const [checkIn, setCheckIn] = useState("");
   const [checkOut, setCheckOut] = useState("");
@@ -166,37 +168,6 @@ const RoomDetails = () => {
             <div>
               <h2 className="text-xl font-semibold mb-2">About Room</h2>
               <p className="text-gray-400 leading-7">{room.description}</p>
-            </div>
-
-            {/* FACILITIES */}
-            <div>
-              <h2 className="text-xl font-semibold mb-3">Facilities</h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 gap-3 text-gray-300">
-                {Array.isArray(facilitiesData?.facilities) ? (
-                  facilitiesData.facilities.map((item, index) => (
-                    <div
-                      key={index}
-                      className="
-              flex items-center gap-3
-              bg-white/5
-              hover:bg-white/10
-              transition
-              rounded-xl
-              px-4 py-3
-              border border-white/5
-            "
-                    >
-                      <div className="w-2 h-2 rounded-full bg-accent"></div>
-
-                      <span className="text-sm sm:text-base text-gray-200">
-                        {item.title}
-                      </span>
-                    </div>
-                  ))
-                ) : (
-                  <p className="text-gray-400">No facilities available</p>
-                )}
-              </div>
             </div>
 
             {/* HOTEL POLICIES */}

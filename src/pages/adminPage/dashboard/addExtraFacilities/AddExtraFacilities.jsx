@@ -11,7 +11,7 @@ import {
   useFetchExtraFacilitiesQuery,
   useToggleExtraFacilityMutation,
   useUpdateExtraFacilityMutation,
-} from "../../../../redux/features/extrafacilities/extrafacilitiesApi";
+} from "../../../../redux/features/extrafacilities/extraFacilitiesApi";
 
 const AddExtraFacilities = () => {
   const { register, handleSubmit, reset, setValue } = useForm();
@@ -43,10 +43,6 @@ const AddExtraFacilities = () => {
         label: form.label,
 
         desc: form.desc,
-
-        price: Number(form.price),
-
-        pricingType: form.pricingType,
 
         maxQuantity: Number(form.maxQuantity),
 
@@ -88,10 +84,6 @@ const AddExtraFacilities = () => {
     setValue("label", item.label);
 
     setValue("desc", item.desc);
-
-    setValue("price", item.price);
-
-    setValue("pricingType", item.pricingType);
 
     setValue("maxQuantity", item.maxQuantity);
 
@@ -164,13 +156,6 @@ const AddExtraFacilities = () => {
               <FormInput label="Icon Name" name="icon" register={register} />
 
               <FormInput label="Label" name="label" register={register} />
-
-              <FormInput
-                label="Price"
-                name="price"
-                type="number"
-                register={register}
-              />
             </div>
 
             <FormInput
@@ -181,12 +166,6 @@ const AddExtraFacilities = () => {
             />
 
             <div className="grid md:grid-cols-3 gap-5">
-              <FormInput
-                label="Pricing Type"
-                name="pricingType"
-                register={register}
-              />
-
               <FormInput
                 label="Max Quantity"
                 name="maxQuantity"
@@ -202,11 +181,41 @@ const AddExtraFacilities = () => {
               />
             </div>
 
-            <FormInput
-              label="Available For"
-              name="availableFor"
-              register={register}
-            />
+            <div className="w-full">
+              <label className="block text-sm sm:text-base font-medium text-black mb-2">
+                availableFor
+              </label>
+
+              <select
+                {...register("availableFor")}
+                className="
+      w-full
+      rounded-xl sm:rounded-2xl
+      border border-secondary/10
+      bg-secondary/10
+      px-3 sm:px-4
+      py-2.5 sm:py-3
+      text-sm sm:text-base
+      text-black
+      outline-none
+      transition
+      focus:border-accent
+      focus:bg-secondary/15
+    "
+              >
+                <option value="all" className="bg-primary/60 text-white">
+                  all
+                </option>
+
+                <option value="room" className="bg-primary/60 text-white">
+                  room
+                </option>
+
+                <option value="guest" className="bg-primary/60 text-white">
+                  guest
+                </option>
+              </select>
+            </div>
 
             <SubmitButton
               type="submit"
@@ -219,66 +228,104 @@ const AddExtraFacilities = () => {
 
         {/* TABLE */}
 
-        <div className="mt-10 overflow-x-auto">
-          <table className="w-full bg-white/10 rounded-3xl overflow-hidden">
-            <thead>
-              <tr className="text-white/70">
-                <th className="p-4">Label</th>
+        <div className="mt-10">
+          <div className="overflow-x-auto rounded-3xl border border-white/10">
+            <table className="min-w-full bg-white/10 text-white">
+              {/* HEAD */}
+              <thead className="bg-white/5 border-b border-white/10">
+                <tr>
+                  <th className="px-6 py-4 text-left text-sm font-semibold whitespace-nowrap">
+                    Label
+                  </th>
 
-                <th>Key</th>
+                  <th className="px-6 py-4 text-left text-sm font-semibold whitespace-nowrap">
+                    Key
+                  </th>
 
-                <th>Price</th>
+                  <th className="px-6 py-4 text-center text-sm font-semibold whitespace-nowrap">
+                    Available
+                  </th>
 
-                <th>Type</th>
+                  <th className="px-6 py-4 text-center text-sm font-semibold whitespace-nowrap">
+                    Status
+                  </th>
 
-                <th>Available</th>
-
-                <th>Status</th>
-
-                <th>Action</th>
-              </tr>
-            </thead>
-
-            <tbody>
-              {extrafacilities.map((item) => (
-                <tr
-                  key={item._id}
-                  className="text-white border-t border-white/10"
-                >
-                  <td className="p-4">{item.label}</td>
-
-                  <td>{item.key}</td>
-
-                  <td>{item.price} Ks</td>
-
-                  <td>{item.pricingType}</td>
-
-                  <td>{item.availableFor}</td>
-
-                  <td>
-                    <button onClick={() => statusHandler(item)}>
-                      <FaToggleOn
-                        className={
-                          item.isActive
-                            ? "text-green-400 text-2xl"
-                            : "text-red-400 text-2xl"
-                        }
-                      />
-                    </button>
-                  </td>
-
-                  <td>
-                    <button
-                      onClick={() => editHandler(item)}
-                      className="bg-primary px-4 py-2 rounded-xl"
-                    >
-                      <FaEdit />
-                    </button>
-                  </td>
+                  <th className="px-6 py-4 text-center text-sm font-semibold whitespace-nowrap">
+                    Action
+                  </th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+
+              {/* BODY */}
+              <tbody>
+                {extrafacilities.map((item, index) => (
+                  <tr
+                    key={item._id}
+                    className={`border-t border-white/10 transition hover:bg-white/5 ${
+                      index % 2 === 0 ? "bg-white/[0.02]" : ""
+                    }`}
+                  >
+                    {/* LABEL */}
+                    <td className="px-6 py-4 align-middle">
+                      <div className="flex flex-col">
+                        <span className="font-medium text-sm sm:text-base">
+                          {item.label}
+                        </span>
+
+                        {item.desc && (
+                          <span className="text-xs text-wrap text-white/50 mt-1 line-clamp-2">
+                            {item.desc}
+                          </span>
+                        )}
+                      </div>
+                    </td>
+
+                    {/* KEY */}
+                    <td className="px-6 py-4 align-middle">
+                      <span className="text-sm text-white/80 break-words">
+                        {item.key}
+                      </span>
+                    </td>
+
+                    {/* AVAILABLE */}
+                    <td className="px-6 py-4 text-center align-middle">
+                      <span className="text-sm">
+                        {item.availableFor || "-"}
+                      </span>
+                    </td>
+
+                    {/* STATUS */}
+                    <td className="px-6 py-4 text-center align-middle">
+                      <button
+                        type="button"
+                        onClick={() => statusHandler(item)}
+                        className="inline-flex items-center justify-center"
+                      >
+                        <FaToggleOn
+                          className={`text-2xl transition ${
+                            item.isActive
+                              ? "text-green-400"
+                              : "text-red-400 opacity-70"
+                          }`}
+                        />
+                      </button>
+                    </td>
+
+                    {/* ACTION */}
+                    <td className="px-6 py-4 text-center align-middle">
+                      <button
+                        type="button"
+                        onClick={() => editHandler(item)}
+                        className="inline-flex items-center justify-center bg-primary hover:bg-primary/80 transition px-4 py-2 rounded-xl"
+                      >
+                        <FaEdit className="text-sm" />
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </section>

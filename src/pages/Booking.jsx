@@ -227,7 +227,7 @@ const Booking = () => {
 
         {/* BUTTONS */}
 
-        <div className="mt-10 flex  justify-between ">
+        <div className="mt-10 flex justify-between">
           <SubmitButton
             fullWidth={false}
             onClick={() => {

@@ -18,8 +18,10 @@ const SubmitButton = ({
         px-5 py-5 rounded-xl
         bg-accent/80 text-white hover:bg-accent
         font-semibold
-        transition-all duration-300
+        transition-all duration-150
         hover:opacity-90
+        hover:rounded-full
+
         disabled:opacity-60
         disabled:cursor-not-allowed
         ${className}

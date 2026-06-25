@@ -11,7 +11,6 @@ import {
 } from "../../../../redux/features/facilities/facilitiesApi";
 
 import FormInput from "../../components/FormInput";
-import ImageUpload from "../../components/ImageUpload";
 import SubmitButton from "../../components/SubmitButton";
 import PageHeader from "../../components/PageHeader";
 import Loading from "../../../../components/Loading";
@@ -82,6 +81,8 @@ const AddFacilities = () => {
       formData.append("name", form.name);
 
       formData.append("description", form.description);
+      formData.append("price", form.price);
+      formData.append("pricingType", form.priceType);
 
       formData.append("link", form.link || "");
 
@@ -213,6 +214,7 @@ const AddFacilities = () => {
               <FormInput
                 label="Facility Name"
                 name="name"
+                type="input"
                 register={register}
               />
 
@@ -222,6 +224,60 @@ const AddFacilities = () => {
                 type="number"
                 register={register}
               />
+              <FormInput
+                label="price"
+                name="price"
+                type="number"
+                register={register}
+              />
+              <div className="w-full">
+                <label className="block text-sm sm:text-base font-medium text-black mb-2">
+                  Price Type
+                </label>
+
+                <select
+                  {...register("priceType")}
+                  className="
+      w-full
+      rounded-xl sm:rounded-2xl
+      border border-secondary/10
+      bg-secondary/10
+      px-3 sm:px-4
+      py-2.5 sm:py-3
+      text-sm sm:text-base
+      text-black
+      outline-none
+      transition
+      focus:border-accent
+      focus:bg-secondary/15
+    "
+                >
+                  <option value="" className="bg-primary/60 text-white">
+                    Select Price Type
+                  </option>
+
+                  <option
+                    value="per_booking"
+                    className="bg-primary/60 text-white"
+                  >
+                    per_booking
+                  </option>
+
+                  <option
+                    value="per_night"
+                    className="bg-primary/60 text-white"
+                  >
+                    per_night
+                  </option>
+
+                  <option
+                    value="per_person"
+                    className="bg-primary/60 text-white"
+                  >
+                    per_person
+                  </option>
+                </select>
+              </div>
             </div>
 
             <FormInput

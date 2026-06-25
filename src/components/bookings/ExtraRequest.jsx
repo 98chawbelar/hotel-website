@@ -10,7 +10,8 @@ const CheckRow = ({ icon: Icon, label, price, desc, checked, onChange }) => (
         : "border-white/10 bg-white/5 hover:border-white/30"
     }`}
   >
-    <div className="flex items-center gap-1 sm:gap-2 flex-1 min-w-0">
+    {/* LEFT */}
+    <div className="flex items-center gap-2 flex-1 min-w-0">
       {/* ICON */}
       <div className="shrink-0">
         {Icon ? (
@@ -30,112 +31,116 @@ const CheckRow = ({ icon: Icon, label, price, desc, checked, onChange }) => (
 
       {/* TEXT */}
       <div className="min-w-0 flex-1">
-        <p className="text-xs sm:text-base font-normal truncate">{label}</p>
-      </div>
+        <p className="text-xs sm:text-sm font-medium truncate">{label}</p>
 
-      {/* PRICE */}
-      <div className="shrink-0">
-        {price > 0 ? (
-          <p className="text-xs text-accent font-medium">
-            {price.toLocaleString()} Ks
+        {desc && (
+          <p className="text-[11px] sm:text-xs text-white/50 truncate">
+            {desc}
           </p>
-        ) : (
-          <p className="text-xs text-green-400 font-medium">Free</p>
         )}
       </div>
     </div>
 
-    {/* CHECKBOX */}
-    <input
-      type="checkbox"
-      checked={checked}
-      onChange={onChange}
-      className="accent-accent w-2 h-2 ml-1 shrink-0"
-    />
+    {/* RIGHT */}
+    <div className="flex items-center gap-3 shrink-0 ml-3">
+      {/* PRICE */}
+      {price > 0 ? (
+        <p className="text-xs text-accent font-semibold whitespace-nowrap">
+          {price.toLocaleString()} Ks
+        </p>
+      ) : (
+        <p className="text-xs text-green-400 font-semibold whitespace-nowrap">
+          Free
+        </p>
+      )}
+
+      {/* CHECKBOX */}
+      <input
+        type="checkbox"
+        checked={checked}
+        onChange={onChange}
+        className="accent-accent w-4 h-4 shrink-0"
+      />
+    </div>
   </label>
 );
 
 const ExtraRequests = ({
   extras,
   toggleExtra,
-  specialRequests,
-  setSpecialRequests,
-  extraServices,
+
+  extraServices = [],
 }) => {
   // FREE FACILITIES
-  const freeFacilities = extraServices.filter((item) => item.price === 0);
+  const complimentaryFacilities = extraServices.filter(
+    (item) => Number(item.price) === 0,
+  );
 
-  // PAID FACILITIES
-  const paidFacilities = extraServices.filter((item) => item.price > 0);
+  // PAID SERVICES
+  const premiumServices = extraServices.filter(
+    (item) => Number(item.price) > 0,
+  );
 
   return (
-    <div className="space-y-3 sm:space-y-5">
+    <div className="space-y-5">
       {/* SERVICES */}
       <Card>
         <CardTitle icon={FaConciergeBell}>Extra Requests</CardTitle>
 
-        <p className="text-gray-400 text-xs sm:text-base mb-5">
+        <p className="text-gray-400 text-xs sm:text-base mb-6">
           Customize your stay with additional services
         </p>
 
-        {/* FREE FACILITIES */}
-        {freeFacilities.length > 0 && (
-          <div className="space-y-3 mb-6">
-            <h3 className="text-sm font-semibold text-accent uppercase tracking-wide">
+        {/* 50 / 50 LAYOUT */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* FREE */}
+          <div className="space-y-3">
+            <h3 className="text-sm font-semibold text-green-400 uppercase tracking-wide">
               Complimentary Facilities
             </h3>
 
-            {freeFacilities.map((service) => (
-              <CheckRow
-                key={service.key}
-                icon={service.icon}
-                label={service.label}
-                desc={service.desc}
-                price={service.price}
-                checked={extras.includes(service.key)}
-                onChange={() => toggleExtra(service.key)}
-              />
-            ))}
+            {complimentaryFacilities.length > 0 ? (
+              complimentaryFacilities.map((service) => (
+                <CheckRow
+                  key={service.key}
+                  icon={service.icon}
+                  label={service.label}
+                  desc={service.desc}
+                  price={service.price}
+                  checked={extras.includes(service.key)}
+                  onChange={() => toggleExtra(service.key)}
+                />
+              ))
+            ) : (
+              <p className="text-white/40 text-sm">
+                No complimentary facilities
+              </p>
+            )}
           </div>
-        )}
 
-        {/* PAID EXTRAS */}
-        {paidFacilities.length > 0 && (
+          {/* PAID */}
           <div className="space-y-3">
-            <h3 className="text-xs font-semibold text-accent uppercase tracking-wide">
+            <h3 className="text-sm font-semibold text-accent uppercase tracking-wide">
               Premium Extra Services
             </h3>
 
-            {paidFacilities.map((service) => (
-              <CheckRow
-                key={service.key}
-                icon={service.icon}
-                label={service.label}
-                desc={service.desc}
-                price={service.price}
-                checked={extras.includes(service.key)}
-                onChange={() => toggleExtra(service.key)}
-              />
-            ))}
+            {premiumServices.length > 0 ? (
+              premiumServices.map((service) => (
+                <CheckRow
+                  key={service.key}
+                  icon={service.icon}
+                  label={service.label}
+                  desc={service.desc}
+                  price={service.price}
+                  checked={extras.includes(service.key)}
+                  onChange={() => toggleExtra(service.key)}
+                />
+              ))
+            ) : (
+              <p className="text-white/40 text-sm">No premium services</p>
+            )}
           </div>
-        )}
-      </Card>
-
-      {/* SPECIAL REQUESTS */}
-      <Card>
-        <CardTitle>Special Requests</CardTitle>
-
-        <p className="text-gray-400 text-xs sm:text-base">
-          Any additional notes for our team
-        </p>
-
-        <textarea
-          rows={4}
-          value={specialRequests}
-          onChange={(e) => setSpecialRequests(e.target.value)}
-          placeholder="e.g. High floor, quiet room, baby cot needed..."
-          className="w-full text-wrap bg-white/10 border border-white/10 rounded-xl p-3 text-base text-white placeholder-gray-500 outline-none focus:border-accent transition resize-none"
-        />
+        </div>
       </Card>
     </div>
   );

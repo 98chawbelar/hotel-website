@@ -56,21 +56,23 @@ const Testimonials = () => {
   }, [current]);
 
   return (
-    <section className="relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
+    <section className=" bg-primary relative py-24 px-4 sm:px-6 lg:px-8 overflow-hidden">
       {/* TOP LINE */}
-      <div className="absolute top-0 left-0 w-full h-px bg-gradient-to-r from-transparent via-primary/40 to-transparent" />
+      <div className="w-screen  mt-20 flex justify-center ">
+        <div className="w-full  h-px bg-linear-to-r from-transparent via-gray-600 mb-5 to-transparent shadow-xs"></div>
+      </div>
 
       {/* BACKGROUND BLUR */}
-      <div className="absolute top-1/2 left-1/2 w-[500px] h-[500px] bg-accent/10 blur-[140px] rounded-full -translate-x-1/2 -translate-y-1/2" />
+      <div className="absolute top-1/2 left-1/2 w-125 h-125 bg-accent/10 blur-[140px] rounded-full -translate-x-1/2 -translate-y-1/2" />
 
       <div className="relative max-w-5xl mx-auto">
         {/* HEADING */}
-        <div className="text-center mb-16">
-          <p className="uppercase tracking-[6px] text-accent text-xs sm:text-sm mb-4">
+        <div className="text-center mb-10 mt-12">
+          <p className="uppercase tracking-[6px] text-accent text-xs sm:text-sm ">
             Guest Reviews
           </p>
 
-          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-black leading-tight">
+          <h1 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-secondary leading-tight">
             What Our Guests Say
           </h1>
 
@@ -84,7 +86,7 @@ const Testimonials = () => {
         {/* CARD */}
         <div className="relative bg-white/60 backdrop-blur-2xl border border-white/20 rounded-[32px] sm:rounded-[40px] shadow-2xl p-8 sm:p-12 lg:p-16 overflow-hidden">
           {/* QUOTE ICON */}
-          <div className="absolute top-8 left-8 text-accent/15 text-7xl">
+          <div className="absolute top-8 left-8 text-accent/30 text-7xl">
             <FaQuoteLeft />
           </div>
 
@@ -96,7 +98,7 @@ const Testimonials = () => {
           </div>
 
           {/* QUOTE */}
-          <p className="relative z-10 text-center text-primary/80 text-lg sm:text-xl lg:text-2xl leading-9 sm:leading-[52px] font-light max-w-4xl mx-auto transition-all duration-500">
+          <p className="relative z-10 text-center text-secondary/60 text-lg sm:text-xl lg:text-2xl leading-9 sm:leading-13 font-light max-w-4xl mx-auto transition-all duration-500">
             “{testimonials[current].quote}”
           </p>
 
@@ -105,7 +107,7 @@ const Testimonials = () => {
             <img
               src={testimonials[current].image}
               alt={testimonials[current].name}
-              className="w-20 h-20 sm:w-24 sm:h-24 rounded-full object-cover border-4 border-white shadow-xl"
+              className="w-15 h-15 sm:w-20 sm:h-20 rounded-full object-cover border-4 border-white shadow-xl"
             />
 
             <h3 className="mt-5 text-xl sm:text-2xl font-bold">

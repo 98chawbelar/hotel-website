@@ -56,7 +56,7 @@ const useBooking = () => {
     key: facility._id,
     label: facility.name,
     desc: facility.description,
-    price: 0,
+    price: facility.price,
     type: "facility",
   }));
 
@@ -64,7 +64,7 @@ const useBooking = () => {
     key: item.key,
     label: item.label,
     desc: item.desc,
-    price: item.price,
+    price: 0,
     type: "extra",
   }));
 

@@ -48,27 +48,30 @@ const Restaurant = () => {
       title: "Luxury Restaurant Interior",
       description:
         "Enjoy a premium dining atmosphere at Kandaw101 Hotel Restaurant. Our elegant interior provides a comfortable environment where guests can relax and enjoy delicious meals with warm hospitality.",
+      price: "500 Ks Per Person",
     },
 
     {
       title: "American Breakfast Experience",
       description:
         "Start your morning with our American breakfast selection prepared with fresh ingredients. Enjoy a balanced meal with quality flavors and a relaxing dining experience.",
+      price: "1500 Ks Per Person",
     },
 
     {
       title: "Traditional Burmese Breakfast",
       description:
         "Experience authentic Burmese breakfast flavors prepared with traditional recipes. Our dishes bring local taste together with comfortable hotel dining.",
+      price: "1000 Ks Per Person",
     },
 
     {
       title: "Restaurant Dining Area",
       description:
         "A peaceful dining space designed for families, friends, and guests who want to enjoy great food in a relaxing atmosphere.",
+      price: "5000 Ks Family Package",
     },
   ];
-
   if (isLoading) {
     return <Loading />;
   }
@@ -78,7 +81,7 @@ const Restaurant = () => {
   }
 
   return (
-    <div className="w-full bg-white">
+    <div className="w-full bg-primary">
       {/* HERO SLIDER */}
 
       <section className="relative h-[60vh] overflow-hidden">
@@ -115,11 +118,11 @@ const Restaurant = () => {
 
       <section className="max-w-7xl mx-auto px-6 py-16">
         <div className="text-center max-w-4xl mx-auto">
-          <h2 className="text-4xl font-serif font-semibold mb-6">
+          <h2 className="text-4xl font-serif text-secondary font-semibold mb-6">
             Delicious Dining Experience
           </h2>
 
-          <p className="text-gray-600 text-lg leading-8">
+          <p className="text-secondary/65 text-lg leading-8">
             {restaurant.description}
           </p>
         </div>
@@ -154,11 +157,11 @@ const Restaurant = () => {
               {/* TEXT */}
 
               <div>
-                <h3 className="text-3xl font-serif font-semibold mb-5">
+                <h3 className="text-3xl text-secondary font-serif font-semibold mb-5">
                   {imageDescriptions[index]?.title || restaurant.name}
                 </h3>
 
-                <p className="text-gray-600 text-lg leading-8">
+                <p className="text-secondary/65 text-lg leading-8">
                   {imageDescriptions[index]?.description ||
                     restaurant.description}
                 </p>

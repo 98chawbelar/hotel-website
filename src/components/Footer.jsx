@@ -5,10 +5,10 @@ import { FaFacebookF, FaInstagram, FaGithub } from "react-icons/fa";
 const Footer = () => {
   return (
     <>
-      <div className="w-screen mt-20 flex justify-center ">
-        <div className="w-full h-px bg-linear-to-r from-transparent via-primary/60 to-transparent shadow-xs"></div>
+      <div className="w-screen   flex justify-center ">
+        <div className="w-full  h-px bg-linear-to-r from-transparent via-primary/60 to-transparent shadow-xs"></div>
       </div>
-      <footer className="relative z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-15 sm:pt-20 pb-16 sm:pb-24">
+      <footer className="relative  z-10 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 pt-15 sm:pt-20 pb-16 sm:pb-24">
         {/* MAIN CONTAINER */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-10 lg:gap-7  lg:place-items-start text-center lg:text-left">
           {/* LOGO + ADDRESS */}

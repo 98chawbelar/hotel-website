@@ -1,5 +1,3 @@
-import React from "react";
-
 import Loading from "../Loading";
 import getBaseUrl from "../../utils/baseURL";
 import { useFetchFacilitiesQuery } from "../../redux/features/facilities/facilitiesApi";
@@ -13,39 +11,70 @@ import "swiper/css/effect-fade";
 const pricing = [
   {
     title: "Shirt / T-Shirt",
-    description: "Professional washing and ironing service.",
-    price: "200 MMK",
+    description:
+      "Professional washing and ironing service for shirts and casual wear with careful fabric protection.",
+    price: "3,000 MMK",
   },
+
   {
     title: "Pants / Jeans",
-    description: "Fresh cleaning with careful fabric handling.",
-    price: "400 MMK",
+    description:
+      "Deep cleaning and wrinkle-free finishing for jeans, trousers and heavy fabrics.",
+    price: "5,000 MMK",
   },
+
   {
     title: "Jacket / Coat",
-    description: "Premium garment care and professional finishing.",
-    price: "600 MMK",
+    description:
+      "Premium garment care with steam ironing and luxury finishing service.",
+    price: "8,000 MMK",
+  },
+
+  {
+    title: "Ironing Service",
+    description:
+      "Fast ironing service for uniforms, shirts and business clothing.",
+    price: "2,500 MMK",
+  },
+
+  {
+    title: "Express Laundry",
+    description:
+      "Same-day laundry service with quick washing, drying and delivery.",
+    price: "10,000 MMK",
+  },
+
+  {
+    title: "Blanket / Bed Sheet",
+    description:
+      "Large fabric washing with sanitizing and soft premium finishing.",
+    price: "12,000 MMK",
   },
 ];
 
-const hotelFacilities = [
+const imageDescriptions = [
   {
-    title: "Free WiFi",
-    description: "High-speed internet access available throughout the hotel.",
-  },
-  {
-    title: "Free Car Parking",
-    description: "Secure and convenient parking space for hotel guests.",
-  },
-  {
-    title: "Android TV",
+    title: "Premium Jeans Cleaning",
     description:
-      "Enjoy entertainment and streaming services inside every room.",
+      "Our professional laundry team carefully cleans jeans, denim and heavy fabrics using premium washing techniques to maintain softness, color and fabric quality.",
   },
+
   {
-    title: "Daily Room Cleaning",
+    title: "Professional Ironing Service",
     description:
-      "Clean and comfortable rooms prepared every day for your stay.",
+      "Enjoy wrinkle-free clothing with our premium ironing service for business wear, uniforms and daily garments prepared with perfect finishing.",
+  },
+
+  {
+    title: "Fast Same-Day Laundry",
+    description:
+      "Need urgent laundry service? Kandaw101 Hotel provides fast same-day washing and drying service for travelers and hotel guests.",
+  },
+
+  {
+    title: "Luxury Garment Care",
+    description:
+      "Delicate fabrics and premium clothing receive professional garment treatment, soft finishing and careful fabric protection.",
   },
 ];
 
@@ -87,136 +116,208 @@ const Laundry = () => {
   }
 
   return (
-    <div className="w-full">
-      {/* ================= HERO SWIPER ================= */}
+    <div className="w-full bg-primary overflow-hidden">
+      {/* HERO SECTION */}
 
-      <div className="relative w-full h-[50vh] md:h-[70vh] overflow-hidden">
+      <section className="relative h-[55vh] sm:h-[70vh] lg:h-[85vh] overflow-hidden">
         <Swiper
           modules={[Autoplay, EffectFade]}
           effect="fade"
-          loop={true}
+          loop
           speed={1200}
           autoplay={{
             delay: 2500,
-
             disableOnInteraction: false,
           }}
-          className="h-full w-full"
+          className="h-full"
         >
           {laundry.images?.map((image, index) => (
             <SwiperSlide key={index}>
               <img
                 src={getImageUrl(image)}
-                alt="Laundry"
+                alt="Laundry Service"
                 className="w-full h-full object-cover"
               />
 
-              <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
-                <h1 className="text-white text-4xl md:text-6xl font-serif font-bold text-center">
-                  Professional Laundry Service
-                </h1>
+              <div className="absolute inset-0 bg-black/55 flex items-center justify-center px-6">
+                <div className="text-center max-w-4xl">
+                  <h1 className="text-white text-3xl sm:text-5xl lg:text-7xl font-serif font-bold leading-tight">
+                    Professional Laundry Service
+                  </h1>
+
+                  <p className="text-white/80 mt-6 text-sm sm:text-lg leading-8 max-w-2xl mx-auto">
+                    Premium laundry, ironing and garment care service for a
+                    clean and comfortable hotel experience.
+                  </p>
+                </div>
               </div>
             </SwiperSlide>
           ))}
         </Swiper>
-      </div>
+      </section>
 
-      {/* ================= CONTENT ================= */}
+      {/* INTRO */}
 
-      <div className="max-w-7xl mx-auto px-6 py-16">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 lg:py-24">
         <div className="text-center max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-serif font-semibold mb-6">
-            Fresh, Clean And Carefully Handled Laundry Service
+          <p className="uppercase tracking-[5px] text-accent text-xs mb-4">
+            Kandaw101 Hotel
+          </p>
+
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl text-secondary font-serif font-semibold mb-6 leading-tight">
+            Fresh, Clean & Carefully Handled Laundry Service
           </h2>
 
-          <p className="text-gray-600 text-lg leading-8">
+          <p className="text-secondary/65 text-base sm:text-lg leading-8">
             {laundry.description}
           </p>
         </div>
 
-        {/* ================= IMAGES + DESCRIPTION ================= */}
+        {/* IMAGE SECTIONS */}
 
-        <div className="mt-16 space-y-16">
+        <div className="mt-20 lg:mt-28 space-y-24">
           {laundry.images?.map((image, index) => (
             <div
               key={index}
-              className="grid grid-cols-1 lg:grid-cols-2 gap-10 items-center"
+              className={`grid grid-cols-1 lg:grid-cols-2 gap-10 lg:gap-16 items-center ${
+                index % 2 !== 0 ? "lg:[&>*:first-child]:order-2" : ""
+              }`}
             >
-              <div
-                className={`overflow-hidden rounded-xl shadow-lg
+              {/* IMAGE */}
 
-${index % 2 !== 0 ? "order-1 lg:order-2" : ""}
-
-`}
-              >
+              <div className="overflow-hidden rounded-[30px] shadow-2xl">
                 <img
                   src={getImageUrl(image)}
                   alt="Laundry"
-                  className="w-full h-[320px] md:h-[450px] object-cover hover:scale-105 transition duration-500"
+                  className="w-full h-75 sm:h-113 lg:h-130 object-cover hover:scale-105 transition duration-700"
                 />
               </div>
 
-              <div className={index % 2 !== 0 ? "order-2 lg:order-1" : ""}>
-                <h3 className="text-2xl md:text-3xl font-serif font-semibold mb-4">
-                  {index === 0
-                    ? "Premium Laundry & Garment Care"
-                    : "Fast & Convenient Service"}
+              {/* TEXT */}
+
+              <div>
+                <p className="uppercase tracking-[4px] text-accent text-xs mb-4">
+                  Laundry Experience
+                </p>
+
+                <h3 className="text-2xl sm:text-3xl text-secondary/65 lg:text-4xl font-serif font-semibold mb-6 leading-tight">
+                  {imageDescriptions[index]?.title ||
+                    "Professional Laundry Service"}
                 </h3>
 
-                <p className="text-gray-600 text-lg leading-8">
-                  {laundry.description}
+                <p className="text-secondary/65 text-base sm:text-lg leading-8">
+                  {imageDescriptions[index]?.description || laundry.description}
                 </p>
+
+                <div className="mt-8 flex flex-wrap gap-4">
+                  <span className="px-5 py-3 rounded-full bg-primary/10 text-primary text-sm font-semibold">
+                    Same Day Service
+                  </span>
+
+                  <span className="px-5 py-3 rounded-full bg-green-500/10 text-green-600 text-sm font-semibold">
+                    Premium Fabric Care
+                  </span>
+                </div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* ================= PRICE ================= */}
+        {/* PRICING */}
 
-        <div className="mt-20">
-          <h2 className="text-3xl font-serif font-semibold text-center mb-10">
-            Laundry Service Pricing
-          </h2>
+        <div className="mt-24 lg:mt-32">
+          <div className="text-center mb-14">
+            <p className="uppercase tracking-[5px] text-accent text-xs mb-4">
+              Laundry Pricing
+            </p>
 
-          <div className="grid md:grid-cols-3 gap-6">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-serif font-semibold">
+              Service Price List
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-6">
             {pricing.map((item, index) => (
               <div
                 key={index}
-                className="border rounded-xl p-6 shadow bg-white"
+                className="bg-white border border-gray-200 rounded-[28px] p-8 shadow-lg hover:shadow-2xl transition duration-500"
               >
-                <h3 className="text-2xl font-semibold">{item.title}</h3>
+                <div className="flex items-start justify-between gap-4">
+                  <h3 className="text-2xl font-semibold leading-tight">
+                    {item.title}
+                  </h3>
 
-                <p className="text-gray-600 my-4">{item.description}</p>
+                  <span className="bg-accent/10 text-accent px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap">
+                    {item.price}
+                  </span>
+                </div>
 
-                <span className="bg-accent/50 px-3 py-1 rounded">
-                  {item.price}
-                </span>
+                <p className="text-gray-600 mt-6 leading-8">
+                  {item.description}
+                </p>
               </div>
             ))}
           </div>
         </div>
 
-        {/* ================= HOTEL FACILITIES ================= */}
+        {/* EXTRA SERVICE INFO */}
 
-        <div className="mt-24 bg-gray-50 rounded-2xl p-10">
-          <h2 className="text-3xl font-serif text-center mb-10">
-            Complimentary Hotel Facilities
-          </h2>
+        <div className="mt-24 bg-gray-50 rounded-[36px] p-8 sm:p-12 lg:p-16">
+          <div className="text-center mb-12">
+            <p className="uppercase tracking-[5px] text-accent text-xs mb-4">
+              Why Choose Us
+            </p>
 
-          <div className="grid md:grid-cols-4 gap-6">
-            {hotelFacilities.map((item, index) => (
-              <div
-                key={index}
-                className="bg-white rounded-xl p-6 text-center shadow"
-              >
-                <h3 className="font-semibold text-xl">{item.title}</h3>
+            <h2 className="text-3xl sm:text-4xl font-serif font-semibold">
+              Premium Laundry Benefits
+            </h2>
+          </div>
 
-                <p className="text-gray-600 mt-3">{item.description}</p>
-              </div>
-            ))}
+          <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
+            <div className="bg-white rounded-[24px] p-8 shadow-md">
+              <h3 className="text-xl font-semibold mb-4">
+                Fast Same-Day Service
+              </h3>
+
+              <p className="text-gray-600 leading-7">
+                Quick laundry processing and delivery for busy travelers and
+                hotel guests.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-[24px] p-8 shadow-md">
+              <h3 className="text-xl font-semibold mb-4">
+                Premium Fabric Care
+              </h3>
+
+              <p className="text-gray-600 leading-7">
+                Gentle cleaning process that protects delicate fabrics and
+                expensive garments.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-[24px] p-8 shadow-md">
+              <h3 className="text-xl font-semibold mb-4">
+                Professional Ironing
+              </h3>
+
+              <p className="text-gray-600 leading-7">
+                Wrinkle-free finishing service for formal wear, uniforms and
+                casual clothing.
+              </p>
+            </div>
+
+            <div className="bg-white rounded-[24px] p-8 shadow-md">
+              <h3 className="text-xl font-semibold mb-4">Hygienic Cleaning</h3>
+
+              <p className="text-gray-600 leading-7">
+                Sanitized washing and fresh finishing to ensure cleanliness and
+                guest comfort.
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
     </div>
   );
 };
