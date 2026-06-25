@@ -60,7 +60,7 @@ const RoomDetails = () => {
   };
 
   const policies = [
-    "Check-in: 12:00 PM",
+    "Check-in: 2:00 PM",
     "Check-out: Before 12:00 PM",
     "Deposit: 3,000 MMK",
     "Damage responsibility applies",
@@ -105,12 +105,12 @@ const RoomDetails = () => {
 
   return (
     <>
-      <div className="bg-primary  text-white min-h-screen">
+      <div className="bg-primary px-12 py-6  text-white min-h-screen">
         {/* BACK BUTTON */}
-        <div className="max-w-6xl  mx-auto px-6 pt-20">
+        <div className="max-w-6xl  mx-auto mt-20 ">
           <Link
             to="/rooms"
-            className="text-sm text-gray-300 hover:text-white transition"
+            className="hover:bg-accent px-2 py-2 hover:rounded-full transition duration-150  text-sm text-gray-300 "
           >
             ← Back to Rooms
           </Link>

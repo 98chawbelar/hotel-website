@@ -9,39 +9,60 @@ import {
 
 import { useFetchAllRoomsQuery } from "../redux/features/rooms/roomsApi";
 import { useFetchFacilitiesQuery } from "../redux/features/facilities/facilitiesApi";
-
 import { useFetchExtraFacilitiesQuery } from "../redux/features/extrafacilities/extraFacilitiesApi";
 
 const useBooking = () => {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
 
   const { data: facilitiesData } = useFetchFacilitiesQuery();
   const { data: extraFacilitiesData } = useFetchExtraFacilitiesQuery();
 
-  const [searchParams] = useSearchParams();
-
   const [step, setStep] = useState(1);
-
   const [selectedRoom, setSelectedRoom] = useState("");
-
   const [paymentMethod, setPaymentMethod] = useState("cash");
-
-  const [specialRequests, setSpecialRequests] = useState("");
-
   const [extras, setExtras] = useState([]);
-
   const [pricing, setPricing] = useState(null);
-
   const [showExtras, setShowExtras] = useState(false);
 
+  // ✅ SINGLE FORM STATE (SOURCE OF TRUTH)
   const [form, setForm] = useState({
     firstName: "",
     lastName: "",
     email: "",
     phone: "",
     country: "",
+    specialRequests: "",
     agreePolicy: false,
   });
+
+  const setField = (key, value) => {
+    setForm((prev) => ({
+      ...prev,
+      [key]: value,
+    }));
+  };
+
+  // search params
+  const checkIn = searchParams.get("checkIn") || "";
+  const checkOut = searchParams.get("checkOut") || "";
+  const roomId = searchParams.get("roomId");
+  const adults = Number(searchParams.get("adults") || 1);
+  const child = Number(searchParams.get("child") || 0);
+
+  // data
+  const { data, isLoading: roomsLoading, isError } = useFetchAllRoomsQuery();
+  const { data: bookingData } = useFetchBookingsAllQuery();
+
+  const rooms = Array.isArray(data) ? data : data?.rooms || [];
+  const bookings = Array.isArray(bookingData)
+    ? bookingData
+    : bookingData?.bookings || [];
+
+  const [createBooking, { isLoading: bookingLoading }] =
+    useCreateBookingMutation();
+
+  const [calculatePricePreview] = useCalculatePricePreviewMutation();
 
   const facilities =
     facilitiesData?.facilities || facilitiesData?.data || facilitiesData || [];
@@ -52,139 +73,54 @@ const useBooking = () => {
     extraFacilitiesData ||
     [];
 
-  const freeFacilities = facilities.map((facility) => ({
-    key: facility._id,
-    label: facility.name,
-    desc: facility.description,
-    price: facility.price,
-    type: "facility",
-  }));
+  const allExtras = [
+    ...extraFacilities.map((item) => ({
+      key: item.key,
+      label: item.label,
+      desc: item.desc,
+      price: 0,
+      type: "extra",
+    })),
+    ...facilities.map((f) => ({
+      key: f._id,
+      label: f.name,
+      desc: f.description,
+      price: f.price,
+      type: "facility",
+    })),
+  ];
 
-  const paidExtras = extraFacilities.map((item) => ({
-    key: item.key,
-    label: item.label,
-    desc: item.desc,
-    price: 0,
-    type: "extra",
-  }));
+  // available rooms
+  const availableRooms = rooms.filter((room) => {
+    const roomStatus = room?.status?.toLowerCase();
+    if (roomStatus === "reserved" || roomStatus === "booked") return false;
 
-  const allExtras = [...paidExtras, ...freeFacilities];
+    const roomBookings = bookings.filter(
+      (b) =>
+        b?.room?._id === room?._id &&
+        b?.bookingStatus?.toLowerCase() !== "cancelled",
+    );
 
-  // SEARCH PARAMS
+    const selectedCheckIn = new Date(checkIn);
+    const selectedCheckOut = new Date(checkOut);
 
-  const checkIn = searchParams.get("checkIn") || "";
+    const isBooked = roomBookings.some((b) => {
+      const inDate = new Date(b?.stay?.checkIn);
+      const outDate = new Date(b?.stay?.checkOut);
 
-  const checkOut = searchParams.get("checkOut") || "";
+      return selectedCheckIn < outDate && selectedCheckOut > inDate;
+    });
 
-  const roomId = searchParams.get("roomId");
-
-  const adults = Number(searchParams.get("adults") || 1);
-
-  const child = Number(searchParams.get("child") || 0);
-
-  // FETCH ROOMS
-
-  const { data, isLoading: roomsLoading, isError } = useFetchAllRoomsQuery();
-
-  // FETCH BOOKINGS
-
-  const { data: bookingData } = useFetchBookingsAllQuery();
-
-  // ROOMS ARRAY
-
-  const rooms = Array.isArray(data) ? data : data?.rooms || [];
-
-  // BOOKINGS ARRAY
-
-  const bookings = Array.isArray(bookingData)
-    ? bookingData
-    : bookingData?.bookings || [];
-
-  // CREATE BOOKING
-
-  const [createBooking, { isLoading: bookingLoading }] =
-    useCreateBookingMutation();
-
-  // PRICE PREVIEW
-
-  const [calculatePricePreview] = useCalculatePricePreviewMutation();
-
-  // FILTER AVAILABLE ROOMS
-
-  const availableRooms = Array.isArray(rooms)
-    ? rooms.filter((room) => {
-        // ROOM STATUS CHECK
-        const roomStatus = room?.status?.toLowerCase();
-
-        // HIDE RESERVED & BOOKED ROOMS
-        if (roomStatus === "reserved" || roomStatus === "booked") {
-          return false;
-        }
-
-        // CAPACITY CHECK
-        const roomAdults = room?.capacity?.adults || 0;
-
-        const roomChild = room?.capacity?.child || 0;
-
-        const capacityMatch = adults <= roomAdults && child <= roomChild;
-
-        if (!capacityMatch) {
-          return false;
-        }
-
-        // ROOM BOOKINGS
-        const roomBookings = bookings.filter(
-          (booking) =>
-            booking?.room?._id === room?._id &&
-            booking?.bookingStatus?.toLowerCase() !== "cancelled",
-        );
-
-        // DATE OVERLAP CHECK
-        const isBooked = roomBookings.some((booking) => {
-          const bookingCheckIn = new Date(booking?.stay?.checkIn);
-
-          const bookingCheckOut = new Date(booking?.stay?.checkOut);
-
-          const selectedCheckIn = new Date(checkIn);
-
-          const selectedCheckOut = new Date(checkOut);
-
-          return (
-            selectedCheckIn < bookingCheckOut &&
-            selectedCheckOut > bookingCheckIn
-          );
-        });
-
-        // ONLY AVAILABLE ROOMS
-        return !isBooked;
-      })
-    : [];
-
-  // SORT ROOM NUMBERS
-
-  availableRooms.sort((a, b) => Number(a.roomNumber) - Number(b.roomNumber));
-
-  // DEFAULT ROOM
+    return !isBooked;
+  });
 
   const room =
     availableRooms.find((r) => String(r?._id) === String(roomId)) ||
     availableRooms?.[0];
 
-  // SELECTED ROOM DATA
-
   const selectedRoomData = availableRooms.find(
-    (room) => String(room?._id) === String(selectedRoom),
+    (r) => String(r?._id) === String(selectedRoom),
   );
-
-  // EXTRA TOTAL
-
-  const extrasTotal = allExtras.reduce(
-    (total, service) =>
-      extras.includes(service.key) ? total + service.price : total,
-    0,
-  );
-
-  // AUTO SELECT FIRST ROOM
 
   useEffect(() => {
     if (room?._id && !selectedRoom) {
@@ -192,89 +128,54 @@ const useBooking = () => {
     }
   }, [room?._id, selectedRoom]);
 
-  // FETCH PRICE
+  const extrasTotal = allExtras.reduce(
+    (total, item) => (extras.includes(item.key) ? total + item.price : total),
+    0,
+  );
 
   useEffect(() => {
     const fetchPricing = async () => {
+      if (!selectedRoom || !checkIn || !checkOut) return;
+
       try {
-        if (!selectedRoom) return;
-
-        if (!checkIn || !checkOut) {
-          setPricing(null);
-          return;
-        }
-
-        const result = await calculatePricePreview({
+        const res = await calculatePricePreview({
           roomId: selectedRoom,
           checkIn,
           checkOut,
           extrasTotal,
         }).unwrap();
 
-        setPricing(result);
-      } catch (error) {
-        console.error("Pricing Error:", error);
+        setPricing(res);
+      } catch (err) {
+        console.error(err);
       }
     };
 
     fetchPricing();
-  }, [selectedRoom, checkIn, checkOut, extrasTotal, calculatePricePreview]);
-
-  // TOGGLE EXTRA
+  }, [selectedRoom, checkIn, checkOut, extrasTotal]);
 
   const toggleExtra = (key) => {
     setExtras((prev) =>
-      prev.includes(key) ? prev.filter((item) => item !== key) : [...prev, key],
+      prev.includes(key) ? prev.filter((i) => i !== key) : [...prev, key],
     );
   };
 
-  // SET FORM FIELD
-
-  const setField = (key, value) => {
-    setForm((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
-  };
-
-  const user = JSON.parse(localStorage.getItem("user"));
-  const isAdmin = user?.role === "admin";
-
-  // HANDLE BOOKING
-
+  // ✅ FIXED BOOKING
   const handleBooking = async () => {
     try {
-      if (!form.agreePolicy) {
-        alert("Please agree policy");
-        return;
-      }
-
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        navigate("/login");
-        return;
-      }
-
-      if (!checkIn || !checkOut) {
-        alert("Please select dates");
-        return;
-      }
-
-      if (!selectedRoom) {
-        alert("Please Select A Room!");
-      }
+      if (!form.agreePolicy) return alert("Please agree policy");
+      if (!checkIn || !checkOut) return alert("Select dates");
+      if (!selectedRoom) return alert("Select room");
 
       const selectedExtras = allExtras
-        .filter((service) => extras.includes(service.key))
-        .map((service) => ({
-          name: service.label,
-          price: service.price || 0,
+        .filter((e) => extras.includes(e.key))
+        .map((e) => ({
+          name: e.label,
+          price: e.price || 0,
         }));
 
-      const bookingData = {
+      const payload = {
         room: selectedRoomData?._id,
-
         guest: {
           firstName: form.firstName,
           lastName: form.lastName,
@@ -282,41 +183,30 @@ const useBooking = () => {
           phone: form.phone,
           country: form.country,
         },
-
         stay: {
           checkIn,
           checkOut,
           adults,
           child,
         },
-
         extras: selectedExtras,
-
-        specialRequests,
-
+        specialRequests: form.specialRequests, // ✅ FIX HERE
         payment: {
           method: paymentMethod,
         },
       };
 
-      const response = await createBooking(bookingData).unwrap();
+      const res = await createBooking(payload).unwrap();
 
-      if (isAdmin) {
-        navigate(`/confirmation/${response.booking._id}`);
-      } else {
-        // CUSTOMER FLOW
-        alert("Booking Confirmed Successfully!");
-        navigate("/");
-      }
-    } catch (error) {
-      console.error(error);
-
-      alert(error?.data?.message || "Booking Failed");
+      alert("Booking Success!");
+      navigate("/");
+    } catch (err) {
+      console.error(err);
+      alert(err?.data?.message || "Booking failed");
     }
   };
 
   return {
-    // states
     step,
     setStep,
 
@@ -326,39 +216,30 @@ const useBooking = () => {
     paymentMethod,
     setPaymentMethod,
 
-    specialRequests,
-    setSpecialRequests,
-
     extras,
     toggleExtra,
 
     pricing,
-
     showExtras,
     setShowExtras,
 
     form,
     setField,
 
-    // params
     checkIn,
     checkOut,
     adults,
     child,
 
-    // room
     availableRooms,
     selectedRoomData,
 
-    // api
     roomsLoading,
     isError,
     bookingLoading,
 
-    // actions
     handleBooking,
 
-    // data
     extraServices: allExtras,
   };
 };

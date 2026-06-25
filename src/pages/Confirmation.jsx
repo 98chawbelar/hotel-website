@@ -1,10 +1,11 @@
 import { useParams, useNavigate } from "react-router-dom";
-
+import Swal from "sweetalert2";
 import {
   useFetchBookingByIdQuery,
   useCancelBookingMutation,
   useUpdateBookingStatusMutation,
   useResendBookingEmailMutation,
+  useDeleteBookingMutation,
 } from "../redux/features/booking/bookingApi";
 
 import SubmitButton from "../pages/adminPage/components/SubmitButton";
@@ -22,6 +23,8 @@ const Confirmation = () => {
 
   const [resendBookingEmail, { isLoading: resending }] =
     useResendBookingEmailMutation();
+
+  const [deleteBooking, { iseLoading: deleting }] = useDeleteBookingMutation();
 
   if (isLoading) {
     return (
@@ -47,27 +50,73 @@ const Confirmation = () => {
   const canCancel =
     booking.bookingStatus !== "cancelled" && daysBeforeCheckIn >= 7;
 
-  // CANCEL BOOKING
-  const handleCancel = async () => {
-    try {
-      await cancelBooking(booking._id).unwrap();
-      alert("Booking cancelled successfully");
-    } catch (error) {
-      alert(error?.data?.message || "Cancellation failed");
-    }
-  };
-
   // REJECT BOOKING (ADMIN ACTION STYLE)
   const handleReject = async () => {
+    const result = await Swal.fire({
+      title: "Reject Booking?",
+      text: "This booking will be cancelled.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#dc2626",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Reject",
+    });
+
+    if (!result.isConfirmed) return;
+
     try {
       await updateBookingStatus({
         id: booking._id,
         bookingStatus: "cancelled",
       }).unwrap();
 
-      alert("Booking rejected successfully");
+      Swal.fire({
+        title: "Rejected!",
+        text: "Booking rejected successfully",
+        icon: "success",
+        confirmButtonColor: "#10b981",
+      });
     } catch (error) {
-      alert("Failed to reject booking");
+      Swal.fire({
+        title: "Error",
+        text: "Failed to reject booking",
+        icon: "error",
+      });
+    }
+  };
+
+  // RESTORE BOOKING
+  const handleRestore = async () => {
+    const result = await Swal.fire({
+      title: "Restore Booking?",
+      text: "This booking will be restored to confirmed status.",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#16a34a",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Restore",
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      await updateBookingStatus({
+        id: booking._id,
+        bookingStatus: "confirmed",
+      }).unwrap();
+
+      Swal.fire({
+        title: "Restored!",
+        text: "Booking restored successfully",
+        icon: "success",
+        confirmButtonColor: "#10b981",
+      });
+    } catch (error) {
+      Swal.fire({
+        title: "Error",
+        text: error?.data?.message || "Failed to restore booking",
+        icon: "error",
+      });
     }
   };
 
@@ -75,9 +124,53 @@ const Confirmation = () => {
   const handleResendEmail = async () => {
     try {
       await resendBookingEmail(booking._id).unwrap();
-      alert("Email resent successfully");
+
+      Swal.fire({
+        title: "Success",
+        text: "Email resent successfully",
+        icon: "success",
+        confirmButtonColor: "#10b981",
+      });
     } catch (error) {
-      alert("Failed to resend email");
+      Swal.fire({
+        title: "Error",
+        text: "Failed to resend email",
+        icon: "error",
+      });
+    }
+  };
+
+  // PERMANENT DELETE
+  const handlePermanentDelete = async () => {
+    const result = await Swal.fire({
+      title: "Delete Permanently?",
+      text: "This action cannot be undone.",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#dc2626",
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "Delete",
+    });
+
+    if (!result.isConfirmed) return;
+
+    try {
+      await deleteBooking(booking._id).unwrap();
+
+      await Swal.fire({
+        title: "Deleted!",
+        text: "Booking deleted permanently",
+        icon: "success",
+        confirmButtonColor: "#10b981",
+      });
+
+      navigate("/dashboard");
+    } catch (error) {
+      Swal.fire({
+        title: "Error",
+        text: error?.data?.message || "Delete failed",
+        icon: "error",
+      });
     }
   };
 
@@ -175,22 +268,9 @@ const Confirmation = () => {
 
         {/* ACTIONS */}
         <div className="mt-8 flex flex-col sm:flex-row gap-4">
-          <SubmitButton onClick={() => navigate("/")}>
+          <SubmitButton onClick={() => navigate("/dashboard")}>
             Back To Home
           </SubmitButton>
-
-          {/* CANCEL (USER RULE) */}
-          {canCancel && (
-            <SubmitButton
-              loading={cancelling}
-              loadingText="Cancelling..."
-              className="bg-red-500 hover:bg-red-600"
-              onClick={handleCancel}
-            >
-              Cancel Booking
-            </SubmitButton>
-          )}
-
           {/* REJECT (ADMIN STYLE) */}
           {booking.bookingStatus === "pending" && (
             <SubmitButton
@@ -201,6 +281,27 @@ const Confirmation = () => {
             >
               Reject Booking
             </SubmitButton>
+          )}
+          {booking.bookingStatus === "cancelled" && (
+            <>
+              <SubmitButton
+                loading={updating}
+                loadingText="Restoring..."
+                className="bg-green-600 hover:bg-green-700"
+                onClick={handleRestore}
+              >
+                Restore Booking
+              </SubmitButton>
+
+              <SubmitButton
+                loading={deleting}
+                loadingText="Deleting..."
+                className="bg-red-700 hover:bg-red-800"
+                onClick={handlePermanentDelete}
+              >
+                Delete Permanently
+              </SubmitButton>
+            </>
           )}
 
           {/* RESEND EMAIL */}

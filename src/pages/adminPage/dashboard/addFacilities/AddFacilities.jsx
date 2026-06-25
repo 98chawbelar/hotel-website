@@ -140,7 +140,7 @@ const AddFacilities = () => {
   if (isLoading) return <Loading />;
 
   return (
-    <section className="relative min-h-screen overflow-hidden rounded-xl bg-gray-600 px-4 sm:px-6 lg:px-8 py-8">
+    <section className="relative min-h-screen overflow-hidden rounded-4xl bg-gray-600 px-4 sm:px-6 lg:px-8 py-8">
       {/* BACKGROUND */}
       <div className="absolute top-0 left-1/2 -translate-x-1/2 w-175 h-175 bg-primary/20 blur-[180px] rounded-full" />
 

@@ -20,6 +20,7 @@ const RoomBody = () => {
   const { data, isLoading, error } = useFetchAllRoomsQuery();
 
   const rooms = Array.isArray(data) ? data : data?.rooms || [];
+  const today = new Date().toISOString().split("T")[0];
 
   const BASE_URL = getBaseUrl();
 
@@ -114,6 +115,7 @@ gap-5
               <input
                 type="date"
                 value={checkIn}
+                min={today}
                 onChange={(e) => setCheckIn(e.target.value)}
                 className="
 w-full
@@ -131,6 +133,7 @@ outline-none
 
               <input
                 type="date"
+                min={checkIn || today}
                 value={checkOut}
                 onChange={(e) => setCheckOut(e.target.value)}
                 className="

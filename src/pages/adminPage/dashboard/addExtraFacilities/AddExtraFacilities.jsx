@@ -111,7 +111,7 @@ const AddExtraFacilities = () => {
   if (isLoading) return <Loading />;
 
   return (
-    <section className="min-h-screen bg-gray-600 rounded-xl p-6">
+    <section className="min-h-screen bg-gray-600 rounded-4xl p-6">
       <div className="max-w-7xl mx-auto">
         <PageHeader
           title={editing ? "Update Extra Facility" : "Manage Extra Facilities"}

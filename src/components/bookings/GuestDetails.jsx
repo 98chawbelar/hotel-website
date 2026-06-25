@@ -90,10 +90,10 @@ const GuestDetails = ({ form, setField }) => {
 
         <textarea
           rows={3}
-          value={form.specialRequest}
-          onChange={(e) => setField("specialRequest", e.target.value)}
-          placeholder="Any special requests or notes..."
-          className="w-full bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-sm text-white placeholder-gray-500 outline-none focus:border-accent transition resize-none"
+          value={form.specialRequests}
+          onChange={(e) => setField("specialRequests", e.target.value)}
+          placeholder="Any special requests..."
+          className="w-full bg-white/10 border border-white/10 rounded-xl px-4 py-3 text-sm text-white"
         />
       </div>
 
