@@ -7,11 +7,10 @@ import { getAdmin } from "../utils/auth";
 
 const Navbar = () => {
   const [open, setOpen] = useState(false);
-  const admin = getAdmin();
 
   const [showFacilitiesDropdown, setShowFacilitiesDropdown] = useState(false);
 
-  const [showAdminDropdown, setShowAdminDropdown] = useState(false);
+  const admin = getAdmin();
 
   const { currentUser, logout, uploadProfileImage } = useAuth();
 
@@ -27,7 +26,7 @@ const Navbar = () => {
       ? location.pathname === "/"
       : location.pathname.startsWith(href);
 
-  // HIDE NAVBAR ON AUTH PAGES
+  // AUTH PAGES
   const authRoutes = ["/login", "/register", "/admin-login"];
 
   const isAuthPage = authRoutes.some((path) =>
@@ -45,7 +44,7 @@ const Navbar = () => {
     }
   };
 
-  //Profile Image Upload
+  // PROFILE IMAGE UPLOAD
   const handleProfileUpload = async (e) => {
     const file = e.target.files[0];
 
@@ -53,29 +52,25 @@ const Navbar = () => {
 
     try {
       const imageUrl = await uploadProfileImage(file);
+
       alert("Profile updated!");
-      console.log("upladed", imageUrl);
+
+      console.log("uploaded", imageUrl);
     } catch (error) {
       console.log(error);
     }
   };
 
-  // NAVIGATION
+  // NAVIGATION LINKS
   const navigation = [
     { name: "Home", href: "/" },
     { name: "Facilities", href: "/facilities" },
     { name: "Rooms", href: "/rooms" },
-
-    {
-      ...(currentUser?.hasBooking
-        ? [{ name: "UserDashboard", href: "/userdashboard" }]
-        : ["/login"]),
-    },
     { name: "Contact", href: "/contact" },
     { name: "About", href: "/about" },
   ];
 
-  // FACILITIES LINKS
+  // FACILITIES DROPDOWN LINKS
   const facilitiesLinks = [
     {
       name: "Restaurant",
@@ -105,14 +100,13 @@ const Navbar = () => {
           {/* MAIN LINK */}
           <Link
             to={link.href}
-            className={`text-sm lg:text-base xl:text-lg  transition duration-300 ${
+            className={`text-sm lg:text-base xl:text-lg transition duration-300 ${
               isActive(link.href)
                 ? "underline text-accent"
                 : "hover:underline hover:text-accent hover:font-bold"
             }`}
             onClick={() => {
               setShowFacilitiesDropdown(false);
-              setShowAdminDropdown(false);
 
               if (isMobile) {
                 setOpen(false);
@@ -122,7 +116,7 @@ const Navbar = () => {
             {link.name}
           </Link>
 
-          {/* FACILITIES DROPDOWN */}
+          {/* FACILITIES DROPDOWN BUTTON */}
           {isFacilities && (
             <button
               type="button"
@@ -151,7 +145,6 @@ const Navbar = () => {
             {facilitiesLinks.map((item) => (
               <li key={item.name}>
                 <Link
-                  key={item.path}
                   to={item.href}
                   className="block px-4 py-2 text-sm text-white hover:bg-accent/20 transition"
                   onClick={() => {
@@ -178,7 +171,7 @@ const Navbar = () => {
         isAuthPage
           ? "bg-black/20 backdrop-blur-md"
           : location.pathname.startsWith("/userdashboard")
-            ? "bg-gray-400"
+            ? "bg-gray-500"
             : "bg-transparent"
       }`}
     >
@@ -201,7 +194,7 @@ const Navbar = () => {
             ))}
           </ul>
 
-          {/* DESKTOP RIGHT SIDE */}
+          {/* RIGHT SIDE */}
           <div className="hidden lg:flex items-center gap-3 xl:gap-4">
             {/* PROFILE */}
             {currentUser && (
@@ -217,25 +210,25 @@ const Navbar = () => {
                   />
                 </label>
 
-                {/* HOVER USERNAME */}
+                {/* USERNAME TOOLTIP */}
                 <div
                   className="
-        absolute
-        top-12
-        left-1/2
-        -translate-x-1/2
-        bg-black/90
-        text-white
-        text-xs
-        px-3
-        py-1
-        rounded-md
-        opacity-0
-        group-hover:opacity-100
-        transition
-        whitespace-nowrap
-        pointer-events-none
-      "
+                    absolute
+                    top-12
+                    left-1/2
+                    -translate-x-1/2
+                    bg-black/90
+                    text-white
+                    text-xs
+                    px-3
+                    py-1
+                    rounded-md
+                    opacity-0
+                    group-hover:opacity-100
+                    transition
+                    whitespace-nowrap
+                    pointer-events-none
+                  "
                 >
                   {currentUser?.name}
                 </div>
@@ -250,17 +243,29 @@ const Navbar = () => {
               </div>
             )}
 
-            {/* ADMIN BUTTON */}
+            {/* USER / ADMIN BUTTON */}
+            {currentUser && !admin ? (
+              <Link
+                to="/userdashboard"
+                className="bg-white text-primary px-4 py-2 rounded-lg font-medium"
+              >
+                User Dashboard
+              </Link>
+            ) : (
+              <Link
+                to={admin ? "/dashboard" : "/admin-login"}
+                className={`px-4 py-2 rounded-lg font-medium transition ${
+                  admin
+                    ? "bg-red-500 text-white"
+                    : "bg-gray-300 text-black hover:bg-gray-400"
+                }`}
+              >
+                Admin Panel
+              </Link>
+            )}
 
-            <Link
-              to={admin ? "/dashboard" : "/admin-login"}
-              className="bg-white text-primary px-4 py-2 rounded-lg font-medium"
-            >
-              Admin Dashboard
-            </Link>
-
-            {/* LOGIN / LOGOUT BUTTON */}
-            {currentUser ? (
+            {/* LOGIN / LOGOUT */}
+            {currentUser || admin ? (
               <button
                 onClick={handleLogout}
                 className="bg-accent text-black px-4 py-2 rounded-lg hover:bg-accent/80 transition"
@@ -290,29 +295,29 @@ const Navbar = () => {
         {open && (
           <div
             className="
-            absolute
-            top-16
-            
-            sm:right-5
-            w-[90vw]
-            max-w-[320px]
-            lg:hidden
-          bg-black/85
-            backdrop-blur-xl
-            rounded-2xl
-            p-5
-            shadow-2xl
-            border
-          border-white/10
-            z-50
-    "
+              absolute
+              top-16
+              sm:right-5
+              w-[90vw]
+              max-w-[320px]
+              lg:hidden
+              bg-black/85
+              backdrop-blur-xl
+              rounded-2xl
+              p-5
+              shadow-2xl
+              border
+              border-white/10
+              z-50
+            "
           >
             <ul className="flex flex-col items-center gap-6">
+              {/* MOBILE NAV LINKS */}
               {navigation.map((link) => (
                 <NavItem key={link.name} link={link} isMobile />
               ))}
 
-              {/* PROFILE */}
+              {/* MOBILE PROFILE */}
               {currentUser && (
                 <div className="relative group">
                   <label htmlFor="profileUpload" className="cursor-pointer">
@@ -326,25 +331,24 @@ const Navbar = () => {
                     />
                   </label>
 
-                  {/* HOVER USERNAME */}
                   <div
                     className="
-        absolute
-        top-12
-        left-1/2
-        -translate-x-1/2
-        bg-black/90
-        text-white
-        text-xs
-        px-3
-        py-1
-        rounded-md
-        opacity-0
-        group-hover:opacity-100
-        transition
-        whitespace-nowrap
-        pointer-events-none
-      "
+                      absolute
+                      top-12
+                      left-1/2
+                      -translate-x-1/2
+                      bg-black/90
+                      text-white
+                      text-xs
+                      px-3
+                      py-1
+                      rounded-md
+                      opacity-0
+                      group-hover:opacity-100
+                      transition
+                      whitespace-nowrap
+                      pointer-events-none
+                    "
                   >
                     {currentUser?.name}
                   </div>
@@ -359,29 +363,42 @@ const Navbar = () => {
                 </div>
               )}
 
-              {/* ADMIN */}
-
-              <Link
-                to={admin ? "/dashboard" : "/admin-login"}
-                className="bg-white text-primary px-4 py-2 rounded-lg font-medium"
-              >
-                Admin Dashboard
-              </Link>
+              {/* USER / ADMIN BUTTON */}
+              {currentUser && !admin ? (
+                <Link
+                  to="/userdashboard"
+                  className="bg-white text-primary px-4 py-2 rounded-lg font-medium"
+                >
+                  User Dashboard
+                </Link>
+              ) : (
+                <Link
+                  to={admin ? "/dashboard" : "/admin-login"}
+                  className={`px-4 py-2 rounded-lg font-medium transition ${
+                    admin
+                      ? "bg-red-500 text-white"
+                      : "bg-gray-300 text-black hover:bg-gray-400"
+                  }`}
+                >
+                  Admin Panel
+                </Link>
+              )}
 
               {/* LOGIN / LOGOUT */}
               <li className="w-full">
-                {currentUser ? (
+                {currentUser || admin ? (
                   <button
                     onClick={handleLogout}
                     className="
-                    w-full
-                  bg-accent
-                  text-black
-                    py-3
-                    rounded-xl
-                    font-medium
-                  hover:bg-accent/80
-                    transition"
+                      w-full
+                      bg-accent
+                      text-black
+                      py-3
+                      rounded-xl
+                      font-medium
+                      hover:bg-accent/80
+                      transition
+                    "
                   >
                     Logout
                   </button>
@@ -390,16 +407,17 @@ const Navbar = () => {
                     to="/login"
                     onClick={() => setOpen(false)}
                     className="
-                    block
-                    w-full
-                    text-center
-                  bg-accent
-                  text-black
-                    py-3
-                    rounded-xl
-                    font-medium
-                  hover:bg-accent/80
-                    transition"
+                      block
+                      w-full
+                      text-center
+                      bg-accent
+                      text-black
+                      py-3
+                      rounded-xl
+                      font-medium
+                      hover:bg-accent/80
+                      transition
+                    "
                   >
                     Login
                   </Link>
