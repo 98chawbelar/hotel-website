@@ -13,7 +13,7 @@ import Restaurant from "../components/facalities/Restaurant";
 import SwimmingPool from "../components/facalities/SwimmingPool";
 import Booking from "../pages/Booking";
 import RoomDetails from "../pages/RoomsDetails";
-import LogIn from "../components/account/Login";
+import Login from "../components/account/LogIn";
 import Register from "../components/account/Register";
 import AdminLogin from "../components/account/admin/AdminLogin";
 import AdminRegister from "../components/account/admin/AdminRegister";
@@ -109,7 +109,7 @@ const Router = createBrowserRouter([
       },
       {
         path: "/login",
-        element: <LogIn />,
+        element: <Login />,
       },
       {
         path: "/register",
