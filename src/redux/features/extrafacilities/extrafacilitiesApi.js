@@ -24,8 +24,8 @@ const axiosBaseQuery =
     }
   };
 
-export const extraFacilitiesApi = createApi({
-  reducerPath: "extraFacilitiesApi",
+export const extrafacilitiesApi = createApi({
+  reducerPath: "extrafacilitiesApi",
 
   baseQuery: axiosBaseQuery(),
 
@@ -96,6 +96,6 @@ export const {
   useCreateExtraFacilityMutation,
   useUpdateExtraFacilityMutation,
   useToggleExtraFacilityMutation,
-} = extraFacilitiesApi;
+} = extrafacilitiesApi;
 
-export default extraFacilitiesApi;
+export default extrafacilitiesApi;
