@@ -12,7 +12,7 @@ import {
 } from "react-icons/fa";
 import getBaseUrl from "../utils/baseURL";
 import { useFetchFacilitiesQuery } from "../redux/features/facilities/facilitiesApi";
-import { useFetchExtraFacilitiesQuery } from "../redux/features/extrafacilities/extraFacilitiesApi";
+import { useFetchExtraFacilitiesQuery } from "../redux/features/extrafacilities/extrafacilitiesApi";
 
 const RoomDetails = () => {
   const { id } = useParams();
