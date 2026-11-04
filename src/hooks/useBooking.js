@@ -9,7 +9,7 @@ import {
 
 import { useFetchAllRoomsQuery } from "../redux/features/rooms/roomsApi";
 import { useFetchFacilitiesQuery } from "../redux/features/facilities/facilitiesApi";
-import { useFetchExtraFacilitiesQuery } from "../redux/features/extrafacilities/extraFacilitiesApi";
+import { useFetchExtraFacilitiesQuery } from "../redux/features/extrafacilities/extrafacilitiesApi";
 
 const useBooking = () => {
   const navigate = useNavigate();
