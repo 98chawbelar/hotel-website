@@ -11,7 +11,7 @@ import {
   useFetchExtraFacilitiesQuery,
   useToggleExtraFacilityMutation,
   useUpdateExtraFacilityMutation,
-} from "../../../../redux/features/extrafacilities/extraFacilitiesApi";
+} from "../../../../redux/features/extrafacilities/extrafacilitiesApi";
 
 const AddExtraFacilities = () => {
   const { register, handleSubmit, reset, setValue } = useForm();
