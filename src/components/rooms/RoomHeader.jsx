@@ -8,33 +8,9 @@ import { Autoplay, EffectFade } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/effect-fade";
 
-import getBaseUrl from "../../utils/baseURL";
+import { getImgUrl } from "../../utils/getImgUrl";
 
 const RoomHeader = ({ rooms = [] }) => {
-  const BASE_URL = getBaseUrl();
-
-  const getImageUrl = (img) => {
-    if (!img) {
-      return "https://placehold.co/1200x800";
-    }
-
-    // if image is object
-    if (typeof img === "object") {
-      img = img.url || img.path || img.secure_url || "";
-    }
-
-    if (!img) {
-      return "https://placehold.co/1200x800";
-    }
-
-    // already full url
-    if (img.startsWith("http")) {
-      return img;
-    }
-
-    return `${BASE_URL}/${img.replace(/^\/+/, "")}`;
-  };
-
   return (
     <header className="relative h-screen overflow-hidden">
       <Swiper
@@ -53,7 +29,7 @@ const RoomHeader = ({ rooms = [] }) => {
           <SwiperSlide key={room._id}>
             <div className="relative h-screen w-full">
               <img
-                src={getImageUrl(
+                src={getImgUrl(
                   Array.isArray(room.images) ? room.images[0] : room.images,
                 )}
                 alt={room.name}

@@ -1,6 +1,6 @@
 import { Link, Outlet, useNavigate, useLocation } from "react-router-dom";
 import { assets } from "../../../assets/assets";
-import getBaseUrl from "../../../utils/baseURL";
+import { getImgUrl } from "../../../utils/getImgUrl";
 import {
   HiOutlineHome,
   HiOutlineMenuAlt2,
@@ -171,7 +171,7 @@ const DashboardLayout = () => {
             <img
               src={
                 admin?.avatar
-                  ? `${getBaseUrl()}${admin.avatar}`
+                  ? getImgUrl(admin.avatar)
                   : "https://ui-avatars.com/api/?name=Admin"
               }
               alt="admin"
@@ -381,7 +381,7 @@ const DashboardLayout = () => {
                 <img
                   src={
                     admin?.avatar
-                      ? `${getBaseUrl()}${admin.avatar}`
+                      ? getImgUrl(admin.avatar)
                       : "https://ui-avatars.com/api/?name=Admin"
                   }
                   alt="admin"

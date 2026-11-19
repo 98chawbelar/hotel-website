@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getAdmin, setAdmin } from "../../../utils/auth";
 import { getProfile, uploadAvatar } from "../../../api/admin.api";
+import { getImgUrl } from "../../../utils/getImgUrl";
 
 const AdminProfile = () => {
   const [avatar, setAvatar] = useState(null);
@@ -12,9 +13,6 @@ const AdminProfile = () => {
   const fetchProfile = async () => {
     try {
       const res = await getProfile();
-
-      console.log("PROFILE DATA:", res.data);
-      console.log("AVATAR URL:", res.data.avatar);
 
       setAdmin(res.data);
       setAdminState(res.data);
@@ -72,7 +70,7 @@ const AdminProfile = () => {
         {/* Admin Avatar */}
         {admin?.avatar ? (
           <img
-            src={admin.avatar}
+            src={getImgUrl(admin?.avatar)}
             alt="Admin"
             className="w-32 h-32 rounded-full object-cover border"
             onError={(e) => {

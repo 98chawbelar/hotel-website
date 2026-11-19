@@ -2,39 +2,13 @@ import { useState } from "react";
 
 import { useFetchAllRoomsQuery } from "../../redux/features/rooms/roomsApi";
 import getBaseUrl from "../../utils/baseURL";
-
+import { getImgUrl } from "../../utils/getImgUrl";
 const RoomGallery = () => {
   const [selectedImage, setSelectedImage] = useState(null);
 
   const { data, isLoading, error } = useFetchAllRoomsQuery();
 
   const rooms = Array.isArray(data) ? data : data?.rooms || [];
-
-  const BASE_URL = getBaseUrl();
-
-  const getImageUrl = (image) => {
-    if (!image) {
-      return "https://placehold.co/600x400";
-    }
-
-    if (Array.isArray(image)) {
-      image = image[0];
-    }
-
-    if (typeof image === "object") {
-      image = image.url || image.path || image.secure_url || "";
-    }
-
-    if (!image) {
-      return "https://placehold.co/600x400";
-    }
-
-    if (image.startsWith("http")) {
-      return image;
-    }
-
-    return `${BASE_URL}/${image.replace(/^\/+/, "")}`;
-  };
 
   const images = rooms.flatMap((room) => {
     if (!room.images) {
@@ -43,7 +17,7 @@ const RoomGallery = () => {
 
     if (Array.isArray(room.images)) {
       return room.images.map((img) => ({
-        src: getImageUrl(img),
+        src: getImgUrl(img),
 
         name: room.name,
       }));
@@ -51,7 +25,7 @@ const RoomGallery = () => {
 
     return [
       {
-        src: getImageUrl(room.images),
+        src: getImgUrl(room.images),
         name: room.name,
       },
     ];
